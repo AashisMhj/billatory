@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import { Avatar, Chip, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import { ChromeOutlined } from '@ant-design/icons';
 import {SideBarContext} from '@/context/sideBar';
 import { NavItemType } from '@/types';
 
@@ -40,18 +39,18 @@ const NavItem = ({ item, level }:Props) => {
   }
 
   const itemHandler = (id:string) => {
+    // TODO
     // dispatch(activeItem({ openItem: [id] }));
   };
 
-  // TODO fix showing icon
-  const itemIcon = <ChromeOutlined style={{ fontSize: is_open ? ' 1rem' : '1.25rem'}} />
-  // const Icon = item.icon;
-  // const itemIcon = item.icon ? <Icon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} /> : false;
+  
+  const itemIcon = item.icon ? item.icon(is_open) : <></>;
 
   const isSelected = openItems.findIndex((id) => id === item.id) > -1;
   // active menu item on page load
   useEffect(() => {
     if (pathname.includes(item.url)) {
+      // TODO
       // dispatch(activeItem({ openItems: [item.id] }));
     }
     // eslint-disable-next-line

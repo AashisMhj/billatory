@@ -1,0 +1,1 @@
+- how to track payment types (partial payment, advance payment)

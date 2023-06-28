@@ -36,6 +36,7 @@
     "windows": [
       {
         "fullscreen": false,
+        "maximized": true,
         "resizable": true,
         "title": "student-billing",
         "width": 800,

@@ -57,7 +57,7 @@ const AuthLogin = () => {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        {({ errors, handleBlur, handleChange, handleSubmit,setFieldValue, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
@@ -67,7 +67,7 @@ const AuthLogin = () => {
                     id="organization-name"
                     type="text"
                     value={values.organization_name}
-                    name="organization-name"
+                    name="organization_name"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="School Name"
@@ -81,12 +81,7 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
-              {/* <Grid item xs={12}>
+              <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="organization-file">Organization Logo</InputLabel>
                   <input ref={fileRef} accept='image/*' style={{display: 'none'}} type="file" onChange={(event) => event?.target?.files && event?.target?.files.length > 0 ?  setFieldValue('image', event.target.files[0]) : undefined } />
@@ -98,17 +93,8 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )} */}
+             
               {/* Phone no */}
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
               <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="phone-no">Phone No</InputLabel>
@@ -116,7 +102,7 @@ const AuthLogin = () => {
                     id="phone-no"
                     type="number"
                     value={values.phone_no}
-                    name="phone-no"
+                    name="phone_no"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Enter Phone No"
@@ -143,7 +129,7 @@ const AuthLogin = () => {
                     id="pan-no"
                     type="text"
                     value={values.pan_no}
-                    name="pan-no"
+                    name="pan_no"
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder="Enter Pan No"
@@ -165,15 +151,15 @@ const AuthLogin = () => {
               {/* Phone No */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="pan-no">Phone No</InputLabel>
+                  <InputLabel htmlFor="address">Address</InputLabel>
                   <OutlinedInput
-                    id="pan-no"
+                    id="address"
                     type="text"
-                    value={values.pan_no}
-                    name="pan-no"
+                    value={values.address}
+                    name="address"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter Pan No"
+                    placeholder="Your Address"
                     fullWidth
                     error={Boolean(touched.pan_no && errors.pan_no)}
                   />

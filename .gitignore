@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 dev.md
+dev.rust.md
+todo.md

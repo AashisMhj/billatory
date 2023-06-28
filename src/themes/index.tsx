@@ -17,7 +17,7 @@ interface Props{
   children: ReactNode
 }
 export default function ThemeCustomization({ children }:Props) {
-  // OLD two variables passed here
+  // TOKNOW OLD two variables passed here
   const theme = Palette('light');
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,7 +44,7 @@ export default function ThemeCustomization({ children }:Props) {
       },
       palette: theme.palette,
       customShadows: themeCustomShadows,
-      // typography: themeTypography
+      typography: themeTypography
     }),
     [theme, themeTypography, themeCustomShadows]
   );

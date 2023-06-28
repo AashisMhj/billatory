@@ -1,4 +1,4 @@
-import { HTMLAttributes, ReactNode, useRef, useState } from 'react';
+import { HTMLAttributes, ReactNode, useRef, useState, useContext } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -18,6 +18,7 @@ import {
   Typography
 } from '@mui/material';
 
+import { SettingsContext } from '@/context/settings';
 // project import
 import MainCard from '@/components/layouts/MainCard';
 import Transitions from '@/components/@extended/Transitions';
@@ -25,7 +26,7 @@ import ProfileTab from './ProfileTab';
 import SettingTab from './SettingsTab';
 
 // assets
-import avatar1 from '@/assets/images/users/avatar-1.png';
+
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
@@ -51,6 +52,7 @@ function a11yProps(index: number) {
 
 const Profile = () => {
   const theme = useTheme();
+  const {value:SettingValue} = useContext(SettingsContext);
 
   const handleLogout = async () => {
     // logout
@@ -93,8 +95,7 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Avatar alt="profile user" src={SettingValue.image} sx={{ width: 40, height: 40 }} />
         </Stack>
       </ButtonBase>
       <Popper
@@ -135,13 +136,7 @@ const Profile = () => {
                       <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-                            <Stack>
-                              <Typography variant="h6">John Doe</Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                UI/UX Designer
-                              </Typography>
-                            </Stack>
+                            <Avatar alt="profile user" src={SettingValue.image} sx={{ width: 40, height: 40 }} />
                           </Stack>
                         </Grid>
                         <Grid item>
