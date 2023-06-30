@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 import { ClassType } from "@/types";
 
-type CreateClassType = Omit<ClassType, "id">
+type CreateClassType = Omit<ClassType, "id" | "created_at" | "updated_at">
 export function addClass(data:CreateClassType){
     return invoke('add_class_data', {
         class: data.class

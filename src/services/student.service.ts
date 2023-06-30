@@ -27,6 +27,7 @@ export function addStudent(data:CreateStudentType){
         guardianRelation: data.guardian_relation,
         emergencyContact: data.emergency_contact,
         classId: data.class_id,
+        rollNo: data.roll_no,
         isActive: true
 
     })

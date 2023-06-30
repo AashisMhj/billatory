@@ -18,12 +18,24 @@ export function getCharges(page:number, limit:number){
     })
 }
 
+export function getStudentCharges(student_id:number){
+    return invoke('get_student_charges_data', {
+        studentId: student_id
+    });
+}
+
 export function updateCharge(data:ChargesType){
     return invoke('update_charge_data', {
         data
     })
 }
 
+export function applyCharge(charge_id:number){
+    return invoke('apply_charges_data', {
+        chargeId: charge_id
+    });
+}
+
 export function getChargeCount(){
-    return invoke('get_charge_count');
+    return invoke('count_charges_row');
 }

@@ -4,6 +4,7 @@ import { lazy } from 'react';
 import Loadable from '@/utils/Loadable';
 import MinimalLayout from '@/layout/MinimalLayout';
 import SetUpPage from '@/pages/Setup';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 // render - login
 // const AuthLogin = Loadable(lazy(() => import('pages/authentication/Login')));
@@ -16,12 +17,12 @@ const OtherRoutes = {
   element: <MinimalLayout />,
   children: [
     {
-      path: '/',
+      path: '/setup',
       element: <SetUpPage />
     },
     // {
-    //   path: 'register',
-    //   element: <AuthRegister />
+    //   path: '*',
+    //   element: <NotFoundPage />
     // }
   ]
 };

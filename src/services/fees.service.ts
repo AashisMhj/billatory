@@ -12,10 +12,13 @@ export function addFee(data:CreateFeeType){
 export function getFees(page:number, limit:number){
     return invoke('get_fee_data', {
         page,
-        limit
+        limit,
+        remaining: false
     })
 }
 
-export function getFeeRowCount(){
-    return invoke('count_fee_rows');
+export function getFeeRowCount(remaining=false){
+    return invoke('count_fees_row', {
+        remaining
+    });
 }

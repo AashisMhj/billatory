@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
 //
 import { ChargesType, ChargesFilterType } from '@/types';
-import { getCharges, getChargeCount } from '@/services/charge.service';
+import { getCharges, getChargeCount, applyCharge } from '@/services/charge.service';
 import { getNoOfPage } from '@/utils/helper-function';
 import { ChargeStatusType, AddChargeModal } from '@/components/pages/charges/listCharges';
 const tableHeads = [
@@ -20,7 +20,7 @@ export default function ListCharges() {
     const [charges, setCharges] = useState<Array<ChargesType>>([]);
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
-    const [total_rows, setTotalRow] = useState<number>(10);
+    const [total_rows, setTotalRow] = useState<number>(0);
     const [filter_class, setFilterClass] = useState<number | null>(null);
     const [is_add_model_open, setIsAddModalOpen] = useState(false);
 
@@ -37,12 +37,24 @@ export default function ListCharges() {
         }
     }
 
+    function chargeHandler(charge_id:number){
+        applyCharge(charge_id)
+            .then((data)=>{
+                console.log(data);
+                if(data === 200){
+                    // TODO show some message
+                }else{
+                    // TODO show some error
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
     function fetchData() {
         getCharges(page, limit)
             .then((data) => {
                 if (typeof data === "string") {
                     const charges_data = JSON.parse(data);
-                    console.log(charges_data);
                     setCharges(charges_data);
                 }
             })
@@ -53,10 +65,8 @@ export default function ListCharges() {
         // 
         getChargeCount()
             .then(data => {
-                console.log(data);
-                if (typeof data === "string") {
-                    const count = parseInt(JSON.parse(data)) || 0;
-                    setTotalRow(count);
+                if (typeof data === "number") {
+                    setTotalRow(data);
                 }
             })
             .catch(err => {
@@ -84,6 +94,9 @@ export default function ListCharges() {
                             </IconButton>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    Total Row count: {total_rows}
                 </Grid>
                 <Grid item xs={12}>
                     <TableContainer sx={{
@@ -135,7 +148,7 @@ export default function ListCharges() {
                                                 {charge.amount}
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant='outlined' color='success'>
+                                                <Button variant='outlined' color='success' onClick={() => chargeHandler(charge.id)}>
                                                     Apply Charge
                                                 </Button>
                                             </TableCell>

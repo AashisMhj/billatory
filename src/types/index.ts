@@ -29,6 +29,7 @@ export interface NavGroupType{
 export type log_types = "backup" | "charge generate" | "system";
 
 export interface LogType{
+    id: number,
     type: log_types,
     description: string,
     time: string,
@@ -45,6 +46,8 @@ export interface SettingsType{
 
 export interface ClassType{
     class: string,
+    created_at: string,
+    updated_at: string,
     id: number
 }
 
@@ -57,6 +60,14 @@ export interface ChargesType{
     is_regular: boolean
 }
 
+export interface StudentChargeType{
+    id: number,
+    charge_id: number,
+    student_id: number,
+    charge_title: string,
+    amount?: number,
+}
+
 export interface StudentType{
     id: number,
     first_name: string,
@@ -67,6 +78,7 @@ export interface StudentType{
     class_id: number,
     class?: string,
     gender: GenderType,
+    roll_no: number,
     address?: string,
     date_of_birth?: string,
     phone_no?: string,
@@ -82,9 +94,9 @@ export interface StudentType{
 export interface FeesType{
     id: number,
     student_id: number,
-    first_name?: string,
-    mid_name?: string,
-    last_name?: string,
+    student_first_name?: string,
+    student_mid_name?: string,
+    student_last_name?: string,
     created_at: string,
     updated_at?: string,
     amount: number,
@@ -93,7 +105,7 @@ export interface FeesType{
     class?: string,
     description?: string,
     charge_id: number,
-    charge?: string,
+    charge_title?: string,
     payment_id?: number 
 }
 

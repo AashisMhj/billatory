@@ -145,7 +145,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <FormLabel id="radio-buttons-charge-type">Charge Type</FormLabel>                                            
-                                            <RadioGroup row={true} onChange={handleChange} defaultValue={true} name="is_regular" value={values.is_regular}>
+                                            <RadioGroup row={true} onChange={(event) => setFieldValue("is_regular",event.target.value === "true")} defaultValue={true} name="is_regular" value={values.is_regular}>
                                                 <FormControlLabel value={true} control={<Radio />} label="Regular" />
                                                 <FormControlLabel value={false} control={<Radio />} label="Not Regular" />
                                             </RadioGroup>

@@ -12,14 +12,14 @@ export default function LoadingPage() {
         <Container maxWidth="sm">
             <Grid container direction="column" alignItems="center" justifyContent="center" spacing={2} style={{ height: '100vh' }}>
                 <Grid item>
-                    <Paper style={{ width: '120px', height: '120px', padding: '16px', position: 'relative' }}>
+                    <Paper style={{ width: '220px', height: '220px', padding: '16px', position: 'relative' }}>
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
                             <img src={Logo} alt="Logo" style={{ width: '150px', height: '100px' }} />
                         </div>
                     </Paper>
 
                 </Grid>
-                <Grid item>
+                <Grid item >
                     <LinearProgress />
                     <Typography variant="body1">Loading...</Typography>
                 </Grid>

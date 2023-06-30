@@ -26,21 +26,13 @@ export const SettingsContext = createContext<SettingsContextType>({
 export const SettingsProvider = ({children}:{children:ReactNode}) =>{
     const [settings_value, setSettingsValue] = useState(initial_settings);
     const navigate = useNavigate();
-    const [is_loading, setIsLoading] = useState(true);
     
     const updateValue = (new_value: SettingsType) =>{
         setSettingsValue(new_value);
     }
 
-    useEffect(()=>{
-        // TODO check if settings exist here
-        setIsLoading(false);
-        navigate(paths.dashboard);
-    }, [])
 
     return <SettingsContext.Provider value={{value: settings_value, updateValue}}>
-        {
-            is_loading ? <LoadingPage /> : children
-        }
+        {children}
     </SettingsContext.Provider>
 }

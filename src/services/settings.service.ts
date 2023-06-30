@@ -1,27 +1,38 @@
 import { invoke } from "@tauri-apps/api";
 import { SettingsType } from "@/types";
 
-export function getSettings(){
-
+interface CreateSettingType {
+    organizationName: string, 
+    email: string | null, 
+    location: string, 
+    image: string, 
+    phoneNo: string, 
+    panNo: number,
 }
 
-export function addSettings({organization_name, address, image, phone_no, pan_no}:SettingsType){
-    return invoke('add_settings', {
-        organization_name,
-        address,
+export function getSettings(){
+    return invoke('get_settings_data');
+}
+
+export function addSettings({organizationName, email, location, image, phoneNo, panNo}:CreateSettingType){
+    return invoke('add_settings_data', {
+        organizationName,
+        location,
+        email,
         image,
-        phone_no,
-        pan_no
+        phoneNo,
+        panNo
     });
 
 }
 
-export function updateSettings({organization_name, address, image, phone_no, pan_no}:SettingsType){
+export function updateSettings({organizationName,email, location, image, phoneNo, panNo}:CreateSettingType){
     return invoke('update_settings', {
-        organization_name,
-        address,
+        organizationName,
+        location,
+        email,
         image,
-        phone_no,
-        pan_no
+        phoneNo,
+        panNo
     })
 }

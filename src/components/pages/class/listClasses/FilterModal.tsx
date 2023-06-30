@@ -17,7 +17,7 @@ const style: SxProps = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 500,
-    bgcolor: 'Background',
+    background: 'white',
     border: '2px solid #000',
     p: 4
 }
@@ -31,7 +31,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
             onClose={handleClose}
         >
             <Box sx={style}>
-                <Typography variant="h6" >Filter Data</Typography>
+                <Typography variant="h5" >Filter Data</Typography>
                 <Formik initialValues={{ ...value, submit: null }}
                     validationSchema={Yup.object().shape({
                         limit: Yup.string().trim().required('Class Title is Required')
@@ -59,7 +59,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                                         <InputLabel htmlFor="limit">Limit</InputLabel>
                                         <Select labelId="limit" id='limit' value={values.limit} name="limit" onChange={handleChange}>
                                             {
-                                                DropDownItems.map((item) => <MenuItem value={item}>{item}</MenuItem>)
+                                                DropDownItems.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
                                             }
                                         </Select>
                                     </Stack>
@@ -72,7 +72,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                                            Update
+                                            Filter
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

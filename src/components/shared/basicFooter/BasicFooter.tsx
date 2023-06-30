@@ -9,7 +9,7 @@ const FooterLinks = ({matchDownSM}:{matchDownSM:boolean}) => {
         variant="subtitle2"
         color="secondary"
         component={Link}
-        href="https://codedthemes.support-hub.io/"
+        href="#"
         target="_blank"
         underline="hover"
       >
@@ -32,7 +32,7 @@ const BasicFooter = () => {
         <Typography variant="subtitle2" color="secondary" component="span">
           &copy;
           <Typography component={Link} variant="subtitle2" href="#" target="_blank" underline="hover">
-            Product Name
+            Billatory
           </Typography>
         </Typography>
 

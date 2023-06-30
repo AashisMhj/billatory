@@ -4,13 +4,13 @@ import { Avatar, Grid, List, ListItemAvatar, ListItemButton, ListItemSecondaryAc
 import { LogType, log_types } from "@/types";
 import { GiftOutlined, MessageOutlined, SettingOutlined } from "@ant-design/icons";
 const fakeData: Array<LogType> = [
-    { type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 1,type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 2,type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 3,type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 4,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 5,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 6,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
+    { id: 7,type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
 
 
 ];
@@ -87,7 +87,7 @@ export default function LogSection() {
                     }}>
                         {
                             logs.map((item) => (
-                                <ListItemButton divider>
+                                <ListItemButton key={item.id} divider>
                                     <ListItemAvatar>
                                         <Avatar
                                             sx={getIconStyle(item.type)}

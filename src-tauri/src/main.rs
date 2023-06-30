@@ -4,6 +4,8 @@
 mod database;
 mod state;
 
+use std::fmt::format;
+
 use serde_json;
 use state::{AppState, ServiceAccess};
 use tauri::{App, AppHandle, Manager, State};
@@ -15,34 +17,40 @@ fn greet(my_name: &str) -> String {
 }
 
 #[tauri::command]
-fn add_settings(
+fn add_settings_data(
     app_handle: AppHandle,
-    organization_name: &str,
-    contact_no: &str,
-    email: &str,
+    organization_name: String,
+    phone_no: String,
+    email: Option<String>,
     pan_no: i32,
-    location: &str,
+    location: String,
+    image: String
 ) -> String {
     let setting_data = database::Setting {
-        organization_name: organization_name.to_string(),
-        phone_no: contact_no.to_string(),
-        email: email.to_string(),
+        organization_name: organization_name,
+        phone_no: phone_no,
+        email: email,
         pan_no: pan_no,
-        image: ' '.to_string(),
-        location: location.to_string(),
+        image: image,
+        location: location,
     };
-    app_handle
-        .db(|db| database::add_settings(db, setting_data))
-        .unwrap();
-    let items = app_handle.db(|db| database::get_settings(db)).unwrap();
-    // let items_string = items.join(" | ");
-    let setting_string = serde_json::to_string(&items).unwrap();
-
-    format!("{}", setting_string)
+    let result = app_handle.db(|db| database::add_settings(db, setting_data));
+    match result{
+        Ok(_value)=>{
+            let items = app_handle.db(|db| database::get_settings(db)).unwrap();
+            // let items_string = items.join(" | ");
+            let setting_string = serde_json::to_string(&items).unwrap();
+        
+            format!("{}", setting_string)
+        }
+        Err(_error)=>{
+            format!("Error")
+        }
+    }
 }
 
 #[tauri::command]
-fn get_settings(app_handle: AppHandle) -> Result<String, String> {
+fn get_settings_data(app_handle: AppHandle) -> Result<String, String> {
     let setting_data = app_handle.db(|db| database::get_settings(db));
     match setting_data{
         Ok(value) =>{
@@ -117,7 +125,8 @@ fn add_student_data(
     emergency_contact: Option<String>,
     is_active: bool,
     class_id: i32,
-) -> String {
+    roll_no: i32
+) -> i32 {
     let student_data = database::Student {
         id: 0,
         first_name: first_name,
@@ -128,6 +137,7 @@ fn add_student_data(
         mother_name: mother_name,
         date_of_birth: date_of_birth,
         gender: gender,
+        roll_no: roll_no,
         phone_no: phone_no,
         email: email,
         created_at: None,
@@ -139,10 +149,16 @@ fn add_student_data(
         class_id: class_id,
         class: None,
     };
-    app_handle
-        .db(|db| database::add_student(db, student_data))
-        .unwrap();
-    format!("OK")
+    let result =app_handle
+        .db(|db| database::add_student(db, student_data));
+    match result{
+        Ok(_value)=>{
+            return 200;
+        }
+        Err(_error)=>{
+            return 500;
+        }
+    }
 }
 
 #[tauri::command]
@@ -173,6 +189,7 @@ fn update_student_data(
     emergency_contact: Option<String>,
     is_active: bool,
     class_id: i32,
+    roll_no: i32
 ) -> String {
     let student_data = database::Student {
         id: id,
@@ -184,6 +201,7 @@ fn update_student_data(
         mother_name: mother_name,
         date_of_birth: date_of_birth,
         gender: gender,
+        roll_no: roll_no,
         phone_no: phone_no,
         email: email,
         created_at: None,
@@ -207,6 +225,33 @@ fn count_student_row(app_handler: AppHandle) -> String {
         .db(|db| database::count_student_row(db))
         .unwrap();
     format!("{}", count)
+}
+
+#[tauri::command]
+fn change_student_status_data(app_handle: AppHandle, student_id: i32, new_status: bool)-> i32{
+    let result = app_handle.db(|db| database::change_student_status(db, new_status, student_id));
+    match result{
+        Ok(_value)=>{
+            return 200;
+        }
+        Err(_error)=>{
+            return 500;
+        }
+    }
+}
+
+#[tauri::command]
+fn get_student_charges_data(app_handle: AppHandle, student_id: i32)-> Vec<database::StudentCharges>{
+    let result = app_handle.db(|db| database::get_student_charges(db, student_id));
+    match result{
+        Ok(value)=>{
+            return value;
+        }
+        Err(_err)=>{
+            let empty_student_charges:Vec<database::StudentCharges> = Vec::new();
+            return empty_student_charges;
+        }
+    }
 }
 
 // charges command
@@ -233,10 +278,135 @@ fn get_charge_data(app_handler: AppHandle, page: i32, limit: i32) -> String {
     format!("{}", charge_data_string)
 }
 
+// apply charges
 #[tauri::command]
-fn get_charge_row(app_handle: AppHandle) -> i32 {
+fn apply_charges_data(app_handle: AppHandle, charge_id: i32)-> i32{
+    let result = app_handle.db_mut(|db| database::apply_charges(db, charge_id));
+    match result{
+        Ok(_value)=>{
+            return 200
+        }
+        Err(error)=>{
+            println!("{}",error);
+            return 500;
+        }
+    }
+}
+
+#[tauri::command]
+fn count_charges_row(app_handle: AppHandle) -> i32 {
     let count = app_handle.db(|db| database::count_charges_row(db)).unwrap();
     return count;
+}
+
+// fees commands
+#[tauri::command]
+fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32 ) -> i32{
+    let fees_data = database::Fees{
+        amount: amount,
+        charge_id: charge_id,
+        student_id: student_id,
+        charge_title: None,
+        created_at: " ".to_string(),
+        description: None,
+        student_first_name: None,
+        student_last_name: None,
+        id: 0,
+        title: None,
+        updated_at: None,
+        payment_id: None
+    };
+    let result = app_handle.db(|db| database::add_fees(db,fees_data ));
+
+    match result{
+        Ok(_value)=>{
+            return 200
+        }
+        Err(_error)=>{
+            return 500
+        }
+    }
+
+}
+
+#[tauri::command]
+fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, student_id: Option<i32>)-> Vec<database::Fees>{
+    let result = app_handle.db(|db| database::get_fees(db, page, limit, remaining, student_id));
+    match result{
+        Ok(value)=>{
+            return value;
+            // let fees_string = serde_json::to_string(&value).unwrap();
+            // format!("{}", fees_string)
+        }
+        Err(error)=>{
+            println!("{}", error);
+            return Vec::new();
+        }
+    }
+}
+
+#[tauri::command]
+fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32>)->i32{
+    let result = app_handle.db(|db| database::count_fees_row(db, remaining, student_id));
+    match result{
+        Ok(value)=>{
+            return value;
+        }
+        Err(_error)=>{
+            return 0;
+        }
+    }
+}
+
+// payment commands
+#[tauri::command]
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks: Option<String> )->i32{
+    let payment_data = database::Payment { 
+        id: 0, 
+        student_id: student_id, 
+        student_first_name: None, 
+        student_last_name: None, 
+        created_at: "".to_string(), 
+        amount: amount, 
+        remarks: remarks
+    };
+    let result = app_handle.db_mut(|db| database::add_payment(db, payment_data));
+
+    match result{
+        Ok(_value)=>{
+            return 200;
+        }
+        Err(_error)=>{
+            return 500;
+        }
+    }
+}
+
+#[tauri::command]
+fn get_payment_data(app_handle: AppHandle, page: i32, limit: i32, student_id: Option<i32>)-> String{
+    let result = app_handle.db(|db| database::get_payment(db, page, limit, student_id));
+    match result{
+        Ok(data)=>{
+            let payment_string = serde_json::to_string(&data).unwrap();
+            return payment_string;
+        }
+        Err(_error)=>{
+            return "[]".to_string();
+        }
+    }
+}
+
+#[tauri::command]
+fn count_payment_rows(app_handle: AppHandle, student_id: Option<i32>) -> i32{
+    let result = app_handle.db(|db| database::count_payment_rows(db, student_id));
+    match result{
+        Ok(value)=>{
+            return value;
+        }
+        Err(_error)=>{
+            return 0;
+        }
+    }
 }
 
 fn main() {
@@ -247,8 +417,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             // settings command
-            add_settings,
-            get_settings,
+            add_settings_data,
+            get_settings_data,
             // class commands
             get_class_data,
             add_class_data,
@@ -258,12 +428,23 @@ fn main() {
             get_student_data,
             add_student_data,
             get_student_detail_data,
+            change_student_status_data,
             update_student_data,
+            get_student_charges_data,
             count_student_row,
             // charges commands
             add_charge_data,
             get_charge_data,
-            get_charge_row
+            count_charges_row,
+            apply_charges_data,
+            // fees
+            add_fee_data,
+            get_fee_data,
+            count_fees_row,
+            // payment
+            add_payment_data,
+            get_payment_data,
+            count_payment_rows,
         ])
         .setup(|app| {
             let handle = app.handle();

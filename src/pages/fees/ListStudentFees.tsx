@@ -5,27 +5,19 @@ import { EditOutlined, PlusOutlined, FilterOutlined, PlusCircleFilled } from '@a
 //
 import { FeesType } from '@/types';
 import { getNoOfPage, addComma } from '@/utils/helper-function';
+import { getFeeRowCount, getFees } from '@/services/fees.service';
 
 
 const tableHeads = [
     'Student',
-    'Class',
     'Fee',
+    'Date',
     'Amount'
 ]
 
-const dummyData: Array<FeesType> = [
-    { id: 1, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class', payment_id: 1 },
-    { id: 2, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class', payment_id: 2 },
-    { id: 3, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class' },
-    { id: 4, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class', payment_id: 3 },
-    { id: 5, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class' },
-    { id: 6, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class' },
-    { id: 7, student_id: 1, first_name: 'Kai', last_name: 'Doe', created_at: '2023-12-12', charge: 'Charge', charge_id: 1, amount: 5000, title: '', class_id: 1, class: 'class' },
-]
 
 export default function ListStudentFees() {
-    const [fees, setFees] = useState<Array<FeesType>>(dummyData);
+    const [fees, setFees] = useState<Array<FeesType>>([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total_rows, setTotalRows]  = useState(0);
@@ -35,7 +27,20 @@ export default function ListStudentFees() {
         setPage(new_page);
     }
     function fetchData() {
-        // TODO fetch Data
+        getFees(page, limit)
+            .then((data) =>{
+                console.log(data);
+
+                setFees(data as Array<FeesType>);
+            })
+            .catch(error => console.log(error));
+
+        //
+        getFeeRowCount()
+            .then((data)=>{
+                console.log(data);
+            })
+            .catch(error => console.log(error))
     }
 
     useEffect(()=>{
@@ -90,13 +95,13 @@ export default function ListStudentFees() {
                                     fees.map((fee: FeesType) => (
                                         <TableRow key={fee.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, borderLeft: 12, borderColor: fee.payment_id ? 'green' : 'red' }} >
                                             <TableCell component="th" scope='row' align='left'>
-                                                {`${fee.first_name} ${fee.mid_name || ''} ${fee.last_name}`}
+                                                {`${fee.student_first_name} ${fee.student_mid_name || ''} ${fee.student_last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {fee.class}
+                                                {fee.charge_title}
                                             </TableCell>
                                             <TableCell>
-                                                {fee.charge}
+                                                {fee.created_at}
                                             </TableCell>
                                             <TableCell>
                                                 {addComma(fee.amount)}

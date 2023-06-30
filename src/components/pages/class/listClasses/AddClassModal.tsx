@@ -61,7 +61,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="class-name">Class</InputLabel>
-                                        <OutlinedInput id="class-name" type="text" value={values.class} onBlur={handleBlur} onChange={handleChange} name='class' fullWidth error={Boolean(touched.class)} />
+                                        <OutlinedInput id="class-name" autoFocus type="text" value={values.class} onBlur={handleBlur} onChange={handleChange} name='class' fullWidth error={Boolean(errors.class && touched.class)} />
                                         {
                                             touched.class && errors.class && (
                                                 <FormHelperText error id="class-error-helper">
