@@ -9,11 +9,11 @@ export function addFee(data:CreateFeeType){
     });
 }
 
-export function getFees(page:number, limit:number){
+export function getFees(page:number, limit:number, remaining=false){
     return invoke('get_fee_data', {
         page,
         limit,
-        remaining: false
+        remaining
     })
 }
 

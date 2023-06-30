@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 //
+import { SnackBarProvider } from './context/snackBar';
 import Routes from '@/routes';
 import ThemeCustomization from '@/themes';
 import ScrollTop from '@/components/layouts/ScrollTop';
@@ -33,15 +34,15 @@ const App = () => {
   }, []);
   return (
     <ThemeCustomization>
-      <ScrollTop>
-        {
-          is_loading ? <LoadingPage /> :  <Routes />
-        }
-      </ScrollTop>
+      <SnackBarProvider>
+        <ScrollTop>
+          {
+            is_loading ? <LoadingPage /> : <Routes />
+          }
+        </ScrollTop>
+      </SnackBarProvider>
     </ThemeCustomization>
   )
 }
-
-
 
 export default App

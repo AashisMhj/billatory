@@ -447,6 +447,7 @@ pub fn count_student_row(db: &Connection) -> Result<i32, rusqlite::Error> {
     Ok(count)
 }
 
+
 // student charges
 pub fn get_student_charges(
     db: &Connection,

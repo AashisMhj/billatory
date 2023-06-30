@@ -19,6 +19,7 @@ export function addStudent(data:CreateStudentType){
         lastName: data.last_name,
         fatherName: data.father_name,
         address: data.address,
+        dateOfBirth: data.date_of_birth,
         motherName: data.mother_name,
         phoneNo: data.phone_no,
         gender: data.gender,
@@ -42,8 +43,10 @@ export function updateStudent(data:UpdateStudentType){
         fatherName: data.father_name,
         address: data.address,
         motherName: data.mother_name,
+        dateOfBirth: data.date_of_birth,
         phoneNo: data.phone_no,
         gender: data.gender,
+        rollNo: data.roll_no,
         email: data.email,
         guardianName: data.guardian_name,
         guardianRelation: data.guardian_relation,
@@ -62,4 +65,11 @@ export function getStudentDetail(id:number){
 
 export function getStudentRowCount(){
     return invoke('count_student_row')
+}
+
+export function getStudentFees(student_id:number){
+    return invoke('get_student_fee_data', {
+        studentId: student_id
+    })
+
 }

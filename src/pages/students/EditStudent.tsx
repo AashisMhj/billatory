@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { DatePicker } from '@mui/x-date-pickers';
+import moment, { MomentInput } from 'moment';
+//
+import { SnackBarContext } from '@/context/snackBar';
 import { StudentType, ClassType, GenderType } from '@/types';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { updateStudent, getStudentDetail } from '@/services/student.service';
 
 export default function EditStudentPage() {
+    const {showAlert} = useContext(SnackBarContext);
     const [classes, setClasses] = useState<Array<ClassType>>([]);
     const [student_data, setStudentData] = useState<StudentType | null>(null);
     const { id } = useParams();
@@ -27,7 +32,6 @@ export default function EditStudentPage() {
     }, []);
 
     useEffect(() => {
-        console.log(id)
         if (id) {
             getStudentDetail(parseInt(id))
                 .then(data => {
@@ -60,6 +64,7 @@ export default function EditStudentPage() {
                         address: Yup.string().trim().required('First Name is Required'),
                         father_name: Yup.string().trim().required('Father Name is Required'),
                         mother_name: Yup.string().trim().required('Mother Name is Required'),
+                        roll_no: Yup.number().required(),
                         date_of_birth: Yup.date(),
                         phone_no: Yup.string().trim(),
                         email: Yup.string(),
@@ -68,9 +73,9 @@ export default function EditStudentPage() {
                         emergency_contact: Yup.string().trim()
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                        console.log(values);
                         setStatus({ success: false });
-                        if(id){
+                        setSubmitting(true);
+                        if (id) {
                             updateStudent({
                                 id: parseInt(id) | 0,
                                 first_name: values.first_name,
@@ -83,17 +88,18 @@ export default function EditStudentPage() {
                                 mother_name: values.mother_name,
                                 date_of_birth: values.date_of_birth,
                                 phone_no: values.phone_no,
+                                roll_no: values.roll_no,
                                 email: values.email,
                                 guardian_name: values.guardian_name,
                                 guardian_relation: values.guardian_relation,
                                 emergency_contact: values.emergency_contact
                             })
                                 .then((data) => {
-                                    console.log(data);
-                                    // TODO navigate
+                                     showAlert('Student Data Updated', 'success');
                                 })
                                 .catch((error) => {
                                     console.log(error);
+                                    showAlert('Error updating Data', 'error');
                                     setStatus(false);
                                     if (error instanceof Error) {
                                         setErrors({ submit: error.message });
@@ -102,15 +108,16 @@ export default function EditStudentPage() {
                         }
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
+                                <Grid item xs={12}><Typography variant='h6' color='secondary'>Basic Info</Typography></Grid>
                                 <Grid item xs={12}>
-                                    <Grid container spacing={12}>
+                                    <Grid container spacing={3}>
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="first-name">First Name</InputLabel>
-                                                <OutlinedInput id="first-name" type="text" value={values.first_name} onBlur={handleBlur} onChange={handleChange} name='first_name' fullWidth error={Boolean(touched.first_name)} />
+                                                <OutlinedInput id="first-name" type="text" value={values.first_name} onBlur={handleBlur} onChange={handleChange} name='first_name' fullWidth error={Boolean(touched.first_name && errors.first_name)} />
                                                 {
                                                     touched.first_name && errors.first_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -123,7 +130,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="middle-name">Middle Name</InputLabel>
-                                                <OutlinedInput id="middle-name" type="text" value={values.mid_name} onBlur={handleBlur} onChange={handleChange} name='mid_name' fullWidth error={Boolean(touched.mid_name)} />
+                                                <OutlinedInput id="middle-name" type="text" value={values.mid_name} onBlur={handleBlur} onChange={handleChange} name='mid_name' fullWidth error={Boolean(touched.mid_name && errors.mid_name)} />
                                                 {
                                                     touched.mid_name && errors.mid_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -136,7 +143,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="last-name">Last Name</InputLabel>
-                                                <OutlinedInput id="last-name" type="text" value={values.last_name} onBlur={handleBlur} onChange={handleChange} name='last_name' fullWidth error={Boolean(touched.last_name)} />
+                                                <OutlinedInput id="last-name" type="text" value={values.last_name} onBlur={handleBlur} onChange={handleChange} name='last_name' fullWidth error={Boolean(touched.last_name && errors.last_name)} />
                                                 {
                                                     touched.last_name && errors.last_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -152,8 +159,53 @@ export default function EditStudentPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
+                                                <InputLabel htmlFor="class">Class</InputLabel>
+                                                <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange}>
+                                                    {
+                                                        classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
+                                                    }
+                                                </Select>
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="roll-no">Roll No</InputLabel>
+                                                <OutlinedInput id="roll-no" type="number" value={values.roll_no} onBlur={handleBlur} onChange={handleChange} name='roll_no' fullWidth error={Boolean(touched.roll_no && errors.roll_no)} />
+                                                {
+                                                    touched.roll_no && errors.roll_no && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.roll_no}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                        <RadioGroup
+                                            row={true}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            defaultValue="female"
+                                            name="gender"
+                                            value={values.gender}
+                                            onChange={handleChange}
+                                        >
+                                            <FormControlLabel value="female" control={<Radio />} label="Female" />
+                                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                        </RadioGroup>
+                                    </FormControl>
+
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={6}>
+                                            <Stack spacing={1}>
                                                 <InputLabel htmlFor="father-name">Father Name</InputLabel>
-                                                <OutlinedInput id="father-name" type="text" value={values.father_name} onBlur={handleBlur} onChange={handleChange} name='father_name' fullWidth error={Boolean(touched.father_name)} />
+                                                <OutlinedInput id="father-name" type="text" value={values.father_name} onBlur={handleBlur} onChange={handleChange} name='father_name' fullWidth error={Boolean(touched.father_name && errors.father_name)} />
                                                 {
                                                     touched.father_name && errors.father_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -166,7 +218,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="mother-name">Mother Name</InputLabel>
-                                                <OutlinedInput id="mother-name" type="text" value={values.mother_name} onBlur={handleBlur} onChange={handleChange} name='mother_name' fullWidth error={Boolean(touched.mother_name)} />
+                                                <OutlinedInput id="mother-name" type="text" value={values.mother_name} onBlur={handleBlur} onChange={handleChange} name='mother_name' fullWidth error={Boolean(touched.mother_name && errors.mother_name)} />
                                                 {
                                                     touched.mother_name && errors.mother_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -183,7 +235,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="address">Address</InputLabel>
-                                                <OutlinedInput id="address" type="text" value={values.address} onBlur={handleBlur} onChange={handleChange} name='address' fullWidth error={Boolean(touched.address)} />
+                                                <OutlinedInput id="address" type="text" value={values.address} onBlur={handleBlur} onChange={handleChange} name='address' fullWidth error={Boolean(touched.address && errors.address)} />
                                                 {
                                                     touched.address && errors.address && (
                                                         <FormHelperText error id="class-error-helper">
@@ -196,7 +248,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="email">Email</InputLabel>
-                                                <OutlinedInput id="email" type="text" value={values.email} onBlur={handleBlur} onChange={handleChange} name='email' fullWidth error={Boolean(touched.email)} />
+                                                <OutlinedInput id="email" type="text" value={values.email} onBlur={handleBlur} onChange={handleChange} name='email' fullWidth error={Boolean(touched.email && errors.email)} />
                                                 {
                                                     touched.email && errors.email && (
                                                         <FormHelperText error id="class-error-helper">
@@ -209,7 +261,8 @@ export default function EditStudentPage() {
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="dob">Date of Birth</InputLabel>
-                                                <OutlinedInput id="dob" type="date" value={values.date_of_birth} onBlur={handleBlur} onChange={handleChange} name='date_of_birth' fullWidth error={Boolean(touched.date_of_birth)} />
+                                                {/* <OutlinedInput id="dob" type="date" value={values.date_of_birth} onBlur={handleBlur} onChange={handleChange} name='date_of_birth' fullWidth error={Boolean(touched.date_of_birth && errors.date_of_birth && errors.date_of_birth)} /> */}
+                                                <DatePicker onChange={(event) => setFieldValue('date_of_birth', moment(event as MomentInput).format('YYYY-MM-DD'))} />
                                                 {
                                                     touched.date_of_birth && errors.date_of_birth && (
                                                         <FormHelperText error id="class-error-helper">
@@ -222,7 +275,7 @@ export default function EditStudentPage() {
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="phone-no">Phone No</InputLabel>
-                                                <OutlinedInput id="phone-no" type="text" value={values.phone_no} onBlur={handleBlur} onChange={handleChange} name='phone_no' fullWidth error={Boolean(touched.phone_no)} />
+                                                <OutlinedInput id="phone-no" type="text" value={values.phone_no} onBlur={handleBlur} onChange={handleChange} name='phone_no' fullWidth error={Boolean(touched.phone_no && errors.phone_no && errors.phone_no)} />
                                                 {
                                                     touched.phone_no && errors.phone_no && (
                                                         <FormHelperText error id="class-error-helper">
@@ -234,35 +287,54 @@ export default function EditStudentPage() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12}><Typography variant='h6' color='secondary'>Guardian Info</Typography></Grid>
                                 <Grid item xs={12}>
-                                    <Stack spacing={1}>
-                                        <InputLabel htmlFor="class">Class</InputLabel>
-                                        <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange}>
-                                            {
-                                                classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
-                                            }
-                                        </Select>
-                                    </Stack>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl>
-                                        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-                                        <RadioGroup
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue="female"
-                                            name="gender"
-                                            value={values.gender}
-                                            onChange={handleChange}
-                                        >
-                                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                                        </RadioGroup>
-                                    </FormControl>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={4}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="guardian-name">Guardian Name</InputLabel>
+                                                <OutlinedInput id="guardian-name" type="text" value={values.guardian_name} onBlur={handleBlur} onChange={handleChange} name='guardian_name' fullWidth error={Boolean(touched.guardian_name && errors.guardian_name)} />
+                                                {
+                                                    touched.guardian_name && errors.guardian_name && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.guardian_name}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="guardian-relation">Guardian Relation</InputLabel>
+                                                <OutlinedInput id="guardian-relation" type="text" value={values.guardian_relation} onBlur={handleBlur} onChange={handleChange} name='guardian_relation' fullWidth error={Boolean(touched.guardian_relation && errors.guardian_relation)} />
+                                                {
+                                                    touched.guardian_relation && errors.guardian_relation && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.guardian_relation}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="emergency-contact">Emergency Contact</InputLabel>
+                                                <OutlinedInput id="emergency-contact" type="text" value={values.emergency_contact} onBlur={handleBlur} onChange={handleChange} name='emergency_contact' fullWidth error={Boolean(touched.emergency_contact && errors.emergency_contact)} />
+                                                {
+                                                    touched.emergency_contact && errors.emergency_contact && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.emergency_contact}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                                            Edit
+                                            Add
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

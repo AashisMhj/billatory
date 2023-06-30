@@ -141,3 +141,17 @@ export interface FeesFilterType{
     limit: number,
     charge?: number
 }
+
+export interface BillItems{
+    title: string,
+    amount: number,
+    index: number
+}
+
+export interface BillProps{
+    date: string,
+    student_class: number,
+    student_name: string,
+    roll_no: number,
+    bill_items: Array< BillItems>
+}

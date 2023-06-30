@@ -20,10 +20,10 @@ const OtherRoutes = {
       path: '/setup',
       element: <SetUpPage />
     },
-    // {
-    //   path: '*',
-    //   element: <NotFoundPage />
-    // }
+    {
+      path: '*',
+      element: <NotFoundPage />
+    }
   ]
 };
 

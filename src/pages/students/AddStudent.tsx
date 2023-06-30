@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -9,9 +9,11 @@ import { ClassType, GenderType } from '@/types';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { addStudent } from '@/services/student.service';
+import { SnackBarContext } from '@/context/snackBar';
 
 export default function AddStudentPage() {
     const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const {showAlert} = useContext(SnackBarContext)
     useEffect(() => {
         getClasses(1, 100)
             .then((data) => {
@@ -90,6 +92,7 @@ export default function AddStudentPage() {
                         )
                             .then((data) => {
                                 console.log(data);
+                                showAlert('Student Added', 'success');
                                 // TODO navigate
                             })
                             .catch((error) => {
@@ -104,18 +107,16 @@ export default function AddStudentPage() {
                             })
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit,setFieldValue, isSubmitting, touched, values }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, isSubmitting, touched, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
-                            <pre>
-                                {JSON.stringify(errors)}
-                            </pre>
                             <Grid container spacing={3}>
+                                <Grid item xs={12}><Typography variant='h6' color='secondary'>Basic Info</Typography></Grid>
                                 <Grid item xs={12}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="first-name">First Name</InputLabel>
-                                                <OutlinedInput id="first-name" type="text" value={values.first_name} onBlur={handleBlur} onChange={handleChange} name='first_name' fullWidth error={Boolean(touched.first_name)} />
+                                                <OutlinedInput id="first-name" type="text" value={values.first_name} onBlur={handleBlur} onChange={handleChange} name='first_name' fullWidth error={Boolean(touched.first_name && errors.first_name)} />
                                                 {
                                                     touched.first_name && errors.first_name && (
                                                         <FormHelperText error id="class-error-helper">
@@ -153,6 +154,51 @@ export default function AddStudentPage() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={6}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="class">Class</InputLabel>
+                                                <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange}>
+                                                    {
+                                                        classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
+                                                    }
+                                                </Select>
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="roll-no">Roll No</InputLabel>
+                                                <OutlinedInput id="roll-no" type="number" value={values.roll_no} onBlur={handleBlur} onChange={handleChange} name='roll_no' fullWidth error={Boolean(touched.roll_no && errors.roll_no)} />
+                                                {
+                                                    touched.roll_no && errors.roll_no && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.roll_no}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl>
+                                        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                        <RadioGroup
+                                            row={true}
+                                            aria-labelledby="demo-radio-buttons-group-label"
+                                            defaultValue="female"
+                                            name="gender"
+                                            value={values.gender}
+                                            onChange={handleChange}
+                                        >
+                                            <FormControlLabel value="female" control={<Radio />} label="Female" />
+                                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                        </RadioGroup>
+                                    </FormControl>
+
+                                </Grid>
+
                                 <Grid item xs={12}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
@@ -214,8 +260,8 @@ export default function AddStudentPage() {
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="dob">Date of Birth</InputLabel>
-                                                {/* <OutlinedInput id="dob" type="date" value={values.date_of_birth} onBlur={handleBlur} onChange={handleChange} name='date_of_birth' fullWidth error={Boolean(touched.date_of_birth && errors.date_of_birth)} /> */}
-                                                <DatePicker  onChange={(event) => setFieldValue('date_of_birth',moment(event as MomentInput).format('YYYY-MM-DD'))} />
+                                                {/* <OutlinedInput id="dob" type="date" value={values.date_of_birth} onBlur={handleBlur} onChange={handleChange} name='date_of_birth' fullWidth error={Boolean(touched.date_of_birth && errors.date_of_birth && errors.date_of_birth)} /> */}
+                                                <DatePicker onChange={(event) => setFieldValue('date_of_birth', moment(event as MomentInput).format('YYYY-MM-DD'))} />
                                                 {
                                                     touched.date_of_birth && errors.date_of_birth && (
                                                         <FormHelperText error id="class-error-helper">
@@ -224,11 +270,11 @@ export default function AddStudentPage() {
                                                     )
                                                 }
                                             </Stack>
-                                        </Grid> 
+                                        </Grid>
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
                                                 <InputLabel htmlFor="phone-no">Phone No</InputLabel>
-                                                <OutlinedInput id="phone-no" type="text" value={values.phone_no} onBlur={handleBlur} onChange={handleChange} name='phone_no' fullWidth error={Boolean(touched.phone_no && errors.phone_no)} />
+                                                <OutlinedInput id="phone-no" type="text" value={values.phone_no} onBlur={handleBlur} onChange={handleChange} name='phone_no' fullWidth error={Boolean(touched.phone_no && errors.phone_no && errors.phone_no)} />
                                                 {
                                                     touched.phone_no && errors.phone_no && (
                                                         <FormHelperText error id="class-error-helper">
@@ -240,26 +286,43 @@ export default function AddStudentPage() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12}><Typography variant='h6' color='secondary'>Guardian Info</Typography></Grid>
                                 <Grid item xs={12}>
                                     <Grid container spacing={3}>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={4}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="class">Class</InputLabel>
-                                                <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange}>
-                                                    {
-                                                        classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
-                                                    }
-                                                </Select>
+                                                <InputLabel htmlFor="guardian-name">Guardian Name</InputLabel>
+                                                <OutlinedInput id="guardian-name" type="text" value={values.guardian_name} onBlur={handleBlur} onChange={handleChange} name='guardian_name' fullWidth error={Boolean(touched.guardian_name && errors.guardian_name)} />
+                                                {
+                                                    touched.guardian_name && errors.guardian_name && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.guardian_name}
+                                                        </FormHelperText>
+                                                    )
+                                                }
                                             </Stack>
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={4}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="roll-no">Roll No</InputLabel>
-                                                <OutlinedInput id="roll-no" type="number" value={values.roll_no} onBlur={handleBlur} onChange={handleChange} name='roll_no' fullWidth error={Boolean(touched.roll_no && errors.roll_no)} />
+                                                <InputLabel htmlFor="guardian-relation">Guardian Relation</InputLabel>
+                                                <OutlinedInput id="guardian-relation" type="text" value={values.guardian_relation} onBlur={handleBlur} onChange={handleChange} name='guardian_relation' fullWidth error={Boolean(touched.guardian_relation && errors.guardian_relation)} />
                                                 {
-                                                    touched.roll_no && errors.roll_no && (
+                                                    touched.guardian_relation && errors.guardian_relation && (
                                                         <FormHelperText error id="class-error-helper">
-                                                            {errors.roll_no}
+                                                            {errors.guardian_relation}
+                                                        </FormHelperText>
+                                                    )
+                                                }
+                                            </Stack>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <Stack spacing={1}>
+                                                <InputLabel htmlFor="emergency-contact">Emergency Contact</InputLabel>
+                                                <OutlinedInput id="emergency-contact" type="text" value={values.emergency_contact} onBlur={handleBlur} onChange={handleChange} name='emergency_contact' fullWidth error={Boolean(touched.emergency_contact && errors.emergency_contact)} />
+                                                {
+                                                    touched.emergency_contact && errors.emergency_contact && (
+                                                        <FormHelperText error id="class-error-helper">
+                                                            {errors.emergency_contact}
                                                         </FormHelperText>
                                                     )
                                                 }
@@ -267,24 +330,6 @@ export default function AddStudentPage() {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl>
-                                        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-                                        <RadioGroup
-                                            row={true}
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue="female"
-                                            name="gender"
-                                            value={values.gender}
-                                            onChange={handleChange}
-                                        >
-                                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                                        </RadioGroup>
-                                    </FormControl>
-
-                                </Grid>
-
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">

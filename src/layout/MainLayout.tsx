@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Toolbar, useMediaQuery } from '@mui/material';
 
 // project import
-import { Header, Drawer } from '@/components/shared';
+import { Header, Drawer, AppAlert } from '@/components/shared';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import navigation from '@/components/shared/drawer/menu-item';
 import { SideBarContext } from '@/context/sideBar';
@@ -38,15 +38,18 @@ const MainLayout = () => {
   }, [is_open]);
 
   return (
-    <Box sx={{ display: 'flex', width: '100%' }}>
-      <Header open={open} handleDrawerToggle={handleDrawerToggle} />
-      <Drawer open={open} handleDrawerToggle={handleDrawerToggle} window={window} />
-      <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
-        <Toolbar />
-        {/* <Breadcrumbs navigation={navigation} title={true} /> */}
-        <Outlet />
+    <>
+      <Box sx={{ display: 'flex', width: '100%' }}>
+        <Header open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Drawer open={open} handleDrawerToggle={handleDrawerToggle} window={window} />
+        <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
+          <Toolbar />
+          {/* <Breadcrumbs navigation={navigation} title={true} /> */}
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
+      <AppAlert />
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import { TableContainer, Grid, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
 //
 import { StudentStatus } from '@/components/pages/students/listStudents';
 import { StudentType, StudentsTableFilterType } from '@/types';
@@ -85,13 +86,14 @@ export default function ListStudents() {
                             <IconButton color='info' onClick={() => setOpenFilterModal(true)}>
                                 <FilterOutlined />
                             </IconButton>
+
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     Total no of Students: {total_rows}
                 </Grid>
-                <Grid xs={12}>
+                <Grid item xs={12}>
                     <TableContainer sx={{
                         width: '100%',
                         overflowX: 'auto',
@@ -133,6 +135,11 @@ export default function ListStudents() {
                                                         <InfoCircleOutlined />
                                                     </IconButton>
                                                 </RouterLink>
+                                                <RouterLink to={paths.studentFees(student.id)}>
+                                                    <IconButton color="success">
+                                                        <CreditCardOutlinedIcon />
+                                                    </IconButton>
+                                                </RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {`${student.first_name} ${student.last_name}`}
@@ -156,7 +163,7 @@ export default function ListStudents() {
                 <Grid>
                     <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='secondary' />
                 </Grid>
-            </Grid>
+            </Grid >
         </>
     )
 }

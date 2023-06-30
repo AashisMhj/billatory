@@ -6,10 +6,13 @@ import MainLayout from '@/layout/MainLayout';
 // students page
 import ListStudentFees from '@/pages/fees/ListStudentFees';
 import ListStudents from '@/pages/students/ListStudents';
-// classes
-import ListClasses from '@/pages/class/ListClasses';
+import StudentDetailPage from '@/pages/students/StudentDetail';
 import AddStudentPage from '@/pages/students/AddStudent';
 import EditStudentPage from '@/pages/students/EditStudent';
+import StudentFeePage from '@/pages/students/StudentFee';
+
+// classes
+import ListClasses from '@/pages/class/ListClasses';
 // charges
 import ListCharges from '@/pages/charges/ListCharges';
 // 
@@ -52,6 +55,14 @@ const MainRoutes = {
     {
       path: 'students/:id/edit',
       element: <EditStudentPage />
+    },
+    {
+      path: 'students/:id/info',
+      element: <StudentDetailPage />
+    },
+    {
+      path: 'students/:id/fee',
+      element: <StudentFeePage />
     },
     {
       path: 'class',
