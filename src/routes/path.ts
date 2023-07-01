@@ -8,6 +8,7 @@ const paths = {
     detailStudent: (id:number) => `/dashboard/students/${id}/info`,
     createStudent: `/dashboard/students/add`,
     studentFees: (id:number) => `/dashboard/students/${id}/fee`,
+    studentBill: (id:number) => `/dashboard/students/${id}/bill`,
     // class
     listClasses: `/dashboard/class`,
     // charges

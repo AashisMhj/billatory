@@ -1,7 +1,8 @@
-import { TableContainer, Grid, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, IconButton } from '@mui/material';
+import { TableContainer, Grid, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 //
 import { StudentStatus } from '@/components/pages/students/listStudents';
 import { StudentType, StudentsTableFilterType } from '@/types';
@@ -138,6 +139,11 @@ export default function ListStudents() {
                                                 <RouterLink to={paths.studentFees(student.id)}>
                                                     <IconButton color="success">
                                                         <CreditCardOutlinedIcon />
+                                                    </IconButton>
+                                                </RouterLink>
+                                                <RouterLink to={paths.studentBill(student.id)}>
+                                                    <IconButton color="success">
+                                                        <ReceiptIcon />
                                                     </IconButton>
                                                 </RouterLink>
                                             </TableCell>

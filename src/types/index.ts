@@ -150,8 +150,11 @@ export interface BillItems{
 
 export interface BillProps{
     date: string,
-    student_class: number,
+    student_class: string,
     student_name: string,
     roll_no: number,
-    bill_items: Array< BillItems>
+    bill_items: Array< BillItems>,
+    previous_due: number,
+    month: string,
+    bill_no: number,
 }

@@ -651,7 +651,7 @@ pub fn get_fees(
         }
         None => {
             if remaining {
-                query = "select * from fees where payment_id is null inner join charge on fees.charge_id = charge.id inner join students on fees.student_id = students.id limit ?1 offset ?2"
+                query = "select * from fees inner join charge on fees.charge_id = charge.id inner join students on fees.student_id = students.id where payment_id is null limit ?1 offset ?2"
             } else {
                 query =
                     "select * from fees inner join charge on fees.charge_id = charge.id inner join students on fees.student_id = students.id limit ?1 offset ?2"

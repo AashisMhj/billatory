@@ -4,8 +4,6 @@
 mod database;
 mod state;
 
-use std::fmt::format;
-
 use serde_json;
 use state::{AppState, ServiceAccess};
 use tauri::{App, AppHandle, Manager, State};
@@ -92,9 +90,16 @@ fn update_class_data(app_handle: AppHandle, class: &str, id: i32) -> String {
 }
 
 #[tauri::command]
-fn count_class_rows(app_handler: AppHandle) -> String {
-    let count = app_handler.db(|db| database::count_class_rows(db)).unwrap();
-    format!("{}", count)
+fn count_class_rows(app_handler: AppHandle) -> Result<i32, String> {
+    let count = app_handler.db(|db| database::count_class_rows(db));
+    match count{
+        Ok(value) =>{
+            return Ok(value);
+        } 
+        Err(error)=>{
+            return Err(error.to_string());
+        }
+    }
 }
 
 // student commands
@@ -220,11 +225,16 @@ fn update_student_data(
 }
 
 #[tauri::command]
-fn count_student_row(app_handler: AppHandle) -> String {
-    let count = app_handler
-        .db(|db| database::count_student_row(db))
-        .unwrap();
-    format!("{}", count)
+fn count_student_row(app_handler: AppHandle) -> Result<i32, String> {
+    let count = app_handler.db(|db| database::count_student_row(db));
+    match count{
+        Ok(value) => {
+            return Ok(value);
+        }
+        Err(error)=>{
+            return Err(error.to_string());
+        }
+    }
 }
 
 #[tauri::command]

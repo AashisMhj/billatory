@@ -29,8 +29,6 @@ export default function ListStudentFees() {
     function fetchData() {
         getFees(page, limit)
             .then((data) =>{
-                console.log(data);
-
                 setFees(data as Array<FeesType>);
             })
             .catch(error => console.log(error));
