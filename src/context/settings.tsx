@@ -9,12 +9,12 @@ export interface SettingsContextType {
     updateValue: (new_value:SettingsType) => void
 }
 
-const initial_settings = {
-    organization_name: 'Holy Angel Secondary School',
-    pan_no: '302720211',
-    image: 'https://www.designevo.com/res/templates/thumb_small/branch-encircled-book-and-torch-shield.webp',
-    address: 'Airport-9, Pokhara',
-    phone_no: '051-538296, 9800000000'
+const initial_settings:SettingsType = {
+    organization_name: '',
+    pan_no: 302720211,
+    image: '',
+    location: '',
+    phone_no: ''
 };
 
 export const SettingsContext = createContext<SettingsContextType>({

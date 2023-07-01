@@ -3,7 +3,7 @@ import { SettingsType } from "@/types";
 
 interface CreateSettingType {
     organizationName: string, 
-    email: string | null, 
+    email: string | undefined, 
     location: string, 
     image: string, 
     phoneNo: string, 
@@ -27,7 +27,7 @@ export function addSettings({organizationName, email, location, image, phoneNo, 
 }
 
 export function updateSettings({organizationName,email, location, image, phoneNo, panNo}:CreateSettingType){
-    return invoke('update_settings', {
+    return invoke('update_settings_data', {
         organizationName,
         location,
         email,

@@ -13,6 +13,8 @@ pub struct Setting {
     pub phone_no: String,
     pub location: String,
     pub image: String,
+    pub created_at: Option<String>,
+    pub updated_at: Option<String>
 }
 
 #[derive(Debug, Serialize)]
@@ -130,10 +132,12 @@ pub fn upgrade_database_if_needed(
                 email char(250),
                 location char(250) not null,
                 phone_no char(250) not null,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime,
                 image text
             )",
         )?;
-
+        
         tx.execute(
             "
         CREATE TABLE IF NOT EXISTS class(
@@ -266,6 +270,8 @@ pub fn get_settings(db: &Connection) -> Result<Setting, rusqlite::Error> {
             location: row.get("location")?,
             pan_no: row.get("pan_no")?,
             phone_no: row.get("phone_no")?,
+            created_at: row.get("created_at")?,
+            updated_at: row.get("updated_at")?,
         })
     })?;
     // TODO check if the row is returned or not
@@ -278,6 +284,13 @@ pub fn get_settings(db: &Connection) -> Result<Setting, rusqlite::Error> {
     // }
 
     // Ok(items)
+}
+
+pub fn update_settings(db:&Connection, setting_data: Setting) -> Result<(), rusqlite::Error>{
+    let current_date = get_current_date();
+    db.execute("UPDATE settings SET organization_name = ?1, image = ?2, email = ?3, location = ?4, pan_no = ?5, phone_no = ?6, updated_at = ?7;", 
+    params![setting_data.organization_name, setting_data.image, setting_data.email, setting_data.location, setting_data.pan_no, setting_data.phone_no, current_date])?;
+    Ok(())
 }
 
 // class

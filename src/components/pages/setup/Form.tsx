@@ -44,41 +44,32 @@ const AuthLogin = () => {
           image: Yup.mixed()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          console.log(values.image);
-          toDataURL(values.image)
-            .then((imageURL) => {
-              console.log(imageURL);
-              addSettings({
-                organizationName: values.organization_name,
-                email: values.email,
-                image: imageURL as string,
-                location: values.location,
-                panNo: values.pan_no,
-                phoneNo: values.phone_no
-              })
-                .then((data) => {
-                  console.log(data);
-                  navigate('/dashboard');
-                  setSubmitting(false);
-                })
-                .catch(err => {
-                  console.log(err);
-                  setStatus({ success: false });
-                  if (err instanceof Error) {
-                    setErrors({ submit: err.message });
-                  }
-                  setSubmitting(false);
-                })
-            })
-            .catch(err => {
+          try {
+            
+            const imageURL = await toDataURL(values.image);
+            const data = await addSettings({
+              organizationName: values.organization_name,
+              email: values.email,
+              image: imageURL as string,
+              location: values.location,
+              panNo: values.pan_no,
+              phoneNo: values.phone_no
+            });
+            if(data === 200){
+
+              navigate('/dashboard');
+              setSubmitting(false);
+            }
+            } catch (err) {
               setStatus({ success: false });
               if (err instanceof Error) {
                 setErrors({ submit: err.message });
               }
-              setSubmitting(false);
-            })
-          setStatus({ success: false });
-          setSubmitting(true);
+              
+            }finally{
+              setStatus({ success: false });
+              setSubmitting(true);
+          }
 
         }}
       >

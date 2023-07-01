@@ -30,7 +30,7 @@ const dashboard: NavGroupType = {
             id: 'settings',
             title: 'Edit Settings',
             type: 'item',
-            url: '/settings',
+            url: paths.editSettings,
             icon: ( is_open:boolean) => <SettingsOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />,
         },
     ]

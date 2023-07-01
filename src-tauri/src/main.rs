@@ -23,7 +23,7 @@ fn add_settings_data(
     pan_no: i32,
     location: String,
     image: String
-) -> String {
+) -> Result<database::Setting, String> {
     let setting_data = database::Setting {
         organization_name: organization_name,
         phone_no: phone_no,
@@ -31,18 +31,28 @@ fn add_settings_data(
         pan_no: pan_no,
         image: image,
         location: location,
+        updated_at: None,
+        created_at: None
     };
     let result = app_handle.db(|db| database::add_settings(db, setting_data));
     match result{
         Ok(_value)=>{
-            let items = app_handle.db(|db| database::get_settings(db)).unwrap();
+            let items = app_handle.db(|db| database::get_settings(db));
+            match items{
+                Ok(setting)=>{
+                    return Ok(setting)
+                }
+                Err(error) => {
+                    Err(error.to_string())
+                }
+            }
             // let items_string = items.join(" | ");
-            let setting_string = serde_json::to_string(&items).unwrap();
+            // let setting_string = serde_json::to_string(&items).unwrap();
         
-            format!("{}", setting_string)
+            // format!("{}", setting_string)
         }
-        Err(_error)=>{
-            format!("Error")
+        Err(error)=>{
+            Err(error.to_string())
         }
     }
 }
@@ -57,6 +67,35 @@ fn get_settings_data(app_handle: AppHandle) -> Result<String, String> {
         },
         Err(error) =>{
             Err(format!("Error {}", error))
+        }
+    }
+}
+
+#[tauri::command]
+fn update_settings_data(app_handle: AppHandle,
+    organization_name: String,
+    phone_no: String,
+    email: Option<String>,
+    pan_no: i32,
+    location: String,
+    image: String ) -> Result<i32, String>{
+    let settings_data = database::Setting{
+        organization_name: organization_name,
+        phone_no: phone_no,
+        email: email,
+        pan_no: pan_no,
+        image: image,
+        location: location,
+        updated_at: None,
+        created_at: None
+    };
+    let result = app_handle.db(|db| database::update_settings(db, settings_data));
+    match result{
+        Ok(_value)=>{
+            return Ok(200);
+        }
+        Err(error)=>{
+            return Err(error.to_string());
         }
     }
 }
@@ -429,6 +468,7 @@ fn main() {
             // settings command
             add_settings_data,
             get_settings_data,
+            update_settings_data,
             // class commands
             get_class_data,
             add_class_data,

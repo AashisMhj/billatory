@@ -38,10 +38,13 @@ export interface LogType{
 
 export interface SettingsType{
     organization_name: string,
-    pan_no: string,
+    pan_no: number,
+    email? : string,
     image: string,
-    address: string,
-    phone_no: string
+    location: string,
+    phone_no: string,
+    created_at?: string,
+    updated_at?: string
 }
 
 export interface ClassType{

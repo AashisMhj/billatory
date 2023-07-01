@@ -11,7 +11,6 @@ import AddStudentPage from '@/pages/students/AddStudent';
 import EditStudentPage from '@/pages/students/EditStudent';
 import StudentFeePage from '@/pages/students/StudentFee';
 import StudentBillPage from '@/pages/students/StudentBill';
-
 // classes
 import ListClasses from '@/pages/class/ListClasses';
 // charges
@@ -86,7 +85,7 @@ const MainRoutes = {
       element: <ListPaymentPage />
     },
     {
-      path: 'settings',
+      path: 'settings/edit',
       element: <EditSettingPage />
     }
   ]
