@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
 import AnimateButton from "@/components/@extended/AnimateButton";
-import { StudentsTableFilterType, ClassType } from "@/types";
+import { StudentsTableFilterType, StudentClassType } from "@/types";
 
 interface Props {
     open: boolean,
@@ -26,7 +26,7 @@ const DropDownItems = [10, 20, 30];
 
 export default function EditModal({ open, handleClose, onSubmit, value }: Props) {
 
-    const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     useEffect(()=>{
         // TODO fetch classes
     }, [])

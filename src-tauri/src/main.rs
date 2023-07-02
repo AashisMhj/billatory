@@ -409,7 +409,7 @@ fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32
 
 // payment commands
 #[tauri::command]
-fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks: Option<String> )->i32{
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks: Option<String> )->Result<i32, String>{
     let payment_data = database::Payment { 
         id: 0, 
         student_id: student_id, 
@@ -423,10 +423,10 @@ fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks
 
     match result{
         Ok(_value)=>{
-            return 200;
+            return Ok(200);
         }
-        Err(_error)=>{
-            return 500;
+        Err(error)=>{
+            return Err(error.to_string());
         }
     }
 }

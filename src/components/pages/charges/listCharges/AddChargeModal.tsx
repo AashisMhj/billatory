@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { Box, Button, Checkbox, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, Modal, OutlinedInput, Radio, RadioGroup, Stack, SxProps, Typography } from "@mui/material";
 import {CloseCircleOutlined} from '@ant-design/icons'
 //
-import { ChargesType, ClassType } from "@/types";
+import { ChargesType, StudentClassType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { addCharge } from "@/services/charge.service";
 import { getClasses } from "@/services/class.service";
@@ -27,7 +27,7 @@ const style: SxProps = {
     p: 4
 }
 export default function EditModal({ open, handleClose, onSubmit }: Props) {
-    const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
 
     useEffect(() => {
         getClasses(1, 100)

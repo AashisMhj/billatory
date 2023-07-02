@@ -18,6 +18,7 @@ const paths = {
     // payment
     listPayment: `/dashboard/payment`,
     addPayment: `/dashboard/payment/add`,
+    printPayment: (id:number) =>  `/dashboard/payment/${id}/info`
 }
 
 

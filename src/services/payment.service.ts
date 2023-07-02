@@ -1,10 +1,10 @@
 import {invoke} from "@tauri-apps/api";
 import { PaymentType } from "@/types";
-export function addPayment({amount, student_id, remark}:{amount:number, student_id:number, remark?: string}){
+export function addPayment({amount, student_id, remarks}:{amount:number, student_id:number, remarks?: string}){
     return invoke('add_payment_data', {
         amount,
         studentId: student_id,
-        remark 
+        remarks
     });
 }
 

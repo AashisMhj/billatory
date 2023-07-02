@@ -7,14 +7,14 @@ import { DatePicker } from '@mui/x-date-pickers';
 import moment, { MomentInput } from 'moment';
 //
 import { SnackBarContext } from '@/context/snackBar';
-import { StudentType, ClassType, GenderType } from '@/types';
+import { StudentType, StudentClassType, GenderType } from '@/types';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { updateStudent, getStudentDetail } from '@/services/student.service';
 
 export default function EditStudentPage() {
     const {showAlert} = useContext(SnackBarContext);
-    const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const [student_data, setStudentData] = useState<StudentType | null>(null);
     const { id } = useParams();
     useEffect(() => {

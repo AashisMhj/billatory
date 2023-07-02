@@ -5,14 +5,14 @@ import * as Yup from 'yup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import moment, { MomentInput } from 'moment';
 //
-import { ClassType, GenderType } from '@/types';
+import { StudentClassType, GenderType } from '@/types';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { addStudent } from '@/services/student.service';
 import { SnackBarContext } from '@/context/snackBar';
 
 export default function AddStudentPage() {
-    const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const {showAlert} = useContext(SnackBarContext)
     useEffect(() => {
         getClasses(1, 100)

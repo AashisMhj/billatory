@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import { Box, Button, FormHelperText, Grid, InputLabel, Modal, OutlinedInput, Stack, SxProps, Typography } from "@mui/material";
-import { ClassType } from "@/types";
+import { StudentClassType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import {addClass} from '@/services/class.service'
 

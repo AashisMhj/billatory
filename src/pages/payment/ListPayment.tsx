@@ -1,16 +1,18 @@
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
+import { Link as RouterLink } from 'react-router-dom';
+import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
+import { EditOutlined, PlusCircleFilled, FilterOutlined, PrinterOutlined } from '@ant-design/icons';
 //
+import paths from '@/routes/path';
 import { PaymentType } from '@/types';
 import { getNoOfPage } from '@/utils/helper-function';
+import { getPaymentRowCount, getPayments } from '@/services/payment.service';
 const tableHeads = [
     'Actions',
-    'Charge',
+    'Title',
     'class',
-    'Type',
     'Amount',
-    'action'
+    'Payment Date'
 ];
 
 export default function ListPaymentPage() {
@@ -19,15 +21,30 @@ export default function ListPaymentPage() {
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRows] = useState(0);
 
-    function fetchData(){
-        // TODO get data
+    function fetchData() {
+        getPayments(page, limit)
+            .then(data => {
+                console.log(data);
+                if (typeof data === "string") {
+                    const payment_data = JSON.parse(data);
+                    setPayments(payment_data);
+                }
+            })
+            .catch(error => console.log(error));
+
+        //
+        getPaymentRowCount()
+            .then(data => {
+                setTotalRows(total_rows);
+            })
+            .catch(err => console.log(err))
     }
 
-    function handlePaginationChange(event: any, new_page:number){
+    function handlePaginationChange(event: any, new_page: number) {
         setPage(new_page);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchData();
     }, [])
     return (
@@ -39,6 +56,11 @@ export default function ListPaymentPage() {
                             <Typography variant='h4'>Payments</Typography>
                         </Grid>
                         <Grid item>
+                            <RouterLink to={paths.addPayment}>
+                                <IconButton color='warning'>
+                                    <PlusCircleFilled />
+                                </IconButton>
+                            </RouterLink>
                             <IconButton color='info' >
                                 <FilterOutlined />
                             </IconButton>
@@ -78,26 +100,23 @@ export default function ListPaymentPage() {
                                     payments.map((payment: PaymentType) => (
                                         <TableRow key={payment.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell>
-                                                <IconButton color='primary'>
-                                                    <EditOutlined />
-                                                </IconButton>
+                                                <RouterLink to={paths.printPayment(payment.id)}>
+                                                    <IconButton color='primary'>
+                                                        <PrinterOutlined />
+                                                    </IconButton>
+                                                </RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {`${payment.student_first_name}`}
+                                                {`${payment.student_first_name} ${payment.student_last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {payment.class}
-                                            </TableCell>
-                                            <TableCell>
                                                 {payment.class}
                                             </TableCell>
                                             <TableCell>
                                                 {payment.amount}
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant='outlined' color='success'>
-                                                    Apply Charge
-                                                </Button>
+                                                {payment.created_at}
                                             </TableCell>
                                         </TableRow>
                                     ))

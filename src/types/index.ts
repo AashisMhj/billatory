@@ -47,7 +47,7 @@ export interface SettingsType{
     updated_at?: string
 }
 
-export interface ClassType{
+export interface StudentClassType{
     class: string,
     created_at: string,
     updated_at: string,

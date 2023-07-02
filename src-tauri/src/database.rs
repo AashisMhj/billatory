@@ -730,7 +730,7 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rus
     let transaction = db.transaction()?;
     transaction.execute(
         "
-    INSERT INTO payment (amount, student_id, remarks) values (?1, ?2, ?2);
+    INSERT INTO payment (amount, student_id, remarks) values (?1, ?2, ?3);
     ",
         params![
             payment_data.amount,
@@ -742,10 +742,11 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rus
     // TODO important the logic
     transaction.execute(
         "
-    UPDATE fees (payment_id) values (?1) where student_id =?2
+    INSERT INTO fees (student_id, amount, title, payment_id) VALUES (?1, ?2, ?3, ?4);
     ",
-        params![id, payment_data.student_id],
+        params![payment_data.student_id, payment_data.amount, "Payment", id],
     )?;
+    transaction.commit()?;
     Ok(())
 }
 
@@ -760,7 +761,7 @@ pub fn get_payment(
     let mut query = "";
     match student_id {
         Some(value) => {
-            query = "Select * from payment inner join students on payment.student_id = student.id where student_id = ?3 limit ?1 offset ?2";
+            query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value, value], |row| {
                 Ok(Payment {
@@ -779,7 +780,7 @@ pub fn get_payment(
             Ok(data)
         }
         None => {
-            query = "Select * from payment inner join students on payment.student_id = student.id limit ?1 offset ?2";
+            query = "Select * from payment inner join students on payment.student_id = students.id limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value], |row| {
                 Ok(Payment {

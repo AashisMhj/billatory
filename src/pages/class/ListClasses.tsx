@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { TableContainer, Table, IconButton, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
 import { EditFilled, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
 //
-import { ClassType, ClassFilterType } from '@/types';
+import { StudentClassType, ClassFilterType } from '@/types';
 import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, FilterModal, AddClassModal } from '@/components/pages/class/listClasses';
 import {getNoOfPage} from '@/utils/helper-function';
@@ -15,13 +15,13 @@ const tableHeads = [
 ];
 
 export default function ListClasses() {
-    const [classes, setClasses] = useState<Array<ClassType>>([]);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total_page_count, setTotalPageCount] = useState(0);
     const [open_edit_modal, setOpenEditModal] = useState(false);
     const [open_add_modal, setOpenAddModal] = useState(false);
-    const [edit_data, setEditData] = useState<ClassType | null>(null);
+    const [edit_data, setEditData] = useState<StudentClassType | null>(null);
     const [open_filter_modal, setOpenFilterModal] = useState(false);
 
     function handlePaginationChange(_: any, new_page: number) {
@@ -54,7 +54,7 @@ export default function ListClasses() {
         setLimit(value.limit);
     }
 
-    function handleEditClick(_: any, data: ClassType) {
+    function handleEditClick(_: any, data: StudentClassType) {
         setOpenEditModal(true);
         setEditData(data);
     }

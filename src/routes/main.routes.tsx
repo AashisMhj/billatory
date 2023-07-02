@@ -19,6 +19,7 @@ import ListCharges from '@/pages/charges/ListCharges';
 import ListPaymentPage from '@/pages/payment/ListPayment';
 // settings page
 import EditSettingPage from '@/pages/settings/EditSettings';
+import AddPaymentPage from '@/pages/payment/AddPayment';
 
 
 // render - dashboard
@@ -83,6 +84,10 @@ const MainRoutes = {
     {
       path: 'payment',
       element: <ListPaymentPage />
+    },
+    {
+      path: 'payment/add',
+      element: <AddPaymentPage />
     },
     {
       path: 'settings/edit',
