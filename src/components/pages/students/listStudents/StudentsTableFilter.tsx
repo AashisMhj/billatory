@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { StudentsTableFilterType, StudentClassType } from "@/types";
+import { getClasses } from "@/services/class.service";
 
 interface Props {
     open: boolean,
@@ -17,7 +18,7 @@ const style: SxProps = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 500,
-    bgcolor: 'Background',
+    bgcolor: 'white',
     border: '2px solid #000',
     p: 4
 }
@@ -27,8 +28,16 @@ const DropDownItems = [10, 20, 30];
 export default function EditModal({ open, handleClose, onSubmit, value }: Props) {
 
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
+
     useEffect(()=>{
-        // TODO fetch classes
+        getClasses(1, 10000)
+            .then((data) => {
+                if (typeof data === "string") {
+                    const class_data = JSON.parse(data);
+                    setClasses(class_data);
+                }
+            })
+            .catch(error => console.log(error))
     }, [])
     return (
         <Modal
@@ -47,7 +56,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                             setStatus({ success: false });
                             // TODO update 
                             setSubmitting(false);
-                            onSubmit({limit: values.limit});
+                            onSubmit({limit: values.limit, class: values.class});
                             handleClose();
                         } catch (error) {
                             setStatus(false);

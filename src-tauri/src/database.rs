@@ -358,12 +358,12 @@ pub fn get_student(
     db: &Connection,
     page: i32,
     limit: i32,
+    class_id: Option<i32>
 ) -> Result<Vec<Student>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<Student> = Vec::new();
-    let mut statement = db.prepare("Select * from students inner join class on students.class_id = class.id limit ?1 offset ?2;")?;
-    let student_iter = statement.query_map(params![limit, offset_value], |row| {
-        Ok(Student {
+    let map_row = |row: &rusqlite::Row| -> Result<Student>{
+        Ok(Student{
             id: row.get("id")?,
             class: row.get("class")?,
             first_name: row.get("first_name")?,
@@ -387,11 +387,25 @@ pub fn get_student(
             emergency_contact: None,
             guardian_relation: None,
         })
-    })?;
-    for student in student_iter {
-        data.push(student.unwrap());
-    }
-    Ok(data)
+    };
+    if let Some(id) = class_id {
+        let query = "Select * from students inner join class on students.class_id = class.id where class_id = ?3 limit ?1 offset ?2;";
+        let mut statement = db.prepare(query)?;
+        let student_iter = statement.query_map(params![limit, offset_value, class_id], map_row)?;
+        for student in student_iter {
+            data.push(student.unwrap());
+        }
+        return Ok(data)
+    }else {
+        let query = "Select * from students inner join class on students.class_id = class.id limit ?1 offset ?2;";
+        let mut statement = db.prepare(query)?;
+        let student_iter = statement.query_map(params![limit, offset_value, class_id], map_row)?;
+        for student in student_iter {
+            data.push(student.unwrap());
+        }
+        return Ok(data)
+    };
+   
 }
 
 pub fn get_student_detail(db: &Connection, id: i32) -> Result<Student, rusqlite::Error> {

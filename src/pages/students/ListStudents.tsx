@@ -1,4 +1,4 @@
-import { TableContainer, Grid, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, IconButton } from '@mui/material';
+import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Pagination, Typography, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
@@ -8,8 +8,9 @@ import { StudentStatus } from '@/components/pages/students/listStudents';
 import { StudentType, StudentsTableFilterType } from '@/types';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
 import paths from '@/routes/path';
-import { getStudents, getStudentRowCount } from '@/services/student.service';
+import { getStudents,  getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage } from '@/utils/helper-function';
+import { StudentsTableFilter } from '@/components/pages/students/listStudents';
 
 const tableHeads = [
     'Actions',
@@ -25,13 +26,14 @@ export default function ListStudents() {
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRow] = useState<number>(10);
-    const [filer_class, setFilterClass] = useState<number | null>(null);
+    const [filtered_class, setFilterClass] = useState<number>();
     const [is_open_filter_modal, setOpenFilterModal] = useState(false);
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
     }
 
     function handleFilterSubmit(value: StudentsTableFilterType) {
+        console.log(value)
         if (value.class) {
             setFilterClass(value.class);
         }
@@ -40,12 +42,20 @@ export default function ListStudents() {
         }
     }
 
+    function handleSwitchChange(event:React.ChangeEvent<HTMLInputElement>, checked:boolean, student_id:number){
+        updateStudentStatus(student_id, checked)
+            .then(data => {
+                console.log(data);
+                fetchData();
+            })
+            .catch(err => console.log(err))
+    }
+
     function fetchData() {
-        getStudents(page, limit)
+        getStudents(page, limit, filtered_class)
             .then((data) => {
                 if (typeof data === "string") {
                     const student_data = JSON.parse(data);
-                    console.log(student_data);
                     setStudentData(student_data);
                 }
             })
@@ -69,7 +79,7 @@ export default function ListStudents() {
 
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [page, filtered_class, limit]);
     return (
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -157,7 +167,8 @@ export default function ListStudents() {
                                                 {student.date_of_birth}
                                             </TableCell>
                                             <TableCell>
-                                                <StudentStatus status={student.is_active} />
+                                                <Switch checked={student.is_active} onChange={(event, checked) => handleSwitchChange(event,checked, student.id)} />
+                                                {/* <StudentStatus status={student.is_active} /> */}
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -170,6 +181,7 @@ export default function ListStudents() {
                     <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='secondary' />
                 </Grid>
             </Grid >
+            <StudentsTableFilter  open={is_open_filter_modal} value={{limit, class: filtered_class}} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
         </>
     )
 }

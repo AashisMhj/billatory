@@ -6,9 +6,9 @@ type CreateStudentType = Omit<StudentType, "id" | "is_active">
 type UpdateStudentType = Omit<StudentType, "is_active">
 
 
-export function getStudents(page:number, limit:number){
+export function getStudents(page:number, limit:number, class_id?: number){
     return invoke('get_student_data', {
-        page, limit
+        page, limit, classId: class_id
     })
 }
 
@@ -72,4 +72,11 @@ export function getStudentFees(student_id:number){
         studentId: student_id
     })
 
+}
+
+export function updateStudentStatus(student_id:number, checked:boolean){
+    return invoke('change_student_status_data', {
+        studentId: student_id,
+        newStatus: checked
+    })
 }

@@ -143,12 +143,19 @@ fn count_class_rows(app_handler: AppHandle) -> Result<i32, String> {
 
 // student commands
 #[tauri::command]
-fn get_student_data(app_handle: AppHandle, page: i32, limit: i32) -> String {
-    let items: Vec<database::Student> = app_handle
-        .db(|db| database::get_student(db, page, limit))
-        .unwrap();
-    let items_string = serde_json::to_string(&items).unwrap();
-    format!("{}", items_string)
+fn get_student_data(app_handle: AppHandle, page: i32, limit: i32,class_id: Option<i32>, ) -> Result<String, String> {
+    let items = app_handle
+        .db(|db| database::get_student(db, page, limit, class_id));
+    match items{
+        Ok(students)=>{
+            let items_string = serde_json::to_string(&students).unwrap();
+            Ok(items_string)
+        }
+        Err(error)=>{
+            Err(error.to_string())
+        }
+    }
+    
 }
 
 #[tauri::command]
