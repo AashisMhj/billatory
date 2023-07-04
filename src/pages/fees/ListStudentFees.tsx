@@ -36,7 +36,9 @@ export default function ListStudentFees() {
         //
         getFeeRowCount()
             .then((data)=>{
-                console.log(data);
+                if(typeof data === "number"){
+                    setTotalRows(data);
+                }
             })
             .catch(error => console.log(error))
     }
@@ -96,7 +98,7 @@ export default function ListStudentFees() {
                                                 {`${fee.student_first_name} ${fee.student_mid_name || ''} ${fee.student_last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {fee.charge_title}
+                                                {fee.title}
                                             </TableCell>
                                             <TableCell>
                                                 {fee.created_at}

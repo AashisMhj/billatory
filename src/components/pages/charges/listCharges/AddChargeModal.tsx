@@ -64,13 +64,11 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                         is_regular: Yup.boolean().required()
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                        console.log(values);
                         setStatus({ success: false });
                         setSubmitting(true);
                         addCharge(values.charge_title, values.amount, values.class, values.is_regular)
                             .then(data => {
                                 setSubmitting(false);
-                                console.log(data);
                                 onSubmit();
                                 handleClose()
                             })

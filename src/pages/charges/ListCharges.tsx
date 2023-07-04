@@ -40,7 +40,6 @@ export default function ListCharges() {
     function chargeHandler(charge_id:number){
         applyCharge(charge_id)
             .then((data)=>{
-                console.log(data);
                 if(data === 200){
                     // TODO show some message
                 }else{

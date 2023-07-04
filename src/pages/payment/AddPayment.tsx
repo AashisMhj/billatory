@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 //
 import { getStudents } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
-import { StudentChargeType, StudentClassType, StudentType } from "@/types";
+import { StudentClassType, StudentType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { getClasses } from "@/services/class.service";
 
@@ -79,7 +79,6 @@ export default function AddPaymentPage() {
                             remarks: values.remarks
                         })
                             .then((data) => {
-                                console.log(data);
                                 setErrors({});
                             })
                             .catch(err => {

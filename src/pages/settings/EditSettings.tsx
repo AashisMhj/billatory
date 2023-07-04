@@ -43,7 +43,6 @@ export default function EditSettingPage() {
                                     panNo: values.pan_no,
                                     phoneNo: values.phone_no
                             });
-                            console.log(data);
                             if(data === 200){
                                 const settings = await getSettings();
                                 if (typeof settings === "string") {

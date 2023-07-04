@@ -39,3 +39,18 @@ export function applyCharge(charge_id:number){
 export function getChargeCount(){
     return invoke('count_charges_row');
 }
+
+export function addStudentCharge(studentId:number, chargeId:number){
+    console.log(studentId, 'st');
+    console.log(chargeId, 'ch');
+    return invoke('add_student_charge_data', {
+        studentId,
+        chargeId
+    })
+}
+
+export function removeStudentCharge(id:number){
+    return invoke('remove_student_charge_data', {
+        id
+    })
+}

@@ -19,7 +19,6 @@ export default function AddStudentPage() {
             .then((data) => {
                 if (typeof data === "string") {
                     const class_data = JSON.parse(data);
-                    console.log(class_data)
                     setClasses(class_data);
                 }
             })
@@ -91,7 +90,6 @@ export default function AddStudentPage() {
                         }
                         )
                             .then((data) => {
-                                console.log(data);
                                 showAlert('Student Added', 'success');
                                 // TODO navigate
                             })

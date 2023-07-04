@@ -143,7 +143,7 @@ fn count_class_rows(app_handler: AppHandle) -> Result<i32, String> {
 
 // student commands
 #[tauri::command]
-fn get_student_data(app_handle: AppHandle, page: i32, limit: i32,class_id: Option<i32>, ) -> Result<String, String> {
+fn get_student_data(app_handle: AppHandle, page: i32, limit: i32, class_id: Option<i32> ) -> Result<String, String> {
     let items = app_handle
         .db(|db| database::get_student(db, page, limit, class_id));
     match items{
@@ -152,6 +152,7 @@ fn get_student_data(app_handle: AppHandle, page: i32, limit: i32,class_id: Optio
             Ok(items_string)
         }
         Err(error)=>{
+            print!("{}",error);
             Err(error.to_string())
         }
     }
@@ -297,15 +298,40 @@ fn change_student_status_data(app_handle: AppHandle, student_id: i32, new_status
 }
 
 #[tauri::command]
-fn get_student_charges_data(app_handle: AppHandle, student_id: i32)-> Vec<database::StudentCharges>{
+fn get_student_charges_data(app_handle: AppHandle, student_id: i32)-> Result<Vec<database::StudentCharges>, String>{
     let result = app_handle.db(|db| database::get_student_charges(db, student_id));
     match result{
         Ok(value)=>{
-            return value;
+            return Ok(value);
         }
-        Err(_err)=>{
-            let empty_student_charges:Vec<database::StudentCharges> = Vec::new();
-            return empty_student_charges;
+        Err(err)=>{
+            Err(err.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn add_student_charge_data(app_handle: AppHandle, student_id: i32, charge_id: i32)-> Result<i32, String>{
+    let result = app_handle.db(|db| database::add_student_charge(db, student_id, charge_id));
+    match result{
+        Ok(_value) => {
+            Ok(200)
+        }
+        Err(err)=>{
+            Err(err.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn remove_student_charge_data(app_handle: AppHandle, id: i32) -> Result<i32,String>{
+    let result = app_handle.db(|db| database::remove_student_charge(db, id));
+    match result{
+        Ok(_value)=>{
+            Ok(200)
+        }
+        Err(err) => {
+            Err(err.to_string())
         }
     }
 }
@@ -360,7 +386,7 @@ fn count_charges_row(app_handle: AppHandle) -> i32 {
 fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32 ) -> i32{
     let fees_data = database::Fees{
         amount: amount,
-        charge_id: charge_id,
+        charge_id: Some(charge_id),
         student_id: student_id,
         charge_title: None,
         created_at: " ".to_string(),
@@ -487,8 +513,11 @@ fn main() {
             get_student_detail_data,
             change_student_status_data,
             update_student_data,
-            get_student_charges_data,
             count_student_row,
+            // student charges
+            get_student_charges_data,
+            add_student_charge_data,
+            remove_student_charge_data,
             // charges commands
             add_charge_data,
             get_charge_data,

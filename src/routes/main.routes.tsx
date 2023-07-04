@@ -11,6 +11,7 @@ import AddStudentPage from '@/pages/students/AddStudent';
 import EditStudentPage from '@/pages/students/EditStudent';
 import StudentFeePage from '@/pages/students/StudentFee';
 import StudentBillPage from '@/pages/students/StudentBill';
+import ListStudentCharges from '@/pages/students/ListStudentCharges';
 // classes
 import ListClasses from '@/pages/class/ListClasses';
 // charges
@@ -68,6 +69,10 @@ const MainRoutes = {
     {
       path: 'students/:id/bill',
       element: <StudentBillPage />
+    },
+    {
+      path: 'students/:id/charges',
+      element: <ListStudentCharges />
     },
     {
       path: 'class',

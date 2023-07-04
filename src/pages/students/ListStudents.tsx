@@ -1,4 +1,4 @@
-import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Pagination, Typography, IconButton } from '@mui/material';
+import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Tooltip, Pagination, Typography, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
@@ -6,7 +6,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 //
 import { StudentStatus } from '@/components/pages/students/listStudents';
 import { StudentType, StudentsTableFilterType } from '@/types';
-import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import paths from '@/routes/path';
 import { getStudents,  getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage } from '@/utils/helper-function';
@@ -16,6 +16,7 @@ const tableHeads = [
     'Actions',
     'Name',
     'Class',
+    'Roll No',
     'DOB',
     'status',
 ];
@@ -33,7 +34,6 @@ export default function ListStudents() {
     }
 
     function handleFilterSubmit(value: StudentsTableFilterType) {
-        console.log(value)
         if (value.class) {
             setFilterClass(value.class);
         }
@@ -43,9 +43,9 @@ export default function ListStudents() {
     }
 
     function handleSwitchChange(event:React.ChangeEvent<HTMLInputElement>, checked:boolean, student_id:number){
+        console.log(checked, 'ch');
         updateStudentStatus(student_id, checked)
             .then(data => {
-                console.log(data);
                 fetchData();
             })
             .catch(err => console.log(err))
@@ -66,7 +66,6 @@ export default function ListStudents() {
         // 
         getStudentRowCount()
             .then(data => {
-                console.log(data);
                 if (typeof data === "string") {
                     const count = parseInt(JSON.parse(data)) || 0;
                     setTotalRow(count);
@@ -80,6 +79,7 @@ export default function ListStudents() {
     useEffect(() => {
         fetchData();
     }, [page, filtered_class, limit]);
+
     return (
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -156,12 +156,22 @@ export default function ListStudents() {
                                                         <ReceiptIcon />
                                                     </IconButton>
                                                 </RouterLink>
+                                                <RouterLink to={paths.studentCharges(student.id)}>
+                                                    <Tooltip title="Student Charges">
+                                                        <IconButton color="primary">
+                                                            <CheckCircleOutlined />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {`${student.first_name} ${student.last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {student.class}
+                                            </TableCell>
+                                            <TableCell component="th" scope='row' align='left'>
+                                                {student.roll_no}
                                             </TableCell>
                                             <TableCell>
                                                 {student.date_of_birth}

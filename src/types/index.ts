@@ -60,15 +60,20 @@ export interface ChargesType{
     charge_title: string,
     class?: string,
     amount: number,
+    student_id?: number,
     is_regular: boolean
 }
 
 export interface StudentChargeType{
     id: number,
     charge_id: number,
-    student_id: number,
+    student_id?: number,
     charge_title: string,
+    student_charge_id: number,
     amount?: number,
+    class?: string,
+    class_id?: number,
+    is_regular: boolean
 }
 
 export interface StudentType{

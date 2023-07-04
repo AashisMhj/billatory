@@ -4,7 +4,9 @@ use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::AppHandle;
 
-const CURRENT_DB_VERSION: u32 = 2;
+const CURRENT_DB_VERSION: u32 = 1;
+
+// Note: The Fees table is the main table which contains all the transactions/records teh ones with charge id are charges and ones with payment id are payment 
 #[derive(Debug, Serialize)]
 pub struct Setting {
     pub organization_name: String,
@@ -70,7 +72,7 @@ pub struct Fees {
     pub amount: f32,
     pub title: Option<String>,
     pub description: Option<String>,
-    pub charge_id: i32,
+    pub charge_id: Option<i32>,
     pub payment_id: Option<i32>,
     pub charge_title: Option<String>,
 }
@@ -86,13 +88,31 @@ pub struct Payment {
     pub remarks: Option<String>,
 }
 
+/*
+Represent the join table for student_charges, charges and class
+The id is of the charge table
+ */
 #[derive(Debug, Serialize)]
 pub struct StudentCharges {
     pub id: i32,
-    pub charge_id: i32,
-    pub student_id: i32,
+    pub class_id: i32,
+    pub is_regular: bool,
     pub charge_title: String,
+    pub student_id: Option<i32>,
+    pub student_charge_id: Option<i32>, // the id of the student charge table
     pub amount: Option<f32>,
+    pub class: Option<String>
+}
+
+#[derive(Debug, Serialize)]
+pub struct StudentChargeTable{
+    pub id: i32, 
+    pub student_id: i32, 
+    pub charge_id: i32, 
+    pub class_id: i32,
+    pub is_regular: bool,
+    pub amount: f32,
+    pub charge_title: String,
 }
 
 pub fn initialize_database(app_handle: &AppHandle) -> Result<Connection, rusqlite::Error> {
@@ -171,7 +191,7 @@ pub fn upgrade_database_if_needed(
             mid_name char(250),
             last_name char(250) NOT NULL,
             address char(250) not null,
-            roll_no integer,
+            roll_no integer not null,
             father_name char(250) NOT NULL,
             mother_name char(250) NOT NULL,
             date_of_birth datetime,
@@ -199,7 +219,8 @@ pub fn upgrade_database_if_needed(
             student_id INTEGER NOT NULL,
             charge_id INTEGER NOT NULL,
             FOREIGN KEY(student_id) references students(id),
-            FOREIGN KEY(charge_id) references charge(id)
+            FOREIGN KEY(charge_id) references charge(id),
+            unique(student_id, charge_id)
         )
         ",
             (),
@@ -212,11 +233,14 @@ pub fn upgrade_database_if_needed(
             student_id INTEGER NOT NULL,
             created_at datetime default current_timestamp,
             amount real not null,
-            remarks text
+            remarks text,
+            FOREIGN KEY(student_id) references students(id)
         );
         ",
             (),
         )?;
+        
+
         tx.execute(
             "
         CREATE TABLE IF NOT EXISTS fees (
@@ -371,13 +395,11 @@ pub fn get_student(
             mid_name: row.get("mid_name")?,
             address: row.get("address")?,
             father_name: row.get("father_name")?,
-            // is_active: row.get("is_active")?,
-            is_active: true,
+            is_active: row.get("is_active")?,
             class_id: row.get("class_id")?,
             mother_name: row.get("mother_name")?,
             gender: row.get("gender")?,
-            // roll_no: row.get("roll_no")?,
-            roll_no: 1,
+            roll_no: row.get("roll_no")?,
             date_of_birth: row.get("date_of_birth")?,
             phone_no: None,
             email: None,
@@ -391,7 +413,8 @@ pub fn get_student(
     if let Some(id) = class_id {
         let query = "Select * from students inner join class on students.class_id = class.id where class_id = ?3 limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
-        let student_iter = statement.query_map(params![limit, offset_value, class_id], map_row)?;
+        
+        let student_iter = statement.query_map(params![limit, offset_value, id], map_row)?;
         for student in student_iter {
             data.push(student.unwrap());
         }
@@ -399,7 +422,7 @@ pub fn get_student(
     }else {
         let query = "Select * from students inner join class on students.class_id = class.id limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
-        let student_iter = statement.query_map(params![limit, offset_value, class_id], map_row)?;
+        let student_iter = statement.query_map(params![limit, offset_value], map_row)?;
         for student in student_iter {
             data.push(student.unwrap());
         }
@@ -421,13 +444,11 @@ pub fn get_student_detail(db: &Connection, id: i32) -> Result<Student, rusqlite:
             mid_name: row.get("mid_name")?,
             address: row.get("address")?,
             father_name: row.get("father_name")?,
-            // is_active: row.get("is_active")?,
-            is_active: true,
+            is_active: row.get("is_active")?,
             class_id: row.get("class_id")?,
             mother_name: row.get("mother_name")?,
             gender: row.get("gender")?,
-            // roll_no: row.get("roll_no")?,
-            roll_no: 1,
+            roll_no: row.get("roll_no")?,
             date_of_birth: row.get("date_of_birth")?,
             phone_no: row.get("phone_no")?,
             email: row.get("email")?,
@@ -459,6 +480,7 @@ pub fn change_student_status(
     student_id: i32,
 ) -> Result<(), rusqlite::Error> {
     let date_string = get_current_date();
+    println!("{}", new_status);
     db.execute(
         "
     UPDATE students SET is_active = ?1, updated_at = ?2 where id = ?3
@@ -480,14 +502,19 @@ pub fn get_student_charges(
     db: &Connection,
     student_id: i32,
 ) -> Result<Vec<StudentCharges>, rusqlite::Error> {
-    let mut statement = db.prepare("SELECT * FROM student_charges inner join charges on student_charges.charge_id = charges.id where student_id = ?1")?;
+    let mut statement = db.prepare("select charge.*, student_charges.*, class.*, student_charges.id as sc_id from charge left join student_charges on charge.id = student_charges.charge_id inner join class on charge.class_id = class.id  where (student_id = ?1 or student_id is null ) ;")?;
+    // let mut statement = db.prepare("select ch.id, ch.class_id, ch.charge_title, ch.amount, ch.is_regular, stc.id, stc.student_id, stc.charge_id, cl.id, cl.class from charge as ch left join student_charges as stc on ch.id = stc.charge_id inner join class as cl on ch.class_id = cl.id  where (stc.student_id = ?1 or stc.student_id is null ) ;")?;
+    
     let student_charges_iter = statement.query_map(params![student_id], |row| {
         Ok(StudentCharges {
             id: row.get("id")?,
-            charge_id: row.get("charge_id")?,
-            charge_title: row.get("charge_title")?,
+            student_charge_id: row.get("sc_id")?,
             student_id: row.get("student_id")?,
-            amount: None,
+            is_regular: row.get("is_regular")?,
+            class_id: row.get("class_id")?,
+            charge_title: row.get("charge_title")?,
+            amount: row.get("amount")?,
+            class: row.get("class")?
         })
     })?;
 
@@ -534,6 +561,16 @@ pub fn update_student_charges(
 
     transaction.commit()?;
 
+    Ok(())
+}
+
+pub fn add_student_charge(db: &Connection, student_id: i32, charge_id: i32)-> Result<(), rusqlite::Error>{
+    db.execute("INSERT INTO student_charges(student_id, charge_id) values(?1, ?2);", params![student_id, charge_id])?;
+    Ok(())   
+}
+
+pub fn remove_student_charge(db: &Connection, id: i32)-> Result<(), rusqlite::Error>{
+    db.execute("DELETE FROM student_charges where id = ?1 ", params![id])?;
     Ok(())
 }
 
@@ -593,9 +630,11 @@ pub fn apply_charges(db: &mut Connection, charge_id: i32) -> Result<(), rusqlite
     let transaction = db.transaction()?;
     let mut student_statement = transaction.prepare("select * from student_charges inner join charge on student_charges.charge_id = charge.id where charge_id = ?1")?;
     let student_ids_iter = student_statement.query_map(params![charge_id], |row| {
-        Ok(StudentCharges {
+        Ok(StudentChargeTable {
             id: row.get("id")?,
-            charge_id: row.get("charge_id")?,
+            charge_id: row.get("id")?,
+            class_id: row.get("class_id")?,
+            is_regular: row.get("is_regular")?,
             student_id: row.get("student_id")?,
             amount: row.get("amount")?,
             charge_title: row.get("charge_title")?,
@@ -643,15 +682,15 @@ pub fn get_fees(
 ) -> Result<Vec<Fees>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<Fees> = Vec::new();
-    let mut query = "";
 
     match student_id {
         Some(_value) => {
+            let mut query = "";
             if remaining {
-                query = "select * from fees  inner join charge on fees.charge_id = charge.id where payment_id is null and student_id = ?3 limit ?1 offset ?2"
+                query = "select * from fees left join students on fees.id = students.id where student_id = ?3 limit ?1 offset ?2"
             } else {
                 query =
-                    "select * from fees inner join charge on fees.charge_id = charge.id and student_id = ?3 limit ?1 offset ?2"
+                    "select * from fees left join students on fees.id = students.id where student_id = ?3 limit ?1 offset ?2"
             }
             let mut statement = db.prepare(query)?;
             let fees_iter =
@@ -667,7 +706,7 @@ pub fn get_fees(
                         student_last_name: row.get("last_name")?,
                         title: row.get("title")?,
                         updated_at: row.get("updated_at")?,
-                        charge_title: row.get("charge_title")?,
+                        charge_title: None,
                         payment_id: row.get("payment_id")?,
                     })
                 })?;
@@ -677,11 +716,12 @@ pub fn get_fees(
             Ok(data)
         }
         None => {
+            let mut query = "";
             if remaining {
-                query = "select * from fees inner join charge on fees.charge_id = charge.id inner join students on fees.student_id = students.id where payment_id is null limit ?1 offset ?2"
+                query = "select * from fees left join students on fees.id = students.id limit ?1 offset ?2"
             } else {
                 query =
-                    "select * from fees inner join charge on fees.charge_id = charge.id inner join students on fees.student_id = students.id limit ?1 offset ?2"
+                    "select * from fees left join students on fees.id = students.id limit ?1 offset ?2"
             }
             let mut statement = db.prepare(query)?;
             let fees_iter = statement.query_map(params![limit, offset_value], |row| {
@@ -696,7 +736,7 @@ pub fn get_fees(
                     student_last_name: row.get("last_name")?,
                     title: row.get("title")?,
                     updated_at: row.get("updated_at")?,
-                    charge_title: row.get("charge_title")?,
+                    charge_title: None,
                     payment_id: row.get("payment_id")?,
                 })
             })?;
