@@ -40,10 +40,8 @@ export default function ListClasses() {
         //
         getClassRowCount()
             .then(data => {
-                console.log(data);
-                if(typeof data === "string"){
-                    const count = parseInt(data) || 0;
-                    setTotalPageCount(count);
+                if(typeof data === "number"){
+                    setTotalPageCount(data);
                 }
             })
             .catch(err => console.log(err));

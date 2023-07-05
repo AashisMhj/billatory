@@ -1,7 +1,8 @@
 use rusqlite::{params, Connection, Result};
+use chrono::Utc;
 use serde::Serialize;
 use std::fs;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::path::PathBuf;
 use tauri::AppHandle;
 
 const CURRENT_DB_VERSION: u32 = 1;
@@ -115,15 +116,21 @@ pub struct StudentChargeTable{
     pub charge_title: String,
 }
 
+const FILE_PATH:&str = "db.sqlite";
+const BACKUP_DIR:&str = "backup";
+
 pub fn initialize_database(app_handle: &AppHandle) -> Result<Connection, rusqlite::Error> {
     let app_dir = app_handle
         .path_resolver()
         .app_data_dir()
         .expect(" The app data  directory should exist.");
     fs::create_dir_all(&app_dir).expect(" The app directory should be created");
-    let sqlite_path = app_dir.join("db.sqlite");
-    print!(" Database file {}", sqlite_path.to_string_lossy());
+    let backup_path = app_dir.join(BACKUP_DIR);
+    fs::create_dir_all(backup_path).expect("Back Up Dir should be created");
+    let sqlite_path = app_dir.join(FILE_PATH);
+    // print!(" Database file {}", sqlite_path.to_string_lossy());
     let mut db = Connection::open(sqlite_path)?;
+
 
     let mut user_pragma = db.prepare("PRAGMA user_version")?;
     let existing_user_version: u32 = user_pragma.query_row([], |row| Ok(row.get(0)?))?;
@@ -266,6 +273,11 @@ pub fn upgrade_database_if_needed(
     Ok(())
 }
 
+pub fn get_app_log(path: PathBuf) -> Result<String, std::io::Error>{
+    let file_content = fs::read_to_string(path);
+    return file_content;
+}
+
 pub fn add_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqlite::Error> {
     db.execute(
         "
@@ -355,9 +367,10 @@ pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<Class>, r
 }
 
 pub fn update_class(db: &Connection, id: i32, class: String) -> Result<(), rusqlite::Error> {
+    let current_date = get_current_date();
     db.execute(
-        "UPDATE class SET class = ?1 where id = ?2",
-        params![class, id],
+        "UPDATE class SET class = ?1, updated_at = ?3 where id = ?2",
+        params![class, id, current_date],
     )?;
     Ok(())
 }
@@ -480,7 +493,6 @@ pub fn change_student_status(
     student_id: i32,
 ) -> Result<(), rusqlite::Error> {
     let date_string = get_current_date();
-    println!("{}", new_status);
     db.execute(
         "
     UPDATE students SET is_active = ?1, updated_at = ?2 where id = ?3
@@ -645,7 +657,6 @@ pub fn apply_charges(db: &mut Connection, charge_id: i32) -> Result<(), rusqlite
         .collect::<Vec<_>>();
 
     drop(student_statement);
-    println!("length {}", student_ids.len());
     for charge in student_ids {
         transaction.execute(
             "
@@ -685,7 +696,7 @@ pub fn get_fees(
 
     match student_id {
         Some(_value) => {
-            let mut query = "";
+            let query;
             if remaining {
                 query = "select * from fees left join students on fees.id = students.id where student_id = ?3 limit ?1 offset ?2"
             } else {
@@ -716,7 +727,7 @@ pub fn get_fees(
             Ok(data)
         }
         None => {
-            let mut query = "";
+            let query;
             if remaining {
                 query = "select * from fees left join students on fees.id = students.id limit ?1 offset ?2"
             } else {
@@ -753,24 +764,25 @@ pub fn count_fees_row(
     remaining: bool,
     student_id: Option<i32>,
 ) -> Result<i32, rusqlite::Error> {
-    let mut query = "";
 
     match student_id {
         Some(value) => {
+            let query;
             if remaining {
-                query = "Select count(id) as count from payment where student_id = ?1 and payment_id is null limit 1;"
+                query = "Select count(id) as count from fees where student_id = ?1 limit 1;"
             } else {
-                query = "Select count(id) as count from payment where student_id = ?1 limit 1;"
+                query = "Select count(id) as count from fees where student_id = ?1 limit 1;"
             }
             let mut statement = db.prepare(query)?;
             let count = statement.query_row([value], |row| row.get::<&str, i32>("count"))?;
             Ok(count)
         }
         None => {
+            let query;
             if remaining {
-                query = "Select count(id) as count from payment where payment_id = null limit 1;"
+                query = "Select count(id) as count from fees limit 1;"
             } else {
-                query = "Select count(id) as count from payment limit 1;"
+                query = "Select count(id) as count from fees limit 1;"
             }
             let mut statement = db.prepare(query)?;
             let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
@@ -812,10 +824,9 @@ pub fn get_payment(
 ) -> Result<Vec<Payment>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<Payment> = Vec::new();
-    let mut query = "";
     match student_id {
         Some(value) => {
-            query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 limit ?1 offset ?2";
+            let  query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value, value], |row| {
                 Ok(Payment {
@@ -834,7 +845,7 @@ pub fn get_payment(
             Ok(data)
         }
         None => {
-            query = "Select * from payment inner join students on payment.student_id = students.id limit ?1 offset ?2";
+            let query = "Select * from payment inner join students on payment.student_id = students.id limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value], |row| {
                 Ok(Payment {
@@ -854,7 +865,21 @@ pub fn get_payment(
         }
     }
 }
-
+pub fn get_payment_detail(db: &Connection, id: i32) -> Result<Payment, rusqlite::Error>{
+    let mut statement = db.prepare("Select * from payment join students on payment.student_id = students.id where payment.id = ?1 limit 1;")?;
+    let data = statement.query_row(params![id], |row|{
+        Ok(Payment{
+            id: row.get("id")?,
+            amount: row.get("amount")?,
+            created_at: row.get("created_at")?,
+            remarks: row.get("remarks")?,
+            student_first_name: row.get("first_name")?,
+            student_id: row.get("student_id")?,
+            student_last_name: row.get("last_name")?,
+        })
+    })?;
+    Ok(data)
+}
 pub fn count_payment_rows(
     db: &Connection,
     student_id: Option<i32>,
@@ -874,21 +899,20 @@ pub fn count_payment_rows(
     }
 }
 
+pub fn backup(app_handle: &AppHandle) -> Result<(u64, PathBuf),std::io::Error >{
+    let mut app_dir = app_handle.path_resolver().app_data_dir().expect("The app data directory should exist");
+    let db_path = app_dir.join(FILE_PATH);
+    let current_data = get_current_date();
+    app_dir.push(BACKUP_DIR);
+    let file = format!("{}.sqlite", current_data);
+    let backup_path = app_dir.join(file);
+    let result = fs::copy(db_path, &backup_path)?;
+    Ok(( result, backup_path))
+}
+
 // Helper functions
 
-pub fn get_current_date() -> String {
-    let current_time = SystemTime::now();
-    let since_epoch = current_time
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
-    let seconds = since_epoch.as_secs();
-
-    let days = seconds / 86400;
-    let remaining_seconds = seconds % 86400;
-    let hours = remaining_seconds / 3600;
-    let remaining_seconds = remaining_seconds % 3600;
-    let minutes = remaining_seconds / 60;
-
-    let date_string = format!("{}-{}-{}", days, hours, minutes);
-    return date_string;
+fn get_current_date()-> String{
+    let current_data = Utc::now();
+    return current_data.format("%Y-%m-%d %H:%M:%S").to_string();
 }

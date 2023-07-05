@@ -36,3 +36,11 @@ export function updateSettings({organizationName,email, location, image, phoneNo
         panNo
     })
 }
+
+export function backupData(){
+    return invoke('backup_data');
+}
+
+export function getAppLog(){
+    return invoke('get_log_data');
+}

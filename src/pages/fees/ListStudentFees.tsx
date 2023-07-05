@@ -63,6 +63,9 @@ export default function ListStudentFees() {
                     </Grid>
                 </Grid>
                 <Grid item xs={12}>
+                    <Typography>Total Count: {total_rows}</Typography>
+                </Grid>
+                <Grid item xs={12}>
                     <TableContainer sx={{
                         width: '100%',
                         overflowX: 'auto',

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import { Box, Button, FormHelperText, Grid, InputLabel, Modal, OutlinedInput, Stack, SxProps, Typography } from "@mui/material";
+//
 import { StudentClassType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { updateClass } from "@/services/class.service";
@@ -18,7 +18,7 @@ const style: SxProps = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 500,
-    bgcolor: 'Background',
+    bgcolor: 'white',
     border: '2px solid #000',
     p: 4
 }
@@ -35,19 +35,23 @@ export default function EditModal({ open, handleClose, onSubmit, data }: Props) 
                         class: Yup.string().trim().required('Class Title is Required')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                        try {
-                            setStatus({ success: false });
-                            if(data && data.id && values.class){
-                                updateClass({class: values.class, id: data.id})
-                                setSubmitting(false);
-                                handleClose();
-                                onSubmit()
-                            }
-                        } catch (error) {
-                            setStatus(false);
-                            if (error instanceof Error) {
-                                setErrors({ submit: error.message });
-                            }
+                        
+                        setStatus({ success: false });
+                        if(data && data.id && values.class){
+                            updateClass({class: values.class, id: data.id})
+                            .then((data) =>{
+                                if(data === 200){
+                                    setSubmitting(false);
+                                    handleClose();
+                                    onSubmit()
+                                }
+                            })
+                            .catch(err => {
+                                setStatus(false);
+                                if (err instanceof Error) {
+                                    setErrors({ submit: err.message });
+                                }
+                            })
                         }
                     }}
                 >

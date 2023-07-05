@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
-import MainCard from "@/components/layouts/MainCard";
-import { Avatar, Grid, List, ListItemAvatar, ListItemButton, ListItemSecondaryAction, ListItemText, Stack, Typography } from "@mui/material";
-import { LogType, log_types } from "@/types";
 import { GiftOutlined, MessageOutlined, SettingOutlined } from "@ant-design/icons";
+import { Avatar, Grid, List, ListItemAvatar, ListItemButton, ListItemText, Typography } from "@mui/material";
+//
+import MainCard from "@/components/layouts/MainCard";
+import { LogType, log_types } from "@/types";
+import { getAppLog } from "@/services/settings.service";
 const fakeData: Array<LogType> = [
     { id: 1,type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
     { id: 2,type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
@@ -68,6 +70,11 @@ export default function LogSection() {
     const [logs, setLogs] = useState(fakeData);
     useEffect(() => {
         // TODO set system logs
+        getAppLog()
+            .then((data) => {
+                console.log(data);
+            })
+            .catch(error => console.log(error))
     }, [])
     return (
         <Grid container alignItems='center' justifyContent='space-between'>

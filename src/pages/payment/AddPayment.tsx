@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, OutlinedInput, Select, Stack, Typography } from "@mui/material";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 //
+
 import { getStudents } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
+import { getClasses } from "@/services/class.service";
+//
+import { SnackBarContext } from "@/context/snackBar";
 import { StudentClassType, StudentType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
-import { getClasses } from "@/services/class.service";
 
 type StudentListType = {
     show: boolean
@@ -16,6 +19,8 @@ type StudentListType = {
 export default function AddPaymentPage() {
     const [students, setStudents] = useState<Array<StudentListType>>([]);
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
+    const {showAlert} = useContext(SnackBarContext);
+
     function filterStudent(selected_class: number | null) {
         const student_records = [...students];
         setStudents(student_records.map((item) => {
@@ -51,7 +56,7 @@ export default function AddPaymentPage() {
                 }
             })
             .catch(err => {
-
+                console.log(err)
             })
     }, []);
 
@@ -79,9 +84,11 @@ export default function AddPaymentPage() {
                             remarks: values.remarks
                         })
                             .then((data) => {
+                                showAlert("Payment Added", 'success');
                                 setErrors({});
                             })
                             .catch(err => {
+                                showAlert('Error Adding Payment', 'error');
                                 console.log(err);
                             })
                             .finally(() => {
@@ -94,9 +101,6 @@ export default function AddPaymentPage() {
                 {
                     ({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
-                            <pre>
-                                {JSON.stringify(errors)}
-                            </pre>
                             <Grid container spacing={3}>
                             <Grid item xs={12}>
                                     <Stack spacing={1}>

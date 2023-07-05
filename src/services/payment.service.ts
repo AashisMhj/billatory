@@ -15,6 +15,12 @@ export function getPayments(page:number, limit:number){
     });
 }
 
+export function getPaymentDetail(id:number){
+    return invoke('get_payment_detail_data', {
+        id
+    });
+}
+
 export function getPaymentRowCount(){
     return invoke('count_payment_rows');
 }

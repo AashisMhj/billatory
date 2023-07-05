@@ -35,7 +35,9 @@ export default function ListPaymentPage() {
         //
         getPaymentRowCount()
             .then(data => {
-                setTotalRows(total_rows);
+                if(typeof data === "number"){
+                    setTotalRows(data);
+                }
             })
             .catch(err => console.log(err))
     }
@@ -66,6 +68,9 @@ export default function ListPaymentPage() {
                             </IconButton>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography>Total Count: {total_rows}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <TableContainer sx={{
