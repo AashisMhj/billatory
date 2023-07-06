@@ -57,9 +57,7 @@ export default function ListCharges() {
                     setCharges(charges_data);
                 }
             })
-            .catch(err => {
-                console.log(err)
-            });
+            .catch(err => console.log(err));
 
         // 
         getChargeCount()
@@ -68,9 +66,7 @@ export default function ListCharges() {
                     setTotalRow(data);
                 }
             })
-            .catch(err => {
-                console.log(err);
-            })
+            .catch(err => console.log(err))
     }
 
     useEffect(() => {

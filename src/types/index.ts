@@ -26,7 +26,7 @@ export interface NavGroupType{
     children: Array<NavItemType>
 }
 
-export type log_types = "backup" | "charge generate" | "system";
+export type log_types = "ERROR" | "INFO" | "WARN";
 
 export interface LogType{
     id: number,

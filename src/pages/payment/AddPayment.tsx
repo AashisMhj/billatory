@@ -45,9 +45,7 @@ export default function AddPaymentPage() {
                     }
                 }
             })
-            .catch(err => {
-                console.log(err);
-            });
+            .catch(err => console.log(err));
         getClasses(1, 1000)
             .then(data => {
                 if (typeof data === "string") {
@@ -55,9 +53,7 @@ export default function AddPaymentPage() {
                     setClasses(class_data);
                 }
             })
-            .catch(err => {
-                console.log(err)
-            })
+            .catch(err => console.log(err))
     }, []);
 
     return (

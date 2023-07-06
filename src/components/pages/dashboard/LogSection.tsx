@@ -5,17 +5,7 @@ import { Avatar, Grid, List, ListItemAvatar, ListItemButton, ListItemText, Typog
 import MainCard from "@/components/layouts/MainCard";
 import { LogType, log_types } from "@/types";
 import { getAppLog } from "@/services/settings.service";
-const fakeData: Array<LogType> = [
-    { id: 1,type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 2,type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 3,type: "backup", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 4,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 5,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 6,type: "charge generate", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
-    { id: 7,type: "system", title: "Dummy Log", description: "lorem lorem lorem lorem", time: '2022-11-10' },
 
-
-];
 const avatarSX = {
     width: 36,
     height: 36,
@@ -32,32 +22,32 @@ const actionSX = {
 };
 
 function getListIcon(type: log_types) {
-    if (type === "charge generate") {
+    if (type === "INFO") {
         return <MessageOutlined />
     }
-    if (type === "backup") {
+    if (type === "ERROR") {
         return <GiftOutlined />
     }
-    if (type === "system") {
+    if (type === "WARN") {
         return <SettingOutlined />
     }
     return <></>
 }
 
 function getIconStyle(type: log_types) {
-    if (type === "charge generate") {
+    if (type === "INFO") {
         return {
             color: 'success.main',
             bgcolor: 'success.lighter'
         }
     }
-    if (type === "backup") {
+    if (type === "ERROR") {
         return {
             color: 'error.main',
             bgcolor: 'error.lighter'
         }
     }
-    if (type === "system") {
+    if (type === "WARN") {
         return {
             color: 'primary.main',
             bgcolor: 'primary.lighter'
@@ -66,13 +56,48 @@ function getIconStyle(type: log_types) {
     return {}
 }
 
+function convertToLogType(value: string): log_types {
+    if (value === "ERROR" || value === "INFO" || value === "WARN") {
+      return value as log_types;
+    } else {
+      return "ERROR";
+    }
+  }
+
 export default function LogSection() {
-    const [logs, setLogs] = useState(fakeData);
+    const [logs, setLogs] = useState<Array<LogType>>([]);
     useEffect(() => {
         // TODO set system logs
         getAppLog()
             .then((data) => {
-                console.log(data);
+                if (typeof data === "string") {
+                    const lines = data.split('\n');
+                    const logs: Array<LogType | null> = lines.map((item, index) => {
+                        const regex = /^\[(\d{4}-\d{2}-\d{2})\]\[(\d{2}:\d{2}:\d{2})\]\[(\w+)\]\[(\w+)\]\s(.*)$/;
+                        const matches = regex.exec(item);
+                        if (matches) {
+                            const date = matches[1];
+                            const time = matches[2];
+                            const error = matches[3];
+                            const module = matches[4];
+                            const message = matches[5];
+                            const log:LogType = {
+                                id: index,
+                                title: message,
+                                time: `${date} ${time}`,
+                                description: '',
+                                type: convertToLogType(error ) || "error",
+
+                            }
+                            return log;
+                        } else {
+                            return null
+                        }
+
+                    });
+                    const filtered_logs:Array<LogType> = logs.filter((item):item is LogType => item !== null);
+                    setLogs(filtered_logs);
+                }
             })
             .catch(error => console.log(error))
     }, [])

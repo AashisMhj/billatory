@@ -41,8 +41,6 @@ export function getChargeCount(){
 }
 
 export function addStudentCharge(studentId:number, chargeId:number){
-    console.log(studentId, 'st');
-    console.log(chargeId, 'ch');
     return invoke('add_student_charge_data', {
         studentId,
         chargeId

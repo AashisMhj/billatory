@@ -44,9 +44,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 onSubmit();
                                 handleClose();
                             })
-                            .catch((err) =>{
-                                console.log(err);
-                            })
+                            .catch((err) =>console.log(err))
                         } catch (error) {
                             setStatus(false);
                             if (error instanceof Error) {

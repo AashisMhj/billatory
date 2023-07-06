@@ -36,7 +36,7 @@ export default function ListClasses() {
                     setClasses(class_data);
                 }
             })
-            .catch(err => console.log);
+            .catch(console.log);
         //
         getClassRowCount()
             .then(data => {
