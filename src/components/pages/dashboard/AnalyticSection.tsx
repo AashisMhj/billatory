@@ -56,10 +56,10 @@ export default function AnalyticSection(){
             <AnalyticCard title="Total Classes" count={addComma(total_classes)} color='primary' />
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3}>
-            <AnalyticCard title="Monthly Payment" count={addComma(monthly_payment)} color='info' />
+            <AnalyticCard title="Months Payment" count={addComma(monthly_payment)} color='info' />
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={3}>
-            <AnalyticCard title="Months Payment" count={addComma(monthly_charge)} color='warning' />
+            <AnalyticCard title="Months Due" count={addComma(monthly_charge)} color='warning' />
         </Grid>
     </Grid>
 }

@@ -4,13 +4,33 @@ import { ChargesType } from "@/types";
 type CreateChargeType = Omit<ChargesType, "id">
 type UpdateChargeType = Omit<ChargesType, "is_regular" | "class_id" >
 
-export function addCharge(chargeTitle: string, amount: number, classes:Array<number>, isRegular: boolean){
-    return invoke('add_charge_data', {
+export function addChargeBulk(chargeTitle: string, amount: number, classes:Array<number>, isRegular: boolean){
+    return invoke('add_charge_bulk_data', {
         chargeTitle,
         amount,
         classes,
         isRegular
     });
+}
+
+export function addCharge(chargeTitle: string, amount: number, classId: number){
+    return invoke('add_charge_data', {
+        chargeTitle,
+        amount,
+        classId
+    })
+}
+
+export function getStudentOfCharge(chargeId:number){
+    return invoke('get_charges_students_data', {
+        chargeId
+    });
+}
+
+export function getChargeDetail(chargeId:number){
+    return invoke('get_charge_detail_data', {
+        chargeId
+    })
 }
 
 export function getCharges(page:number, limit:number){
@@ -19,11 +39,17 @@ export function getCharges(page:number, limit:number){
     })
 }
 
-export function getStudentCharges(student_id:number){
+/**
+ * Function to get the all charges and status of checked of a student
+ * @param charge_id 
+ * @returns 
+ */
+export function getStudentCharges(studentId:number){
     return invoke('get_student_charges_data', {
-        studentId: student_id
+        studentId
     });
 }
+
 
 export function updateCharge(data:UpdateChargeType){
     return invoke('update_charge_data', {
@@ -33,10 +59,24 @@ export function updateCharge(data:UpdateChargeType){
     })
 }
 
-export function applyCharge(charge_id:number){
+/**
+ * Function to apply charges directly
+ * @param charge_id 
+ * @returns 
+ */
+export function applyChargeAll(charge_id:number){
     return invoke('apply_charges_data', {
         chargeId: charge_id
     });
+}
+
+export function applyCharge(charge_id:number, student_ids: Array<number>, amount: number, chargeTitle: string){
+    return invoke('apply_charges_student_data', {
+        chargeId: charge_id,
+        studentIds: student_ids,
+        amount,
+        chargeTitle
+    })
 }
 
 export function getChargeCount(){

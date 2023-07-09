@@ -25,14 +25,7 @@ const dashboard: NavGroupType = {
             url: paths.dashboard,
             icon: (is_open: boolean) => <DashboardCustomizeOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
             breadcrumbs: false
-        },
-        {
-            id: 'settings',
-            title: 'Edit Settings',
-            type: 'item',
-            url: paths.editSettings,
-            icon: (is_open: boolean) => <SettingsOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
-        },
+        }
     ]
 };
 
@@ -59,11 +52,18 @@ const student: NavGroupType = {
     ]
 };
 
-const fees: NavGroupType = {
-    id: 'Fee',
-    title: 'Fees',
-    type: 'group',
+const transaction: NavGroupType = {
+    id: 'transaction',
+    title: 'Transactions', 
+    type: 'group', 
     children: [
+        {
+            id: 'f-fees',
+            title: 'Transactions',
+            type: 'item',
+            url: paths.listFees,
+            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+        },
         {
             id: 'f-charges',
             title: 'Charges',
@@ -71,13 +71,14 @@ const fees: NavGroupType = {
             url: paths.listCharges,
             icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
         },
-        {
-            id: 'f-fees',
-            title: 'Student Fees',
-            type: 'item',
-            url: paths.listFees,
-            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
-        },
+    ]
+}
+
+const fees: NavGroupType = {
+    id: 'Fee',
+    title: 'Fees',
+    type: 'group',
+    children: [
         {
             id: 'f-payments',
             title: 'Payment',
@@ -91,7 +92,7 @@ const fees: NavGroupType = {
 
 
 const menuItems: { items: Array<NavGroupType> } = {
-    items: [dashboard, student, fees]
+    items: [dashboard, student, transaction, fees]
 };
 
 export default menuItems;

@@ -30,6 +30,8 @@ export default function ListStudents() {
     const [total_rows, setTotalRow] = useState<number>(0);
     const [filtered_class, setFilterClass] = useState<number>();
     const [is_open_filter_modal, setOpenFilterModal] = useState(false);
+    const [show_active, setShowActive] = useState(true);
+
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
     }
@@ -201,7 +203,7 @@ export default function ListStudents() {
                     <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='secondary' />
                 </Grid>
             </Grid >
-            <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
+            <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class, show_active: show_active }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
         </>
     )
 }

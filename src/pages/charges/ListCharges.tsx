@@ -1,18 +1,19 @@
 import { useEffect, useState, useContext } from 'react';
 import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
 import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
+import {Link as RouterLink} from 'react-router-dom';
 //
 import { ChargesType, ChargesFilterType } from '@/types';
 import { getCharges, getChargeCount, applyCharge } from '@/services/charge.service';
 import { getNoOfPage, addComma } from '@/utils/helper-function';
-import { ChargeStatusType, AddChargeModal, EditChargeModal } from '@/components/pages/charges/listCharges';
+import { AddChargeModal, EditChargeModal } from '@/components/pages/charges/listCharges';
 import { SnackBarContext } from '@/context/snackBar';
+import paths from '@/routes/path';
 //
 const tableHeads = [
     'Id',
     'Charge',
     'class',
-    'Type',
     'Amount',
     'Actions',
     'Actions'
@@ -41,21 +42,6 @@ export default function ListCharges() {
         if (limit !== value.limit) {
             setLimit(value.limit);
         }
-    }
-
-    function chargeHandler(charge_id: number) {
-        applyCharge(charge_id)
-            .then((data) => {
-                if (data === 200) {
-                    showAlert('Charges Applied', 'success');
-                } else {
-                    showAlert(' ' + data, 'info');
-                }
-            })
-            .catch(error => {
-                showAlert('Error ' + error, 'error');
-                console.log(error)
-            })
     }
 
     function fetchData() {
@@ -152,15 +138,14 @@ export default function ListCharges() {
                                                 {charge.class}
                                             </TableCell>
                                             <TableCell>
-                                                <ChargeStatusType type={charge.is_regular} />
-                                            </TableCell>
-                                            <TableCell>
                                                 {addComma(charge.amount)}
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant='outlined' color='success' onClick={() => chargeHandler(charge.id)}>
-                                                    Apply Charge
-                                                </Button>
+                                                <RouterLink to={paths.applyCharges(charge.id)}>
+                                                    <Button variant='outlined' color='success'>
+                                                        Apply Charges
+                                                    </Button>
+                                                </RouterLink>
                                             </TableCell>
                                             <TableCell>
                                                 <IconButton color='primary' onClick={(event) => handleEditClick(event, charge)}>

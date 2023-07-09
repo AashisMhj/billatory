@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Formik, } from "formik";
 import * as Yup from 'yup';
-import { Box, Button, Checkbox, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, Modal, OutlinedInput, Radio, RadioGroup, Stack, SxProps, Typography } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
 import {CloseCircleOutlined} from '@ant-design/icons'
 //
 import { ChargesType, StudentClassType } from "@/types";
@@ -55,18 +55,18 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                     charge_title: '',
                     amount: 0,
                     is_regular: false,
-                    class: [] as number[],
+                    class: 0,
                     submit: null
                 }}
                     validationSchema={Yup.object().shape({
                         charge_title: Yup.string().trim().required('This field is Required'),
-                        amount: Yup.number().min(0).required(),
-                        is_regular: Yup.boolean().required()
+                        amount: Yup.number().min(1, 'Please Enter the Amount').required('Please Enter the Amount'),
+                        class: Yup.number().min(0, 'Please Select Class'),
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         setStatus({ success: false });
                         setSubmitting(true);
-                        addCharge(values.charge_title, values.amount, values.class, values.is_regular)
+                        addCharge(values.charge_title, values.amount, values.class)
                             .then(data => {
                                 setSubmitting(false);
                                 onSubmit();
@@ -111,45 +111,23 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Typography variant="h6" color='gray' >Classes</Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Grid container spacing={3}>
+                                <Stack spacing={1}>
+                                        <InputLabel htmlFor="class">Class</InputLabel>
+                                        <Select labelId='class' value={values.class} name="class" onChange={handleChange}>
+                                            {
+                                                classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
+                                            }
+                                        </Select>
                                         {
-                                            classes.map((class_item) => (
-                                                <Grid item xs={6}>
-                                                    <FormControlLabel label={class_item.class} control={
-                                                        <Checkbox value={class_item.id} checked={values.class.includes(class_item.id)} onChange={(event) => {
-                                                            if (values.class.includes(class_item.id)) {
-                                                                let current_values = values.class;
-                                                                const value_index = values.class.indexOf(parseInt(event.target.value));
-                                                                if (value_index > -1) {
-                                                                    current_values.splice(value_index, 1);
-                                                                }
-                                                                setFieldValue('class', current_values);
-                                                            } else {
-                                                                const current_values = values.class;
-                                                                setFieldValue('class', [...current_values, class_item.id])
-                                                            }
-                                                        }} />
-                                                    } />
-                                                </Grid>
-                                            ))
+                                            touched.amount && errors.amount && (
+                                                <FormHelperText error id="amount-error-helper">
+                                                    {errors.amount}
+                                                </FormHelperText>
+                                            )
                                         }
-                                    </Grid>
+                                    </Stack>
                                 </Grid>
-                               
-                                <Grid item xs={12}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={6}>
-                                            <FormLabel id="radio-buttons-charge-type">Charge Type</FormLabel>                                            
-                                            <RadioGroup row={true} onChange={(event) => setFieldValue("is_regular",event.target.value === "true")} defaultValue={true} name="is_regular" value={values.is_regular}>
-                                                <FormControlLabel value={true} control={<Radio />} label="Regular" />
-                                                <FormControlLabel value={false} control={<Radio />} label="Not Regular" />
-                                            </RadioGroup>
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
+                                
                                 {errors.submit && (
                                     <Grid item xs={12}>
                                         <FormHelperText error>{errors.submit}</FormHelperText>

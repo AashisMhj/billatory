@@ -3,6 +3,11 @@
 
 mod database;
 mod state;
+mod charges;
+mod fees;
+mod students;
+mod helpers;
+
 
 use log::{info, error,};
 use serde_json;
@@ -201,6 +206,20 @@ fn count_class_rows(app_handler: AppHandle) -> Result<i32, String> {
 }
 
 // student commands
+#[tauri::command]
+fn get_all_active_students_data(app_handle: AppHandle) -> Result<Vec<students::StudentMinType>, String> {
+    let result = app_handle.db(|db| students::get_all_active_students(db));
+    match result{
+        Ok(value) =>{
+            Ok(value)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
 #[tauri::command]
 fn get_student_data(app_handle: AppHandle, page: i32, limit: i32, class_id: Option<i32> ) -> Result<String, String> {
     let items = app_handle
@@ -416,8 +435,8 @@ fn get_student_previous_due_data(app_handle: AppHandle, student_id: i32)-> Resul
 }
 
 #[tauri::command]
-fn get_current_month_student_fee_data(app_handle: AppHandle, student_id: i32) -> Result<Vec<database::Fees>, String>{
-    let result = app_handle.db(|db| database::get_current_month_student_fee(db, student_id));
+fn get_current_month_student_fee_data(app_handle: AppHandle, student_id: i32) -> Result<Vec<fees::Fees>, String>{
+    let result = app_handle.db(|db| fees::get_current_month_student_fee(db, student_id));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -444,17 +463,53 @@ fn remove_student_charge_data(app_handle: AppHandle, id: i32) -> Result<i32,Stri
 
 // charges command
 #[tauri::command]
-fn add_charge_data(
+fn add_charge_bulk_data(
     app_handle: AppHandle,
     charge_title: String,
     amount: f32,
     classes: Vec<i32>,
     is_regular: bool,
-) -> String {
-    app_handle
-        .db_mut(|db| database::add_charge(db, charge_title, amount, classes, is_regular))
-        .unwrap();
-    format!("Ok")
+) -> Result<i32, String> {
+    let result = app_handle.db_mut(|db| database::add_charge_bulk(db, charge_title, amount, classes, is_regular));
+
+    match result{
+        Ok(_value)=>{
+            Ok(200)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn add_charge_data(app_handle: AppHandle, charge_title: String, amount: f32, class_id: i32) -> Result<i32, String>{
+    let result = app_handle.db(|db| database::add_charge(db, amount, charge_title, class_id));
+
+    match result{
+        Ok(_value) =>{
+            Ok(200)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn get_charge_detail_data(app_handle: AppHandle, charge_id: i32) -> Result<charges::Charge, String>{
+    let result = app_handle.db(|db| charges::get_charge_detail(db, charge_id));
+    match result{
+        Ok(value) =>{
+            Ok(value)
+        }
+        Err(error) =>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
 }
 
 #[tauri::command]
@@ -468,11 +523,24 @@ fn get_charge_data(app_handler: AppHandle, page: i32, limit: i32) -> Result<Stri
         }
         Err(error)=>{
             error!("{}", error);
-            return Err(error.to_string())
+            Err(error.to_string())
         }
     }
 }
 
+#[tauri::command]
+fn get_charges_students_data(app_handle: AppHandle, charge_id: i32) -> Result<Vec<charges::ChargeOfStudent>, String>{
+    let result = app_handle.db(|db| charges::get_student_of_charge(db, charge_id));
+    match result{
+        Ok(value)=>{
+            return Ok(value)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
 #[tauri::command]
 fn update_charge_data(app_handle: AppHandle, charge_id: i32, charge_title:String, amount: f32) -> Result<i32, String>{
     let result = app_handle.db(|db| database::update_charge(db, charge_id, amount, charge_title));
@@ -506,6 +574,23 @@ fn update_student_charges_data(app_handle: AppHandle, student_id: i32, charges_i
 
 // apply charges
 #[tauri::command]
+fn apply_charges_student_data(app_handle: AppHandle, charge_id: i32, amount: f32, charge_title: String, student_ids: Vec<i32>) -> Result<i32, String>{
+    let result = app_handle.db_mut(|db| charges::apply_charges_student(db, charge_id, amount, charge_title, student_ids));
+    // TODO set the length of vector in msg
+    match result{
+        Ok(_value) => {
+            let msg = format!("Charge {} ", charge_id);
+            info!("{}", msg);
+            Ok(200)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+// apply charges directly
+#[tauri::command]
 fn apply_charges_data(app_handle: AppHandle, charge_id: i32)-> Result<i32, String>{
     let result = app_handle.db_mut(|db| database::apply_charges(db, charge_id));
     match result{
@@ -536,12 +621,12 @@ fn count_charges_row(app_handle: AppHandle) -> Result<i32, String> {
 
 // fees commands
 #[tauri::command]
-fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32 ) -> Result<i32, String>{
-    let fees_data = database::Fees{
+fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32, charge_title: String ) -> Result<i32, String>{
+    let fees_data = fees::Fees{
         amount: amount,
         charge_id: Some(charge_id),
         student_id: student_id,
-        charge_title: None,
+        charge_title: Some(charge_title),
         created_at: " ".to_string(),
         description: None,
         student_first_name: None,
@@ -551,7 +636,7 @@ fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32
         updated_at: None,
         payment_id: None
     };
-    let result = app_handle.db(|db| database::add_fees(db,fees_data ));
+    let result = app_handle.db(|db| fees::add_fees(db,fees_data ));
 
     match result{
         Ok(_value)=>{
@@ -567,8 +652,41 @@ fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32
 }
 
 #[tauri::command]
-fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, student_id: Option<i32>)-> Result<Vec<database::Fees>, String>{
-    let result = app_handle.db(|db| database::get_fees(db, page, limit, remaining, student_id));
+fn update_fee_data(app_handle: AppHandle, amount: f32, id: i32, charge_title: String ) -> Result<i32, String>{
+    
+    let fees_data = fees::Fees{
+        amount: amount,
+        charge_id: None,
+        student_id: 0,
+        charge_title: Some(charge_title),
+        created_at: " ".to_string(),
+        description: None,
+        student_first_name: None,
+        student_last_name: None,
+        id: id,
+        title: None,
+        updated_at: None,
+        payment_id: None
+    };
+
+    let result = app_handle.db(|db| fees::update_fee(db, fees_data));
+    match result{
+        Ok(_value) => {
+            info!(" Fees Updated of id: {}", id);
+            Ok(200)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+
+} 
+
+
+#[tauri::command]
+fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, student_id: Option<i32>)-> Result<Vec<fees::Fees>, String>{
+    let result = app_handle.db(|db| fees::get_fees(db, page, limit, remaining, student_id));
     match result{
         Ok(value)=>{
             return Ok(value);
@@ -580,9 +698,10 @@ fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, st
     }
 }
 
+
 #[tauri::command]
 fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32>)->Result<i32, String>{
-    let result = app_handle.db(|db| database::count_fees_row(db, remaining, student_id));
+    let result = app_handle.db(|db| fees::count_fees_row(db, remaining, student_id));
     match result{
         Ok(value)=>{
             return Ok(value);
@@ -596,7 +715,7 @@ fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32
 
 #[tauri::command]
 fn get_monthly_fee_data(app_handle: AppHandle)-> Result<f32, String>{
-    let result = app_handle.db(|db| database::get_monthly_fee(db));
+    let result = app_handle.db(|db| fees::get_monthly_fee(db));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -610,7 +729,7 @@ fn get_monthly_fee_data(app_handle: AppHandle)-> Result<f32, String>{
 
 #[tauri::command]
 fn get_monthly_payment_data(app_handle: AppHandle) -> Result<f32, String>{
-    let result = app_handle.db(|db| database::get_monthly_payment(db));
+    let result = app_handle.db(|db| fees::get_monthly_payment(db));
     match result{
         Ok(value) => {
             Ok(value)
@@ -719,6 +838,7 @@ fn main() {
             update_student_data,
             get_student_previous_due_data,
             get_current_month_student_fee_data,
+            get_all_active_students_data,
             count_student_row,
             // student charges
             get_student_charges_data,
@@ -726,14 +846,19 @@ fn main() {
             remove_student_charge_data,
             // charges commands
             add_charge_data,
+            add_charge_bulk_data,
             get_charge_data,
             count_charges_row,
             apply_charges_data,
+            apply_charges_student_data,
             update_charge_data,
             update_student_charges_data,
+            get_charges_students_data,
+            get_charge_detail_data,
             // fees
             add_fee_data,
             get_fee_data,
+            update_fee_data,
             count_fees_row,
             get_monthly_fee_data,
             get_monthly_payment_data,

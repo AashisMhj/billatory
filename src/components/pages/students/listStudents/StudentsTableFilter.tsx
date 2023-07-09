@@ -63,7 +63,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                             setStatus({ success: false });
                             // TODO update 
                             setSubmitting(false);
-                            onSubmit({ limit: values.limit, class: values.class });
+                            onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active });
                             handleClose();
                         } catch (error) {
                             setStatus(false);

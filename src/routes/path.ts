@@ -2,6 +2,7 @@ const paths = {
     dashboard: `/dashboard/`,
     // settings
     editSettings: `/dashboard/settings/edit`,
+    viewLogs: `/dashboard/logs`,
     // students
     studentsList: `/dashboard/students`,
     editStudent: (id: number) => `/dashboard/students/${id}/edit`,
@@ -14,6 +15,7 @@ const paths = {
     listClasses: `/dashboard/class`,
     // charges
     listCharges: `/dashboard/charges`,
+    applyCharges: (id:number) => `/dashboard/charges/${id}/apply`,
     // fees
     listFees: `/dashboard/fees`,
     // payment

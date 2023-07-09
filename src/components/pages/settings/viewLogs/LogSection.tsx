@@ -96,7 +96,7 @@ export default function LogSection() {
                         }
 
                     });
-                    const filtered_logs:Array<LogType> = logs.filter((item):item is LogType => item !== null).reverse().slice(0, 15);
+                    const filtered_logs:Array<LogType> = logs.filter((item):item is LogType => item !== null).reverse().slice(0, 25);
                     setLogs(filtered_logs);
                 }
             })
@@ -119,7 +119,7 @@ export default function LogSection() {
                         }
                     }}>
                         {
-                            logs.map((item) => (
+                            logs.map((item, index) => (
                                 <ListItemButton key={item.id} divider>
                                     <ListItemAvatar>
                                         <Avatar
@@ -129,7 +129,7 @@ export default function LogSection() {
                                         </Avatar>
                                     </ListItemAvatar>
                                     <ListItemText primary={<>
-                                        <Typography variant="subtitle1">{item.title}</Typography> {item.time}
+                                        <Typography variant="subtitle1">{index+1}: {item.title}</Typography> {item.time}
                                     </>} secondary={item.description} />
                                 </ListItemButton>
                             ))

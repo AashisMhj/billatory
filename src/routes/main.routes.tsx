@@ -16,10 +16,12 @@ import ListStudentCharges from '@/pages/students/ListStudentCharges';
 import ListClasses from '@/pages/class/ListClasses';
 // charges
 import ListCharges from '@/pages/charges/ListCharges';
+import ApplyChargesPage from '@/pages/charges/ApplyCharges';
 // 
 import ListPaymentPage from '@/pages/payment/ListPayment';
 // settings page
 import EditSettingPage from '@/pages/settings/EditSettings';
+import ViewLogsPage from '@/pages/settings/ViewLogs';
 // payment
 import AddPaymentPage from '@/pages/payment/AddPayment';
 import PrintPaymentPage from '@/pages/payment/PrintPayment';
@@ -90,6 +92,10 @@ const MainRoutes = {
       element: <ListCharges />
     },
     {
+      path: 'charges/:id/apply', 
+      element: <ApplyChargesPage />
+    },
+    {
       path: 'payment',
       element: <ListPaymentPage />
     },
@@ -104,6 +110,10 @@ const MainRoutes = {
     {
       path: 'settings/edit',
       element: <EditSettingPage />
+    },
+    {
+      path: 'logs',
+      element: <ViewLogsPage />
     }
   ]
 };

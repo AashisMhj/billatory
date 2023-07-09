@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
-import { Link as RouterLink, useParams } from 'react-router-dom';
-import { EditOutlined, PlusOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
+import { EditOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
 //
 import { FeesType } from '@/types';
 import { getNoOfPage, addComma } from '@/utils/helper-function';
 import { getFeeRowCount, getFees } from '@/services/fees.service';
-
+import { AddFeeModal } from '@/components/pages/fees/listFees';
 
 const tableHeads = [
     'Student',
@@ -22,6 +21,7 @@ export default function ListFees() {
     const [limit, setLimit] = useState(10);
     const [total_rows, setTotalRows] = useState(0);
     const [open_filter_modal, setOpenFilterModal] = useState(false);
+    const [open_add_modal, setOpenAddModal] = useState(false)
 
 
     function handlePaginationChange(event: any, new_page: number) {
@@ -47,7 +47,7 @@ export default function ListFees() {
 
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [page])
 
     return (
         <>
@@ -58,6 +58,9 @@ export default function ListFees() {
                             <Typography variant='h4'>Fee Charges</Typography>
                         </Grid>
                         <Grid item>
+                            <IconButton color='warning' onClick={() => setOpenAddModal(true)}>
+                                <PlusCircleFilled />
+                            </IconButton>
                             <IconButton color='info' >
                                 <FilterOutlined />
                             </IconButton>
@@ -124,6 +127,7 @@ export default function ListFees() {
                     </Box>
                 </Grid>
             </Grid>
+            <AddFeeModal open={open_add_modal} onSubmit={() => fetchData()} handleClose={() => setOpenAddModal(false)} />
         </>
     )
 }

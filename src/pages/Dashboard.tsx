@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 //
-import { AnalyticSection, LogSection, BackupSection } from '@/components/pages/dashboard';
+import { AnalyticSection, OrganizationInfo, BackupSection } from '@/components/pages/dashboard';
 
 export default function DashboardDefault() {
 
@@ -17,7 +17,7 @@ export default function DashboardDefault() {
         <AnalyticSection />
       </Grid>
       <Grid item xs={12}>
-        <LogSection />
+        <OrganizationInfo />
       </Grid>
     </Grid>
   );

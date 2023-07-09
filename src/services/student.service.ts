@@ -12,6 +12,10 @@ export function getStudents(page:number, limit:number, class_id?: number){
     })
 }
 
+export function getAllActiveStudents(){
+    return invoke('get_all_active_students_data');
+}
+
 export function addStudent(data:CreateStudentType){
     return invoke('add_student_data', {
         firstName: data.first_name,

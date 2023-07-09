@@ -76,6 +76,13 @@ export interface StudentChargeType{
     is_regular: boolean
 }
 
+export interface StudentMiniType{
+    id: number,
+    first_name: string,
+    last_name: string,
+    class_id: number,
+}
+
 export interface StudentType{
     id: number,
     first_name: string,
@@ -136,6 +143,7 @@ export interface ClassFilterType{
 
 export interface StudentsTableFilterType{
     limit: number,
+    show_active: boolean,
     class?: number
 }
 

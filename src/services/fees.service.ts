@@ -1,12 +1,22 @@
 import {invoke} from "@tauri-apps/api";
-import { FeesType } from "@/types";
 
-type CreateFeeType = Omit<FeesType, "id">
 
-export function addFee(data:CreateFeeType){
-    return invoke('add_fee_data', {
-        
+export function addFee(amount: number, chargeId: number, studentId: number, chargeTitle: string){
+    return invoke('add_fee_data', { 
+        chargeId,
+        amount,
+        studentId,
+        chargeTitle
     });
+
+}
+
+export function updateFee(amount: number, chargeTitle: string, id: number){
+    return invoke('update_fee_daa', {
+        amount,
+        chargeTitle, 
+        id
+    })
 }
 
 export function getFees(page:number, limit:number, student_id?:number, remaining=false,){
