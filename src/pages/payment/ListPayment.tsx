@@ -8,11 +8,10 @@ import { PaymentType } from '@/types';
 import { getNoOfPage } from '@/utils/helper-function';
 import { getPaymentRowCount, getPayments } from '@/services/payment.service';
 const tableHeads = [
-    'Actions',
-    'Title',
-    'class',
+    'Name',
     'Amount',
-    'Payment Date'
+    'Payment Date',
+    'Actions',
 ];
 
 export default function ListPaymentPage() {
@@ -24,7 +23,6 @@ export default function ListPaymentPage() {
     function fetchData() {
         getPayments(page, limit)
             .then(data => {
-                console.log(data);
                 if (typeof data === "string") {
                     const payment_data = JSON.parse(data);
                     setPayments(payment_data);
@@ -104,24 +102,21 @@ export default function ListPaymentPage() {
                                 {
                                     payments.map((payment: PaymentType) => (
                                         <TableRow key={payment.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                            <TableCell>
-                                                <RouterLink to={paths.printPayment(payment.id)}>
-                                                    <IconButton color='primary'>
-                                                        <PrinterOutlined />
-                                                    </IconButton>
-                                                </RouterLink>
-                                            </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {`${payment.student_first_name} ${payment.student_last_name}`}
-                                            </TableCell>
-                                            <TableCell component="th" scope='row' align='left'>
-                                                {payment.class}
                                             </TableCell>
                                             <TableCell>
                                                 {payment.amount}
                                             </TableCell>
                                             <TableCell>
                                                 {payment.created_at}
+                                            </TableCell>
+                                            <TableCell>
+                                                <RouterLink to={paths.printPayment(payment.id)}>
+                                                    <IconButton color='primary'>
+                                                        <PrinterOutlined />
+                                                    </IconButton>
+                                                </RouterLink>
                                             </TableCell>
                                         </TableRow>
                                     ))

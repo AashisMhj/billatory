@@ -9,9 +9,9 @@ import {getNoOfPage} from '@/utils/helper-function';
 
 const tableHeads = [
     'Class',
-    'Actions',
     'Created At',
-    'Updated At'
+    'Updated At',
+    'Actions',
 ];
 
 export default function ListClasses() {
@@ -114,11 +114,6 @@ export default function ListClasses() {
                                 {
                                     classes.map((cl, index) => (
                                         <TableRow key={cl.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                            <TableCell>
-                                                <IconButton color='primary' onClick={(event) => handleEditClick(event, cl)}>
-                                                    <EditFilled />
-                                                </IconButton>
-                                            </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {cl.class}
                                             </TableCell>
@@ -127,6 +122,11 @@ export default function ListClasses() {
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {cl.updated_at}
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton color='primary' onClick={(event) => handleEditClick(event, cl)}>
+                                                    <EditFilled />
+                                                </IconButton>
                                             </TableCell>
                                         </TableRow>
                                     ))

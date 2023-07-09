@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
 import { Formik } from "formik";
+import CloseCircleOutlined from '@ant-design/icons/CloseCircleOutlined'
 import * as Yup from 'yup';
-import { Box, Button, FormHelperText, Grid, InputLabel, Modal, OutlinedInput, Stack, SxProps, Typography } from "@mui/material";
-import { StudentClassType } from "@/types";
+import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, Modal, OutlinedInput, Stack, SxProps, Typography } from "@mui/material";
+//
 import AnimateButton from "@/components/@extended/AnimateButton";
-import {addClass} from '@/services/class.service'
+import { addClass } from '@/services/class.service'
 
 
 interface Props {
@@ -29,7 +29,12 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
             onClose={handleClose}
         >
             <Box sx={style}>
-                <Typography variant="h6" >Add Class</Typography>
+                <Box display='flex' justifyContent='space-between'>
+                    <Typography variant="h5" >Add Class</Typography>
+                    <IconButton onClick={() => handleClose()}>
+                        <CloseCircleOutlined />
+                    </IconButton>
+                </Box>
                 <Formik initialValues={{ class: '', submit: null }}
                     validationSchema={Yup.object().shape({
                         class: Yup.string().trim().required('Class Title is Required')
@@ -39,12 +44,12 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                             setStatus({ success: false });
                             addClass({
                                 class: values.class,
-                            }).then((data)=>{
+                            }).then((data) => {
                                 setSubmitting(false);
                                 onSubmit();
                                 handleClose();
                             })
-                            .catch((err) =>console.log(err))
+                                .catch((err) => console.log(err))
                         } catch (error) {
                             setStatus(false);
                             if (error instanceof Error) {

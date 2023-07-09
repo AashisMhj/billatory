@@ -1,5 +1,5 @@
 import './payment-slip.css';
-import { forwardRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 
 interface Props{
     organization_name: string
@@ -8,32 +8,34 @@ interface Props{
     phone_no: string 
     payment_id: number 
     amount: number 
-    student_id: number
+    amount_words: string,
+    current_date: string,
+    payee: string
 }
 
-export default forwardRef(function PaymentSlip({organization_name, location, pan_no, phone_no, payment_id, amount, student_id}:Props, ref){
+export default forwardRef(function PaymentSlip({organization_name, location, pan_no, phone_no, payment_id, amount, current_date, amount_words, payee}:Props, ref:ForwardedRef<HTMLDivElement>){
     return (
-        <div className='payment-container'>
+        <div ref={ref} className='payment-container'>
             <div className='payment-title'>
-                Holy Angel Sec. English School
+                {organization_name}
             </div>
             <div className='payment-school-info'>
-                <div>PAN No: 12345678</div>
-                <div>Airport, Pokhara</div>
-                <div>Phone No: 051-12345, 9876888</div>
+                <div>PAN No: {pan_no}</div>
+                <div>{location}</div>
+                <div>Phone No: {phone_no}</div>
             </div>
             <div className='payment-info'>
-                <div>Receipt No: 12</div>
+                <div>Receipt No: {payment_id}</div>
                 <div>CASH RECEIPT</div>
                 <div>
-                    Date: 2020-12-12
+                    Date: {current_date}
                 </div>
             </div>
             <div className='payment-content'>
-                Recived with thanks from Susant Krilly as per the bill no 123 by Cash No the sum of rupees Twelve thousand On the account of
+                Received with thanks from  {payee}  as per the bill no 123 by Cash No the sum of rupees {amount_words} On the account of
             </div>
             <div className='payment-footer'>
-                <div>Rs <span>12000</span></div>
+                <div>Rs <span>{amount}</span></div>
                 <div>
                     Signature
                 </div>

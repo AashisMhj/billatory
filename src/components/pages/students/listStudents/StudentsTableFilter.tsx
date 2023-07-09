@@ -1,7 +1,9 @@
-import {useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
-import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
+import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
+import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
+//
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { StudentsTableFilterType, StudentClassType } from "@/types";
 import { getClasses } from "@/services/class.service";
@@ -9,7 +11,7 @@ import { getClasses } from "@/services/class.service";
 interface Props {
     open: boolean,
     handleClose: () => void,
-    onSubmit: (value:StudentsTableFilterType) => void,
+    onSubmit: (value: StudentsTableFilterType) => void,
     value: StudentsTableFilterType
 }
 const style: SxProps = {
@@ -29,7 +31,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
 
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
 
-    useEffect(()=>{
+    useEffect(() => {
         getClasses(1, 10000)
             .then((data) => {
                 if (typeof data === "string") {
@@ -45,7 +47,12 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
             onClose={handleClose}
         >
             <Box sx={style}>
-                <Typography variant="h6" >Filter Data</Typography>
+                <Box display='flex' justifyContent='space-between'>
+                    <Typography variant="h5" >Filter Data</Typography>
+                    <IconButton onClick={() => handleClose()}>
+                        <CloseCircleOutlined />
+                    </IconButton>
+                </Box>
                 <Formik initialValues={{ ...value, submit: null }}
                     validationSchema={Yup.object().shape({
                         limit: Yup.string().trim().required('Limit is Required'),
@@ -56,7 +63,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                             setStatus({ success: false });
                             // TODO update 
                             setSubmitting(false);
-                            onSubmit({limit: values.limit, class: values.class});
+                            onSubmit({ limit: values.limit, class: values.class });
                             handleClose();
                         } catch (error) {
                             setStatus(false);

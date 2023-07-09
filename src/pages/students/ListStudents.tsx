@@ -8,17 +8,18 @@ import { StudentStatus } from '@/components/pages/students/listStudents';
 import { StudentType, StudentsTableFilterType } from '@/types';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import paths from '@/routes/path';
-import { getStudents,  getStudentRowCount, updateStudentStatus } from '@/services/student.service';
+import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage } from '@/utils/helper-function';
 import { StudentsTableFilter } from '@/components/pages/students/listStudents';
 
 const tableHeads = [
-    'Actions',
+    'Id',
     'Name',
     'Class',
     'Roll No',
     'DOB',
     'status',
+    'Actions',
 ];
 
 
@@ -26,7 +27,7 @@ export default function ListStudents() {
     const [student_data, setStudentData] = useState<Array<StudentType>>([]);
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
-    const [total_rows, setTotalRow] = useState<number>(10);
+    const [total_rows, setTotalRow] = useState<number>(0);
     const [filtered_class, setFilterClass] = useState<number>();
     const [is_open_filter_modal, setOpenFilterModal] = useState(false);
     function handlePaginationChange(_: any, new_page: number) {
@@ -42,8 +43,7 @@ export default function ListStudents() {
         }
     }
 
-    function handleSwitchChange(event:React.ChangeEvent<HTMLInputElement>, checked:boolean, student_id:number){
-        console.log(checked, 'ch');
+    function handleSwitchChange(event: React.ChangeEvent<HTMLInputElement>, checked: boolean, student_id: number) {
         updateStudentStatus(student_id, checked)
             .then(data => {
                 fetchData();
@@ -66,9 +66,8 @@ export default function ListStudents() {
         // 
         getStudentRowCount()
             .then(data => {
-                if (typeof data === "string") {
-                    const count = parseInt(JSON.parse(data)) || 0;
-                    setTotalRow(count);
+                if (typeof data === "number") {
+                    setTotalRow(data);
                 }
             })
             .catch(err => {
@@ -86,7 +85,7 @@ export default function ListStudents() {
                 <Grid item xs={12}>
                     <Grid container alignItems="center">
                         <Grid item>
-                            <Typography variant='h2'>Students</Typography>
+                            <Typography variant='h4'>Students</Typography>
                         </Grid>
                         <Grid item>
                             <RouterLink to={paths.createStudent}>
@@ -135,34 +134,8 @@ export default function ListStudents() {
                                 {
                                     student_data.map((student: StudentType) => (
                                         <TableRow key={student.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                            <TableCell>
-                                                <RouterLink to={paths.editStudent(student.id)}>
-                                                    <IconButton color='primary'>
-                                                        <EditFilled />
-                                                    </IconButton>
-                                                </RouterLink>
-                                                <RouterLink to={paths.detailStudent(student.id)}>
-                                                    <IconButton color='info'>
-                                                        <InfoCircleOutlined />
-                                                    </IconButton>
-                                                </RouterLink>
-                                                <RouterLink to={paths.studentFees(student.id)}>
-                                                    <IconButton color="success">
-                                                        <CreditCardOutlinedIcon />
-                                                    </IconButton>
-                                                </RouterLink>
-                                                <RouterLink to={paths.studentBill(student.id)}>
-                                                    <IconButton color="success">
-                                                        <ReceiptIcon />
-                                                    </IconButton>
-                                                </RouterLink>
-                                                <RouterLink to={paths.studentCharges(student.id)}>
-                                                    <Tooltip title="Student Charges">
-                                                        <IconButton color="primary">
-                                                            <CheckCircleOutlined />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
+                                            <TableCell component="th" scope='row' align='left'>
+                                                {student.id}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {`${student.first_name} ${student.last_name}`}
@@ -177,8 +150,45 @@ export default function ListStudents() {
                                                 {student.date_of_birth}
                                             </TableCell>
                                             <TableCell>
-                                                <Switch checked={student.is_active} onChange={(event, checked) => handleSwitchChange(event,checked, student.id)} />
+                                                <Switch checked={student.is_active} onChange={(event, checked) => handleSwitchChange(event, checked, student.id)} />
                                                 {/* <StudentStatus status={student.is_active} /> */}
+                                            </TableCell>
+                                            <TableCell>
+                                                <RouterLink to={paths.editStudent(student.id)}>
+                                                    <Tooltip title="Edit Info">
+                                                        <IconButton color='primary'>
+                                                            <EditFilled />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
+                                                <RouterLink to={paths.detailStudent(student.id)}>
+                                                    <Tooltip title="Student Detail">
+                                                        <IconButton color='info'>
+                                                            <InfoCircleOutlined />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
+                                                <RouterLink to={paths.studentFees(student.id)}>
+                                                    <Tooltip title="Students Fees">
+                                                        <IconButton color="success">
+                                                            <CreditCardOutlinedIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
+                                                <RouterLink to={paths.studentBill(student.id)}>
+                                                    <Tooltip title="Student Bill">
+                                                        <IconButton color="success">
+                                                            <ReceiptIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
+                                                <RouterLink to={paths.studentCharges(student.id)}>
+                                                    <Tooltip title="Student Charges">
+                                                        <IconButton color="primary">
+                                                            <CheckCircleOutlined />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -191,7 +201,7 @@ export default function ListStudents() {
                     <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='secondary' />
                 </Grid>
             </Grid >
-            <StudentsTableFilter  open={is_open_filter_modal} value={{limit, class: filtered_class}} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
+            <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
         </>
     )
 }

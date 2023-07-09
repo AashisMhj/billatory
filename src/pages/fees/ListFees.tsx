@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { EditOutlined, PlusOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
 //
 import { FeesType } from '@/types';
@@ -16,34 +16,36 @@ const tableHeads = [
 ]
 
 
-export default function ListStudentFees() {
+export default function ListFees() {
     const [fees, setFees] = useState<Array<FeesType>>([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [total_rows, setTotalRows]  = useState(0);
+    const [total_rows, setTotalRows] = useState(0);
     const [open_filter_modal, setOpenFilterModal] = useState(false);
+
 
     function handlePaginationChange(event: any, new_page: number) {
         setPage(new_page);
     }
     function fetchData() {
         getFees(page, limit)
-            .then((data) =>{
+            .then((data) => {
                 setFees(data as Array<FeesType>);
             })
             .catch(error => console.log(error));
 
         //
         getFeeRowCount()
-            .then((data)=>{
-                if(typeof data === "number"){
+            .then((data) => {
+                if (typeof data === "number") {
                     setTotalRows(data);
                 }
             })
             .catch(error => console.log(error))
+
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchData()
     }, [])
 

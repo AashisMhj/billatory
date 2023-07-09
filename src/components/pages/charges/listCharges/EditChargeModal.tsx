@@ -3,15 +3,15 @@ import * as Yup from 'yup';
 import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
 import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, Modal, OutlinedInput, Stack, SxProps, Typography } from "@mui/material";
 //
-import { StudentClassType } from "@/types";
+import { ChargesType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
-import { updateClass } from "@/services/class.service";
+import { updateCharge } from "@/services/charge.service";
 
 interface Props {
     open: boolean,
     handleClose: () => void,
     onSubmit: () => void,
-    data: StudentClassType | null
+    data: ChargesType | null
 }
 const style: SxProps = {
     position: 'absolute' as 'absolute',
@@ -23,7 +23,7 @@ const style: SxProps = {
     border: '2px solid #000',
     p: 4
 }
-export default function EditModal({ open, handleClose, onSubmit, data }: Props) {
+export default function EditChargeModal({ open, handleClose, onSubmit, data }: Props) {
     return (
         <Modal
             open={open && data !== null}
@@ -31,7 +31,7 @@ export default function EditModal({ open, handleClose, onSubmit, data }: Props) 
         >
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
-                    <Typography variant="h5" >Edit Class</Typography>
+                    <Typography variant="h5" >Edit Charge</Typography>
                     <IconButton onClick={() => handleClose()}>
                         <CloseCircleOutlined />
                     </IconButton>
@@ -41,11 +41,13 @@ export default function EditModal({ open, handleClose, onSubmit, data }: Props) 
                         class: Yup.string().trim().required('Class Title is Required')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
+                        console.log('submitting');
+                        console.log(values);
                         setStatus({ success: false });
-                        if (data && data.id && values.class) {
-                            updateClass({ class: values.class, id: data.id })
+                        if (values && values.id && values.amount && values.charge_title) {
+                            updateCharge({ amount: values.amount, id: values.id, charge_title: values.charge_title })
                                 .then((data) => {
+                                    console.log(data);
                                     if (data === 200) {
                                         setSubmitting(false);
                                         handleClose();
@@ -53,6 +55,7 @@ export default function EditModal({ open, handleClose, onSubmit, data }: Props) 
                                     }
                                 })
                                 .catch(err => {
+                                    console.log(err);
                                     setStatus(false);
                                     if (err instanceof Error) {
                                         setErrors({ submit: err.message });
@@ -61,17 +64,30 @@ export default function EditModal({ open, handleClose, onSubmit, data }: Props) 
                         }
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, isSubmitting, touched, values }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="class-name">Class</InputLabel>
-                                        <OutlinedInput id="class-name" type="text" value={values.class} onBlur={handleBlur} onChange={handleChange} name='class' fullWidth error={Boolean(touched.class)} />
+                                        <InputLabel htmlFor="charge-title">Title</InputLabel>
+                                        <OutlinedInput id="charge-title" type="text" value={values.charge_title} onBlur={handleBlur} onChange={handleChange} name='charge_title' fullWidth error={Boolean(errors.charge_title)} />
                                         {
-                                            touched.class && errors.class && (
-                                                <FormHelperText error id="class-error-helper">
-                                                    {errors.class}
+                                            touched.charge_title && errors.charge_title && (
+                                                <FormHelperText error id="charge_title-error-helper">
+                                                    {errors.charge_title}
+                                                </FormHelperText>
+                                            )
+                                        }
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack spacing={1}>
+                                        <InputLabel htmlFor="amount">Amount</InputLabel>
+                                        <OutlinedInput id="amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount)} />
+                                        {
+                                            touched.amount && errors.amount && (
+                                                <FormHelperText error id="amount-error-helper">
+                                                    {errors.amount}
                                                 </FormHelperText>
                                             )
                                         }

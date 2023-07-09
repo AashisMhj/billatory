@@ -34,18 +34,18 @@ export default function AddStudentPage() {
             <Grid item>
                 <Formik
                     initialValues={{
-                        first_name: 'kai',
-                        last_name: 'Doe',
+                        first_name: '',
+                        last_name: '',
                         mid_name: '',
                         class_id: 0,
                         gender: 'male',
-                        address: 'Somewhere',
-                        father_name: 'father',
-                        mother_name: 'mother',
-                        date_of_birth: '2022-10-10',
-                        phone_no: '9800',
+                        address: '',
+                        father_name: '',
+                        mother_name: '',
+                        date_of_birth: '',
+                        phone_no: '',
                         email: '',
-                        guardian_name: 'guardian',
+                        guardian_name: '',
                         guardian_relation: '',
                         emergency_contact: '',
                         roll_no: 0,
@@ -55,7 +55,7 @@ export default function AddStudentPage() {
                         first_name: Yup.string().trim().required('First Name is Required'),
                         last_name: Yup.string().trim().required('Last Name is Required'),
                         mid_name: Yup.string().trim(),
-                        class_id: Yup.number().required(),
+                        class_id: Yup.number().required('Class is Required').min(1, 'Class is Required'),
                         gender: Yup.string().required('Gender is Required').oneOf(['male', 'female']),
                         address: Yup.string().trim().required('First Name is Required'),
                         father_name: Yup.string().trim().required('Father Name is Required'),
@@ -66,7 +66,7 @@ export default function AddStudentPage() {
                         guardian_name: Yup.string().trim(),
                         guardian_relation: Yup.string().trim(),
                         emergency_contact: Yup.string().trim(),
-                        roll_no: Yup.number().required()
+                        roll_no: Yup.number().required('Roll No is required').min(1, 'Roll no is required')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         setStatus({ success: false });
@@ -113,7 +113,7 @@ export default function AddStudentPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="first-name">First Name</InputLabel>
+                                                <InputLabel htmlFor="first-name" required={true}>First Name</InputLabel>
                                                 <OutlinedInput id="first-name" type="text" value={values.first_name} onBlur={handleBlur} onChange={handleChange} name='first_name' fullWidth error={Boolean(touched.first_name && errors.first_name)} />
                                                 {
                                                     touched.first_name && errors.first_name && (
@@ -139,7 +139,7 @@ export default function AddStudentPage() {
                                         </Grid>
                                         <Grid item xs={4}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="last-name">Last Name</InputLabel>
+                                                <InputLabel htmlFor="last-name" required={true}>Last Name</InputLabel>
                                                 <OutlinedInput id="last-name" type="text" value={values.last_name} onBlur={handleBlur} onChange={handleChange} name='last_name' fullWidth error={Boolean(touched.last_name && errors.last_name)} />
                                                 {
                                                     touched.last_name && errors.last_name && (
@@ -156,8 +156,8 @@ export default function AddStudentPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="class">Class</InputLabel>
-                                                <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange}>
+                                                <InputLabel htmlFor="class" required={true}>Class</InputLabel>
+                                                <Select labelId="class" id='class' value={values.class_id} name="class_id" onChange={handleChange} error={Boolean(touched.class_id && errors.class_id)} >
                                                     {
                                                         classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
                                                     }
@@ -166,7 +166,7 @@ export default function AddStudentPage() {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="roll-no">Roll No</InputLabel>
+                                                <InputLabel htmlFor="roll-no" required={true}>Roll No</InputLabel>
                                                 <OutlinedInput id="roll-no" type="number" value={values.roll_no} onBlur={handleBlur} onChange={handleChange} name='roll_no' fullWidth error={Boolean(touched.roll_no && errors.roll_no)} />
                                                 {
                                                     touched.roll_no && errors.roll_no && (
@@ -181,7 +181,7 @@ export default function AddStudentPage() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <FormControl>
-                                        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                        <FormLabel id="demo-radio-buttons-group-label" required={true}>Gender</FormLabel>
                                         <RadioGroup
                                             row={true}
                                             aria-labelledby="demo-radio-buttons-group-label"
@@ -201,7 +201,7 @@ export default function AddStudentPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="father-name">Father Name</InputLabel>
+                                                <InputLabel htmlFor="father-name" required={true}>Father Name</InputLabel>
                                                 <OutlinedInput id="father-name" type="text" value={values.father_name} onBlur={handleBlur} onChange={handleChange} name='father_name' fullWidth error={Boolean(touched.father_name && errors.father_name)} />
                                                 {
                                                     touched.father_name && errors.father_name && (
@@ -214,7 +214,7 @@ export default function AddStudentPage() {
                                         </Grid>
                                         <Grid item xs={6}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="mother-name">Mother Name</InputLabel>
+                                                <InputLabel htmlFor="mother-name" required={true}>Mother Name</InputLabel>
                                                 <OutlinedInput id="mother-name" type="text" value={values.mother_name} onBlur={handleBlur} onChange={handleChange} name='mother_name' fullWidth error={Boolean(touched.mother_name && errors.mother_name)} />
                                                 {
                                                     touched.mother_name && errors.mother_name && (
@@ -231,7 +231,7 @@ export default function AddStudentPage() {
                                     <Grid container spacing={3}>
                                         <Grid item xs={3}>
                                             <Stack spacing={1}>
-                                                <InputLabel htmlFor="address">Address</InputLabel>
+                                                <InputLabel htmlFor="address" required={true}>Address</InputLabel>
                                                 <OutlinedInput id="address" type="text" value={values.address} onBlur={handleBlur} onChange={handleChange} name='address' fullWidth error={Boolean(touched.address && errors.address)} />
                                                 {
                                                     touched.address && errors.address && (

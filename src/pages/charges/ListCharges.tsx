@@ -1,18 +1,21 @@
+import { useEffect, useState, useContext } from 'react';
 import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
 //
 import { ChargesType, ChargesFilterType } from '@/types';
 import { getCharges, getChargeCount, applyCharge } from '@/services/charge.service';
-import { getNoOfPage } from '@/utils/helper-function';
-import { ChargeStatusType, AddChargeModal } from '@/components/pages/charges/listCharges';
+import { getNoOfPage, addComma } from '@/utils/helper-function';
+import { ChargeStatusType, AddChargeModal, EditChargeModal } from '@/components/pages/charges/listCharges';
+import { SnackBarContext } from '@/context/snackBar';
+//
 const tableHeads = [
-    'Actions',
+    'Id',
     'Charge',
     'class',
     'Type',
     'Amount',
-    'action'
+    'Actions',
+    'Actions'
 ];
 
 
@@ -22,7 +25,10 @@ export default function ListCharges() {
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRow] = useState<number>(0);
     const [filter_class, setFilterClass] = useState<number | null>(null);
+    const [is_edit_modal_open, setIsEditModalOpen] = useState(false);
     const [is_add_model_open, setIsAddModalOpen] = useState(false);
+    const [edit_data, setEditData] = useState<ChargesType | null>(null);
+    const { showAlert } = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
@@ -37,16 +43,19 @@ export default function ListCharges() {
         }
     }
 
-    function chargeHandler(charge_id:number){
+    function chargeHandler(charge_id: number) {
         applyCharge(charge_id)
-            .then((data)=>{
-                if(data === 200){
-                    // TODO show some message
-                }else{
-                    // TODO show some error
+            .then((data) => {
+                if (data === 200) {
+                    showAlert('Charges Applied', 'success');
+                } else {
+                    showAlert(' ' + data, 'info');
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                showAlert('Error ' + error, 'error');
+                console.log(error)
+            })
     }
 
     function fetchData() {
@@ -69,6 +78,11 @@ export default function ListCharges() {
             .catch(err => console.log(err))
     }
 
+    function handleEditClick(_: any, data: ChargesType) {
+        setIsEditModalOpen(true);
+        setEditData(data);
+    }
+
     useEffect(() => {
         fetchData();
     }, [page]);
@@ -89,6 +103,9 @@ export default function ListCharges() {
                             </IconButton>
                         </Grid>
                     </Grid>
+                </Grid>
+                <Grid item xs={12}>
+
                 </Grid>
                 <Grid item xs={12}>
                     Total Row count: {total_rows}
@@ -125,10 +142,8 @@ export default function ListCharges() {
                                 {
                                     charges.map((charge: ChargesType) => (
                                         <TableRow key={charge.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                            <TableCell>
-                                                <IconButton color='primary'>
-                                                    <EditOutlined />
-                                                </IconButton>
+                                            <TableCell component="th" scope='row' align='left'>
+                                                {charge.id}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {charge.charge_title}
@@ -140,12 +155,17 @@ export default function ListCharges() {
                                                 <ChargeStatusType type={charge.is_regular} />
                                             </TableCell>
                                             <TableCell>
-                                                {charge.amount}
+                                                {addComma(charge.amount)}
                                             </TableCell>
                                             <TableCell>
                                                 <Button variant='outlined' color='success' onClick={() => chargeHandler(charge.id)}>
                                                     Apply Charge
                                                 </Button>
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton color='primary' onClick={(event) => handleEditClick(event, charge)}>
+                                                    <EditOutlined />
+                                                </IconButton>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -161,6 +181,7 @@ export default function ListCharges() {
                 </Grid>
             </Grid>
             <AddChargeModal open={is_add_model_open} handleClose={() => setIsAddModalOpen(false)} onSubmit={() => fetchData()} />
+            <EditChargeModal data={edit_data} open={is_edit_modal_open} handleClose={() => setIsEditModalOpen(false)} onSubmit={() => fetchData()} />
         </>
     )
 }

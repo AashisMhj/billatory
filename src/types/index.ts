@@ -161,8 +161,13 @@ export interface BillProps{
     student_class: string,
     student_name: string,
     roll_no: number,
-    bill_items: Array< BillItems>,
+    bill_items: Array< FeesType>,
     previous_due: number,
+    total_sum: number,
     month: string,
     bill_no: number,
+    organization_name: string,
+    location: string,
+    pan_no: number,
+    phone_no: string
 }

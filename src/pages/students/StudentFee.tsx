@@ -1,8 +1,9 @@
 import { Container, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { getFees } from "@/services/fees.service";
 import { useEffect, useState } from "react";
 import { FeesType } from "@/types";
 import { addComma } from "@/utils/helper-function";
+import { getStudentFees } from "@/services/student.service";
+import { useParams } from "react-router-dom";
 
 const tableHeads = [
     'Student',
@@ -13,12 +14,18 @@ const tableHeads = [
 
 export default function StudentFeePage() {
     const [fees, setFees] = useState<Array<FeesType>>([]);
+    const {id} = useParams();
     useEffect(() => {
-        getFees(1, 100, true)
-            .then((data) => {
-                setFees(data as Array<FeesType>);
-            })
-            .catch(error => console.log(error));
+        if(id){
+            const parsed_id = parseInt(id);
+            if(parsed_id){
+                getStudentFees(parsed_id)
+                    .then((data) => {
+                        setFees(data as Array<FeesType>);
+                    })
+                    .catch(error => console.log(error));
+            }
+        }
     }, []);
     return (
         <Container>
@@ -63,7 +70,7 @@ export default function StudentFeePage() {
                                                 {`${fee.student_first_name} ${fee.student_mid_name || ''} ${fee.student_last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {fee.charge_title}
+                                                {fee.title}
                                             </TableCell>
                                             <TableCell>
                                                 {fee.created_at}

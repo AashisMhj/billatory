@@ -68,8 +68,11 @@ export function getStudentRowCount(){
 }
 
 export function getStudentFees(student_id:number){
-    return invoke('get_student_fee_data', {
-        studentId: student_id
+    return invoke('get_fee_data', {
+        studentId: student_id,
+        page: 1,
+        limit: 1000,
+        remaining: false,
     })
 
 }
@@ -78,5 +81,18 @@ export function updateStudentStatus(student_id:number, checked:boolean){
     return invoke('change_student_status_data', {
         studentId: student_id,
         newStatus: checked
+    })
+}
+
+
+export function getStudentPreviousDue(student_id:number){
+    return invoke('get_student_previous_due_data', {
+        studentId: student_id
+    });
+}
+
+export function getStudentCurrentMonthStudentFees(student_id:number){
+    return invoke('get_current_month_student_fee_data', {
+        studentId: student_id
     })
 }

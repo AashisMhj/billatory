@@ -4,10 +4,12 @@ import { useParams } from 'react-router-dom';
 //
 import { SnackBarContext } from '@/context/snackBar';
 import { addStudentCharge, getStudentCharges, removeStudentCharge } from "@/services/charge.service";
-import { StudentChargeType, } from '@/types';
+import { StudentChargeType, StudentType, } from '@/types';
+import { getStudentDetail } from '@/services/student.service';
 
 export default function ListStudentCharges() {
     const [studentCharges, setStudentCharges] = useState<Array<StudentChargeType>>([]);
+    const [student_detail, setStudentDetail] = useState<StudentType | null>(null);
     const { id } = useParams();
     const { showAlert } = useContext(SnackBarContext);
 
@@ -39,11 +41,26 @@ export default function ListStudentCharges() {
 
     function fetchData() {
         if (id) {
-            getStudentCharges(parseInt(id))
-                .then((data) => {
-                    setStudentCharges(data as Array<StudentChargeType>);
-                })
-                .catch(error => console.log(error))
+            const parsed_id = parseInt(id);
+            if(parsed_id){
+                getStudentCharges(parsed_id)
+                    .then((data) => {
+                        console.log(data);
+                        setStudentCharges(data as Array<StudentChargeType>);
+                    })
+                    .catch(error => console.log(error));
+    
+                getStudentDetail(parsed_id)
+                    .then(data =>{
+                        if(typeof data === "string"){
+                            const student = JSON.parse(data);
+                            setStudentDetail(student);
+                        }                    
+                    })
+            }else{
+                showAlert('Failed to parsed Id', 'error');
+            }
+                
         }
     }
 
@@ -58,7 +75,9 @@ export default function ListStudentCharges() {
         <Container>
             <Grid container>
                 <Grid item xs={12}>
-                    <Typography variant='h4'>Student Charges</Typography>
+                    <Typography variant='h4'>{`${student_detail?.first_name} ${student_detail?.last_name}`}</Typography>
+                    <Typography variant='h6'>Class: {student_detail?.class}</Typography>
+                     Charges
                 </Grid>
                 <Grid item xs={12}>
                     <Grid container>

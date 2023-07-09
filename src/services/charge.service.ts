@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api";
 import { ChargesType } from "@/types";
 
 type CreateChargeType = Omit<ChargesType, "id">
+type UpdateChargeType = Omit<ChargesType, "is_regular" | "class_id" >
 
 export function addCharge(chargeTitle: string, amount: number, classes:Array<number>, isRegular: boolean){
     return invoke('add_charge_data', {
@@ -24,9 +25,11 @@ export function getStudentCharges(student_id:number){
     });
 }
 
-export function updateCharge(data:ChargesType){
+export function updateCharge(data:UpdateChargeType){
     return invoke('update_charge_data', {
-        data
+        chargeId: data.id,
+        amount: data.amount,
+        chargeTitle: data.charge_title
     })
 }
 

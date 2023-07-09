@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileAddOutlined } from '@ant-design/icons'
 import * as Yup from 'yup';
@@ -13,39 +13,42 @@ import {
   Stack,
 } from '@mui/material';
 
-
 // project import
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { addSettings } from '@/services/settings.service';
 import { toDataURL } from '@/utils/helper-function';
+import { SnackBarContext } from '@/context/snackBar';
+import { SettingsContext } from '@/context/settings';
+import { SettingsType } from '@/types';
 
 const AuthLogin = () => {
 
   const fileRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const {showAlert} = useContext(SnackBarContext);
+  const {updateValue} = useContext(SettingsContext);
 
   return (
     <>
       <Formik
         initialValues={{
-          organization_name: 'The Company',
+          organization_name: '',
           image: null as File | null,
-          location: 'Address',
-          pan_no: 12345,
-          phone_no: '98080',
+          location: '',
+          pan_no: 0,
+          phone_no: '',
           email: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
           organization_name: Yup.string().trim().required('Name is required').max(200),
           location: Yup.string().trim().required('Address is required').max(200),
-          pan_no: Yup.number().required('Pan No is required').max(100000),
-          phone_no: Yup.string().trim().required('Phone No is required').max(200),
+          pan_no: Yup.number().required('Pan No is required').max(99999999999),
+          phone_no: Yup.string().trim().required('Phone No is required'),
           image: Yup.mixed()
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            
             const imageURL = await toDataURL(values.image);
             const data = await addSettings({
               organizationName: values.organization_name,
@@ -55,20 +58,26 @@ const AuthLogin = () => {
               panNo: values.pan_no,
               phoneNo: values.phone_no
             });
-            if(data === 200){
-
+            if (data) {
+              updateValue(data as SettingsType);
+              showAlert('Settings Saved', 'success');
               navigate('/dashboard');
               setSubmitting(false);
             }
-            } catch (err) {
-              setStatus({ success: false });
+          } catch (err) {
+            if(typeof err === "string"){
+              showAlert(err, 'error');
+            }else{
+              showAlert('Error Saving Settings', 'error');
               if (err instanceof Error) {
                 setErrors({ submit: err.message });
               }
-              
-            }finally{
-              setStatus({ success: false });
-              setSubmitting(true);
+            }
+            setStatus({ success: false });
+
+          } finally {
+            setStatus({ success: false });
+            setSubmitting(true);
           }
 
         }}
@@ -78,7 +87,7 @@ const AuthLogin = () => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="organization-name">Organization Name</InputLabel>
+                  <InputLabel htmlFor="organization-name" required={true}>Organization Name</InputLabel>
                   <OutlinedInput
                     id="organization-name"
                     type="text"
@@ -99,7 +108,8 @@ const AuthLogin = () => {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="organization-file">Organization Logo</InputLabel>
+                  <InputLabel htmlFor="organization-file" required={true}>Organization Logo</InputLabel>
+                  <span>{values.image?.name || ''}</span>
                   <input ref={fileRef} accept='image/*' style={{ display: 'none' }} type="file" onChange={(event) => event?.target?.files && event?.target?.files.length > 0 ? setFieldValue('image', event.target.files[0]) : undefined} />
                   <Button variant='outlined' onClick={() => fileRef.current?.click()} startIcon={<FileAddOutlined />}>Upload</Button>
                   {touched.image && errors.image && (
@@ -110,13 +120,35 @@ const AuthLogin = () => {
                 </Stack>
               </Grid>
 
+              <Grid item xs={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="phone-no" >Email</InputLabel>
+                  <OutlinedInput
+                    id="phone-no"
+                    type="text"
+                    value={values.email}
+                    name="email"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Enter Email"
+                    fullWidth
+                    error={Boolean(touched.email && errors.email)}
+                  />
+                  {touched.email && errors.email && (
+                    <FormHelperText error id="standard-weight-helper-text-email-login">
+                      {errors.email}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </Grid>
+
               {/* Phone no */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="phone-no">Phone No</InputLabel>
+                  <InputLabel htmlFor="phone-no" required={true}>Phone No</InputLabel>
                   <OutlinedInput
                     id="phone-no"
-                    type="number"
+                    type="text"
                     value={values.phone_no}
                     name="phone_no"
                     onBlur={handleBlur}
@@ -132,18 +164,13 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
               {/* Pan No */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="pan-no">Pan No</InputLabel>
+                  <InputLabel htmlFor="pan-no" required={true}>Pan No</InputLabel>
                   <OutlinedInput
                     id="pan-no"
-                    type="text"
+                    type="number"
                     value={values.pan_no}
                     name="pan_no"
                     onBlur={handleBlur}
@@ -159,15 +186,10 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
               {/* Phone No */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="address">Address</InputLabel>
+                  <InputLabel htmlFor="address" required={true}>Address</InputLabel>
                   <OutlinedInput
                     id="address"
                     type="text"

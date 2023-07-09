@@ -4,7 +4,7 @@ import { lazy } from 'react';
 import Loadable from '@/utils/Loadable';
 import MainLayout from '@/layout/MainLayout';
 // students page
-import ListStudentFees from '@/pages/fees/ListStudentFees';
+import ListFees from '@/pages/fees/ListFees';
 import ListStudents from '@/pages/students/ListStudents';
 import StudentDetailPage from '@/pages/students/StudentDetail';
 import AddStudentPage from '@/pages/students/AddStudent';
@@ -83,7 +83,7 @@ const MainRoutes = {
     },
     {
       path: 'fees',
-      element: <ListStudentFees />
+      element: <ListFees />
     },
     {
       path: 'charges',

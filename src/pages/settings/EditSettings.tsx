@@ -11,9 +11,8 @@ import { SnackBarContext } from "@/context/snackBar";
 
 export default function EditSettingPage() {
     const fileRef = useRef<HTMLInputElement>(null);
-    const {value, updateValue}  = useContext(SettingsContext);
-    const {showAlert} = useContext(SnackBarContext);
-    console.log(value.phone_no);
+    const { value, updateValue } = useContext(SettingsContext);
+    const { showAlert } = useContext(SnackBarContext);
     return (
         <Grid container rowSpacing={4.5} columnSpacing={2.75} >
             <Grid item xs={12}>
@@ -29,36 +28,36 @@ export default function EditSettingPage() {
                     validationSchema={Yup.object().shape({
                         organization_name: Yup.string().trim().required('Name is required').max(200),
                         location: Yup.string().trim().required('Address is required').max(200),
-                        pan_no: Yup.number().required('Pan No is required').max(100000),
-                        phone_no: Yup.string().trim().required('Phone No is required').max(200),
+                        pan_no: Yup.number().required('Pan No is required').max(99999999999),
+                        phone_no: Yup.string().trim().required('Phone No is required'),
                         image: Yup.mixed()
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
                             const data = await updateSettings({
                                 organizationName: values.organization_name,
-                                    email: values.email,
-                                    image: values.image,
-                                    location: values.location,
-                                    panNo: values.pan_no,
-                                    phoneNo: values.phone_no
+                                email: values.email,
+                                image: values.image,
+                                location: values.location,
+                                panNo: values.pan_no,
+                                phoneNo: values.phone_no
                             });
-                            if(data === 200){
+                            if (data === 200) {
                                 const settings = await getSettings();
                                 if (typeof settings === "string") {
                                     let setting_data = JSON.parse(settings);
                                     updateValue(setting_data);
                                     showAlert('Settings Updated', 'success');
-                                  }
+                                }
                             }
                         } catch (err) {
                             console.log(err);
                             setStatus({ success: false });
-                                if (err instanceof Error) {
-                                    setErrors({ submit: err.message });
-                                }
-                                setSubmitting(false);
-                        } finally{
+                            if (err instanceof Error) {
+                                setErrors({ submit: err.message });
+                            }
+                            setSubmitting(false);
+                        } finally {
                             setStatus({ success: false });
                             setSubmitting(true);
                         }
@@ -70,7 +69,7 @@ export default function EditSettingPage() {
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="organization-name">Organization Name</InputLabel>
+                                        <InputLabel htmlFor="organization-name" required={true}>Organization Name</InputLabel>
                                         <OutlinedInput
                                             id="organization-name"
                                             type="text"
@@ -92,8 +91,8 @@ export default function EditSettingPage() {
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <img src={values.image} height={200} width={200} />
-                                        <InputLabel htmlFor="organization-file">Organization Logo</InputLabel>
-                                        <input ref={fileRef} accept='image/*' style={{ display: 'none' }} type="file" onChange={async (event) => event?.target?.files && event?.target?.files.length > 0 ? setFieldValue('image',await toDataURL(event.target.files[0])) : undefined} />
+                                        <InputLabel htmlFor="organization-file" required={true}>Organization Logo</InputLabel>
+                                        <input ref={fileRef} accept='image/*' style={{ display: 'none' }} type="file" onChange={async (event) => event?.target?.files && event?.target?.files.length > 0 ? setFieldValue('image', await toDataURL(event.target.files[0])) : undefined} />
                                         <Button variant='outlined' onClick={() => fileRef.current?.click()} startIcon={<FileAddOutlined />}>Select Another</Button>
                                         {touched.image && errors.image && (
                                             <FormHelperText error id="standard-weight-helper-text-email-login">
@@ -103,10 +102,32 @@ export default function EditSettingPage() {
                                     </Stack>
                                 </Grid>
 
+                                <Grid item xs={12}>
+                                    <Stack spacing={1}>
+                                        <InputLabel htmlFor="phone-no" >Email</InputLabel>
+                                        <OutlinedInput
+                                            id="phone-no"
+                                            type="text"
+                                            value={values.email}
+                                            name="email"
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            placeholder="Enter Email"
+                                            fullWidth
+                                            error={Boolean(touched.email && errors.email)}
+                                        />
+                                        {touched.email && errors.email && (
+                                            <FormHelperText error id="standard-weight-helper-text-email-login">
+                                                {errors.email}
+                                            </FormHelperText>
+                                        )}
+                                    </Stack>
+                                </Grid>
+
                                 {/* Phone no */}
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="phone-no">Phone No</InputLabel>
+                                        <InputLabel htmlFor="phone-no" required={true}>Phone No</InputLabel>
                                         <OutlinedInput
                                             id="phone-no"
                                             type="string"
@@ -125,15 +146,10 @@ export default function EditSettingPage() {
                                         )}
                                     </Stack>
                                 </Grid>
-                                {errors.submit && (
-                                    <Grid item xs={12}>
-                                        <FormHelperText error>{errors.submit}</FormHelperText>
-                                    </Grid>
-                                )}
                                 {/* Pan No */}
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="pan-no">Pan No</InputLabel>
+                                        <InputLabel htmlFor="pan-no" required={true}>Pan No</InputLabel>
                                         <OutlinedInput
                                             id="pan-no"
                                             type="number"
@@ -152,15 +168,10 @@ export default function EditSettingPage() {
                                         )}
                                     </Stack>
                                 </Grid>
-                                {errors.submit && (
-                                    <Grid item xs={12}>
-                                        <FormHelperText error>{errors.submit}</FormHelperText>
-                                    </Grid>
-                                )}
                                 {/* Phone No */}
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="address">Address</InputLabel>
+                                        <InputLabel htmlFor="address" required={true}>Address</InputLabel>
                                         <OutlinedInput
                                             id="address"
                                             type="text"

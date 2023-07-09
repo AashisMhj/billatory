@@ -23,7 +23,7 @@ const dashboard: NavGroupType = {
             title: 'Dashboard',
             type: 'item',
             url: paths.dashboard,
-            icon: ( is_open:boolean) => <DashboardCustomizeOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />,
+            icon: (is_open: boolean) => <DashboardCustomizeOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
             breadcrumbs: false
         },
         {
@@ -31,7 +31,7 @@ const dashboard: NavGroupType = {
             title: 'Edit Settings',
             type: 'item',
             url: paths.editSettings,
-            icon: ( is_open:boolean) => <SettingsOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />,
+            icon: (is_open: boolean) => <SettingsOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
         },
     ]
 };
@@ -42,19 +42,20 @@ const student: NavGroupType = {
     type: 'group',
     children: [
         {
-            id: 's-students',
-            title: 'Students',
-            type: 'item',
-            url: paths.studentsList,
-            icon: ( is_open:boolean) => <PersonOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />
-        },
-        {
             id: 's-classes',
             title: 'Classes',
             type: 'item',
             url: paths.listClasses,
-            icon: ( is_open:boolean) => <CorporateFareOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />
+            icon: (is_open: boolean) => <CorporateFareOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
         },
+        {
+            id: 's-students',
+            title: 'Students',
+            type: 'item',
+            url: paths.studentsList,
+            icon: (is_open: boolean) => <PersonOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+        },
+
     ]
 };
 
@@ -68,21 +69,21 @@ const fees: NavGroupType = {
             title: 'Charges',
             type: 'item',
             url: paths.listCharges,
-            icon: ( is_open:boolean) => <AddCardOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />,
+            icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
         },
         {
             id: 'f-fees',
             title: 'Student Fees',
             type: 'item',
             url: paths.listFees,
-            icon: ( is_open:boolean) => <FeedOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />
+            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
         },
         {
             id: 'f-payments',
             title: 'Payment',
             type: 'item',
             url: paths.listPayment,
-            icon: ( is_open:boolean) => <MonetizationOnOutlinedIcon style={{fontSize: is_open ? '1rem' : '1.25.rem'}} />,
+            icon: (is_open: boolean) => <MonetizationOnOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
         },
 
     ]
@@ -90,7 +91,7 @@ const fees: NavGroupType = {
 
 
 const menuItems: { items: Array<NavGroupType> } = {
-    items: [dashboard, fees, student]
+    items: [dashboard, student, fees]
 };
 
 export default menuItems;
