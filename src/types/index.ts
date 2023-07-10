@@ -72,8 +72,7 @@ export interface StudentChargeType{
     student_charge_id: number,
     amount?: number,
     class?: string,
-    class_id?: number,
-    is_regular: boolean
+    class_id?: number
 }
 
 export interface StudentMiniType{

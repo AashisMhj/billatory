@@ -14,7 +14,7 @@ export default function AnalyticSection(){
     const [monthly_charge, setMonthlyCharge] = useState(0);
 
     useEffect(()=>{
-        getStudentRowCount()
+        getStudentRowCount(true)
             .then((student_count) => {
                 if(typeof student_count === "number"){
                     setTotalStudents(student_count);

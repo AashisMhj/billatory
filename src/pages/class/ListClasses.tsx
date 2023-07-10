@@ -89,6 +89,7 @@ export default function ListClasses() {
                         overflowX: 'auto',
                         position: 'relative',
                         display: 'block',
+                        background: '#fefefe',
                         maxWidth: '100%',
                         '& td, & th': { whiteSpace: 'nowrap' }
                     }}>

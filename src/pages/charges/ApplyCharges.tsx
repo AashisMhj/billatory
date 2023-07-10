@@ -1,10 +1,11 @@
-import { Button, Checkbox, Grid, InputLabel, List, ListItem, ListItemButton, ListItemText, OutlinedInput, Paper, Stack, Typography } from '@mui/material';
+import { Button, Checkbox, Grid, InputLabel, IconButton, List, ListItem, ListItemButton, ListItemText, OutlinedInput, Paper, Stack, Typography } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 //
 import { applyCharge, getChargeDetail, getStudentOfCharge } from '@/services/charge.service';
-import { ChargesType } from '@/types';
+import { getClasses } from '@/services/class.service';
 import { SnackBarContext } from '@/context/snackBar';
+import { CloseOutlined } from '@mui/icons-material';
 
 
 interface StudentCharge {
@@ -13,72 +14,92 @@ interface StudentCharge {
     mid_name?: string,
     last_name: string,
     class: string,
-    charge_id?: number
+    charge_id?: number,
+    display: boolean
 }
 
 export default function ApplyChargesPage() {
     const [selected_student, setSelectedStudent] = useState<Array<StudentCharge>>([]);
     const [all_students, setAllStudents] = useState<Array<StudentCharge>>([]);
-    // const [charge_detail, setChargeDetail] = useState<ChargesType | null>(null)
     const [charge_title, setChargeTitle] = useState('');
     const [charge_amount, setChargeAmount] = useState(0);
     const [search_text, setSearchText] = useState('');
-    const {showAlert} = useContext(SnackBarContext);
+    const { showAlert } = useContext(SnackBarContext);
 
     const { id } = useParams();
 
-    function handleCheckBoxChange(value:boolean, student:StudentCharge){
-        if(value){
+    function handleCheckBoxChange(value: boolean, student: StudentCharge) {
+        if (value) {
             // TODO add 
             let temp = [...selected_student];
             temp.push(student);
             setSelectedStudent(temp);
-        }else{
+        } else {
             // TODo remove
             let index = selected_student.findIndex(i => i.id === student.id);
-            if(index !== -1){
+            if (index !== -1) {
                 let temp = [...selected_student];
-                console.log(index);
-                const new_array = temp.splice(index, 1)
-                console.log(new_array);
-                console.log(temp);
+                temp.splice(index, 1);
                 setSelectedStudent(temp);
 
             }
         }
     }
 
-    function handleSearchChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>){
+    function handleSearchChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setSearchText(event.target.value);
         // TODO filter
     }
 
-    function handleSubmit(){
-        if(id){
+    function removeSelectedUser(remove_index:number){
+        let temp = [...selected_student];
+        temp.splice(remove_index, 1);
+        console.log(temp);
+        console.log(remove_index);
+        setSelectedStudent(temp);
+    }
+
+    function handleSubmit() {
+        if (id) {
             const parsed_id = parseInt(id);
-            if(parsed_id){
+            if (parsed_id) {
                 const selected_students_id = selected_student.map((item) => item.id);
                 applyCharge(parsed_id, selected_students_id, charge_amount, charge_title)
                     .then(data => {
                         showAlert('Charges applied', 'success');
                     })
-                    .catch(error =>{
+                    .catch(error => {
                         console.log(error);
-                        showAlert('Failed to Apply Charge'+error, 'error');
+                        showAlert('Failed to Apply Charge' + error, 'error');
                     })
-            }else{
+            } else {
                 showAlert('Failed to Parse Id', 'error');
 
             }
-        }else{
+        } else {
             showAlert('Id not found', 'error');
         }
 
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setSelectedStudent(all_students.filter((item) => item.charge_id));
-    }, [])
+    }, [all_students]);
+
+    useEffect(()=>{
+        const lower_search = search_text.toLowerCase();
+        if(search_text && search_text.trim().length > 0){
+            setAllStudents(all_students.map(e => {
+                const display = (e.first_name.toLowerCase().includes(lower_search) || e.last_name.toLowerCase().includes(lower_search));
+                return {
+                    ...e,
+                    display
+                }
+            }))
+        }else{
+            setAllStudents(all_students.map(el => ({...el, display: true})))
+        }
+    }, [search_text])
 
     useEffect(() => {
         if (id) {
@@ -88,7 +109,14 @@ export default function ApplyChargesPage() {
                     .then((data) => {
                         console.log(data)
                         // TODO set selected student
-                        setAllStudents(data as Array<StudentCharge>);
+                        if(Array.isArray(data)){
+                            setAllStudents(data.map((item => {
+                                return {
+                                    ...item,
+                                    display: true
+                                }
+                            })) as Array<StudentCharge>);
+                        }
                     })
                     .catch(error => {
                         console.log(error)
@@ -98,25 +126,31 @@ export default function ApplyChargesPage() {
                 getChargeDetail(parse_id)
                     .then((data) => {
                         console.log(data, 'detail');
-                        if(typeof data === "object" && data !== null && 'charge_title' in data && 'amount' in data){
-                            if(typeof data.charge_title === "string"){
+                        if (typeof data === "object" && data !== null && 'charge_title' in data && 'amount' in data) {
+                            if (typeof data.charge_title === "string") {
                                 setChargeTitle(data.charge_title);
                             }
-                            if(typeof data.amount === "number"){
+                            if (typeof data.amount === "number") {
                                 setChargeAmount(data.amount)
                             }
 
                         }
                     })
-                    .catch(error => console.log(error))
+                    .catch(error => console.log(error));
+
+                getClasses(1, 99999)
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(error => console.error(error))
             }
         }
     }, [])
     return (
         <>
-            <Grid container spacing={3} sx={{background: 'white'}}>
+            <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} padding={2} alignItems='end' justifyContent='center' sx={{ backgroundColor: 'white' }}>
                         <Grid item xs={3}>
                             <Stack spacing={1}>
                                 <InputLabel htmlFor="title" required={true}>Title</InputLabel>
@@ -150,31 +184,41 @@ export default function ApplyChargesPage() {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={7}>
-                    <OutlinedInput value={search_text} onChange={handleSearchChange} placeholder='Search'/>
-                    <Paper style={{ maxHeight: 700, overflow: 'auto' }}>
-                        <List dense>
-                            {
-                                all_students.map((item) => (
-                                    <ListItem key={item.id} secondaryAction={
-                                        <Checkbox color='success' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)}  />
-                                    }>
-                                        <ListItemButton>
-                                            <ListItemText primary={`${item.first_name} ${item.last_name}`} secondary={item.class} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                ))
-                            }
-                        </List>
-                    </Paper>
+                <Grid item xs={9} padding={1} spacing={2} sx={{ backgroundColor: 'white' }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <OutlinedInput value={search_text} onChange={handleSearchChange} placeholder='Search' />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Paper style={{ maxHeight: 700, overflow: 'auto' }}>
+                                <List dense>
+                                    {
+                                        all_students.filter(el => el.display).map((item) => (
+                                            <ListItem key={item.id} secondaryAction={
+                                                <Checkbox color='success' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)} />
+                                            }>
+                                                <ListItemButton>
+                                                    <ListItemText primary={`${item.first_name} ${item.last_name}`} secondary={item.class} />
+                                                </ListItemButton>
+                                            </ListItem>
+                                        ))
+                                    }
+                                </List>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item xs={5}>
-                    <Typography>Selected Total: {selected_student.length}</Typography>
-                    <List dense>
+                <Grid item xs={3} padding={1} spacing={2}>
+                    <Typography variant='h5'>Selected Total: {selected_student.length}</Typography>
+                    <List dense sx={{width: '100%', bgcolor: 'Background.paper'}}>
                         {
-                            selected_student.map(item => (
-                                <ListItem>
-                                    <Typography >{`${item.first_name} ${item.last_name}`}</Typography>
+                            selected_student.map((item, index) => (
+                                <ListItem key={item.id} secondaryAction={<IconButton edge="end" onClick={() => removeSelectedUser(index)} >
+                                    <CloseOutlined />
+                                </IconButton> }>
+                                    <ListItemButton>
+                                        <ListItemText primary={`${item.first_name} ${item.last_name}`} />
+                                    </ListItemButton>
                                 </ListItem>
                             ))
                         }

@@ -1,17 +1,16 @@
+import { useEffect, useState, useContext } from 'react';
 import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Tooltip, Pagination, Typography, IconButton } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-//
-import { StudentStatus } from '@/components/pages/students/listStudents';
-import { StudentType, StudentsTableFilterType } from '@/types';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
+//
 import paths from '@/routes/path';
+import { StudentType, StudentsTableFilterType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage } from '@/utils/helper-function';
-import { StudentsTableFilter } from '@/components/pages/students/listStudents';
-
+import { StudentsTableFilter, DisableConfirmModal } from '@/components/pages/students/listStudents';
+import { SnackBarContext } from '@/context/snackBar';
 const tableHeads = [
     'Id',
     'Name',
@@ -31,6 +30,8 @@ export default function ListStudents() {
     const [filtered_class, setFilterClass] = useState<number>();
     const [is_open_filter_modal, setOpenFilterModal] = useState(false);
     const [show_active, setShowActive] = useState(true);
+    const [disable_id, setDisableId] = useState<number | null>(null);
+    const {showAlert} = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
@@ -43,18 +44,32 @@ export default function ListStudents() {
         if (limit !== value.limit) {
             setLimit(value.limit);
         }
+        setShowActive(value.show_active);
     }
 
-    function handleSwitchChange(event: React.ChangeEvent<HTMLInputElement>, checked: boolean, student_id: number) {
-        updateStudentStatus(student_id, checked)
-            .then(data => {
-                fetchData();
-            })
-            .catch(err => console.log(err))
+    function changeStatus(id: number, checked: boolean){
+        updateStudentStatus(id, checked)
+        .then(_ => {
+            showAlert('Student Status Updated', 'success');
+            fetchData();
+        })
+        .catch(err => {
+            showAlert('Failed to Update Status '+err, 'error');
+            console.log(err)
+        })
+    }
+
+    function handleSwitchChange(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, student_id: number) {
+        if(checked){
+            changeStatus(student_id, checked);
+        }else{
+            setDisableId(student_id);
+        }
+        
     }
 
     function fetchData() {
-        getStudents(page, limit, filtered_class)
+        getStudents(page, limit, show_active, filtered_class)
             .then((data) => {
                 if (typeof data === "string") {
                     const student_data = JSON.parse(data);
@@ -66,7 +81,7 @@ export default function ListStudents() {
             });
 
         // 
-        getStudentRowCount()
+        getStudentRowCount(show_active, filtered_class)
             .then(data => {
                 if (typeof data === "number") {
                     setTotalRow(data);
@@ -79,7 +94,7 @@ export default function ListStudents() {
 
     useEffect(() => {
         fetchData();
-    }, [page, filtered_class, limit]);
+    }, [page, filtered_class, limit, show_active]);
 
     return (
         <>
@@ -111,6 +126,7 @@ export default function ListStudents() {
                         overflowX: 'auto',
                         position: 'relative',
                         display: 'block',
+                        background: '#fefefe',
                         maxWidth: '100%',
                         '& td, & th': { whiteSpace: 'nowrap' }
                     }}>
@@ -134,10 +150,10 @@ export default function ListStudents() {
                             </TableHead>
                             <TableBody>
                                 {
-                                    student_data.map((student: StudentType) => (
+                                    student_data.map((student: StudentType, index:number) => (
                                         <TableRow key={student.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell component="th" scope='row' align='left'>
-                                                {student.id}
+                                                {index + 1}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {`${student.first_name} ${student.last_name}`}
@@ -204,6 +220,7 @@ export default function ListStudents() {
                 </Grid>
             </Grid >
             <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class, show_active: show_active }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
+            <DisableConfirmModal id={disable_id} onSubmit={(id) => changeStatus(id, false)} handleClose={() => setDisableId(null)} />
         </>
     )
 }

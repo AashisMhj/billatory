@@ -2,11 +2,16 @@ import { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
-import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
 //
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { StudentsTableFilterType, StudentClassType } from "@/types";
 import { getClasses } from "@/services/class.service";
+
+enum ActiveOptions  {
+    yes="YES",
+    no="NO"
+}
 
 interface Props {
     open: boolean,
@@ -53,7 +58,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
-                <Formik initialValues={{ ...value, submit: null }}
+                <Formik initialValues={{ ...value, show_active: value.show_active ? ActiveOptions.yes : ActiveOptions.no, submit: null }}
                     validationSchema={Yup.object().shape({
                         limit: Yup.string().trim().required('Limit is Required'),
                         class: Yup.number(),
@@ -63,7 +68,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                             setStatus({ success: false });
                             // TODO update 
                             setSubmitting(false);
-                            onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active });
+                            onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active === ActiveOptions.yes });
                             handleClose();
                         } catch (error) {
                             setStatus(false);
@@ -73,7 +78,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                         }
                     }}
                 >
-                    {({ errors, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                    {({ errors, handleChange, handleSubmit, isSubmitting, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -95,6 +100,15 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                                             }
                                         </Select>
                                     </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <FormControl>
+                                        <FormLabel id="student-status-radio-group-label">Active?</FormLabel>
+                                        <RadioGroup row={true} defaultValue={false} value={values.show_active} onChange={handleChange} name="show_active">
+                                            <FormControlLabel value={ActiveOptions.yes} control={<Radio />} label="Yes" />
+                                            <FormControlLabel value={ActiveOptions.no} control={<Radio />} label="No" />
+                                        </RadioGroup>
+                                    </FormControl>
                                 </Grid>
                                 {errors.submit && (
                                     <Grid item xs={12}>

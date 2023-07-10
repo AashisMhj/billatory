@@ -6,9 +6,9 @@ type CreateStudentType = Omit<StudentType, "id" | "is_active">
 type UpdateStudentType = Omit<StudentType, "is_active">
 
 
-export function getStudents(page:number, limit:number, class_id?: number){
+export function getStudents(page:number, limit:number, show_active:boolean, class_id?: number){
     return invoke('get_student_data', {
-        page, limit, classId: class_id
+        page, limit, classId: class_id, isActive: show_active
     })
 }
 
@@ -67,8 +67,11 @@ export function getStudentDetail(id:number){
     })
 }
 
-export function getStudentRowCount(){
-    return invoke('count_student_row')
+export function getStudentRowCount(isActive: boolean, classId?: number){
+    return invoke('count_student_row', {
+        isActive,
+        classId
+    })
 }
 
 export function getStudentFees(student_id:number){

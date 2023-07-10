@@ -7,6 +7,9 @@ mod charges;
 mod fees;
 mod students;
 mod helpers;
+mod classes;
+mod settings;
+mod payment;
 
 
 use log::{info, error,};
@@ -25,7 +28,7 @@ fn greet(my_name: &str) -> String {
 fn get_log_data(app_handle: AppHandle) -> Result<String, String>{
     let log_path = app_handle.path_resolver().app_log_dir().unwrap();
     println!("{}", log_path.display());
-    let result = database::get_app_log(log_path.join("student-billing.log"));
+    let result = settings::get_app_log(log_path.join("student-billing.log"));
     match result{
         Ok(value)=>{
             return Ok(value);
@@ -62,8 +65,8 @@ fn add_settings_data(
     pan_no: i32,
     location: String,
     image: String
-) -> Result<database::Setting, String> {
-    let setting_data = database::Setting {
+) -> Result<settings::Setting, String> {
+    let setting_data = settings::Setting {
         organization_name: organization_name,
         phone_no: phone_no,
         email: email,
@@ -73,10 +76,10 @@ fn add_settings_data(
         updated_at: None,
         created_at: None
     };
-    let result = app_handle.db(|db| database::add_settings(db, setting_data));
+    let result = app_handle.db(|db| settings::add_settings(db, setting_data));
     match result{
         Ok(_value)=>{
-            let items = app_handle.db(|db| database::get_settings(db));
+            let items = app_handle.db(|db| settings::get_settings(db));
             match items{
                 Ok(setting)=>{
                     info!("Added Settings");
@@ -97,7 +100,7 @@ fn add_settings_data(
 
 #[tauri::command]
 fn get_settings_data(app_handle: AppHandle) -> Result<String, String> {
-    let setting_data = app_handle.db(|db| database::get_settings(db));
+    let setting_data = app_handle.db(|db| settings::get_settings(db));
     match setting_data{
         Ok(value) =>{
             let setting_string = serde_json::to_string(&value).unwrap();
@@ -118,7 +121,7 @@ fn update_settings_data(app_handle: AppHandle,
     pan_no: i32,
     location: String,
     image: String ) -> Result<i32, String>{
-    let settings_data = database::Setting{
+    let settings_data = settings::Setting{
         organization_name: organization_name,
         phone_no: phone_no,
         email: email,
@@ -128,7 +131,7 @@ fn update_settings_data(app_handle: AppHandle,
         updated_at: None,
         created_at: None
     };
-    let result = app_handle.db(|db| database::update_settings(db, settings_data));
+    let result = app_handle.db(|db| settings::update_settings(db, settings_data));
     match result{
         Ok(_value)=>{
             info!("Updated Settings Data");
@@ -146,7 +149,7 @@ fn update_settings_data(app_handle: AppHandle,
 fn get_class_data(app_handle: AppHandle, page: i32, limit: i32) -> Result<String, String> {
     // app_handle.db(|db | database::get_class(1, 10, db)).unwrap();
     let items = app_handle
-        .db(|db| database::get_class(page, limit, db));
+        .db(|db| classes::get_class(page, limit, db));
     match items{
         Ok(value)=>{
             let items_string = serde_json::to_string(&value).unwrap();
@@ -162,7 +165,7 @@ fn get_class_data(app_handle: AppHandle, page: i32, limit: i32) -> Result<String
 #[tauri::command]
 fn add_class_data(app_handle: AppHandle, class: &str) -> Result<i32, String> {
     let result = app_handle
-        .db(|db| database::add_class(class.to_string(), db));
+        .db(|db| classes::add_class(class.to_string(), db));
     match result{
         Ok(_value)=>{
             info!("Added Class");
@@ -177,7 +180,7 @@ fn add_class_data(app_handle: AppHandle, class: &str) -> Result<i32, String> {
 
 #[tauri::command]
 fn update_class_data(app_handle: AppHandle, class: &str, id: i32) -> Result<i32, String> {
-    let result= app_handle.db(|db| database::update_class(db, id, class.to_string()));
+    let result= app_handle.db(|db| classes::update_class(db, id, class.to_string()));
     match result{
         Ok(_value)=>{
             let msg = format!("Updated class {}", id);
@@ -193,7 +196,7 @@ fn update_class_data(app_handle: AppHandle, class: &str, id: i32) -> Result<i32,
 
 #[tauri::command]
 fn count_class_rows(app_handler: AppHandle) -> Result<i32, String> {
-    let count = app_handler.db(|db| database::count_class_rows(db));
+    let count = app_handler.db(|db| classes::count_class_rows(db));
     match count{
         Ok(value) =>{
             return Ok(value);
@@ -221,9 +224,9 @@ fn get_all_active_students_data(app_handle: AppHandle) -> Result<Vec<students::S
 }
 
 #[tauri::command]
-fn get_student_data(app_handle: AppHandle, page: i32, limit: i32, class_id: Option<i32> ) -> Result<String, String> {
+fn get_student_data(app_handle: AppHandle, page: i32, limit: i32,is_active: bool, class_id: Option<i32> ) -> Result<String, String> {
     let items = app_handle
-        .db(|db| database::get_student(db, page, limit, class_id));
+        .db(|db| students::get_student(db, page, limit,is_active, class_id));
     match items{
         Ok(students)=>{
             let items_string = serde_json::to_string(&students).unwrap();
@@ -257,7 +260,7 @@ fn add_student_data(
     class_id: i32,
     roll_no: i32
 ) -> Result<i32, String> {
-    let student_data = database::Student {
+    let student_data = students::Student {
         id: 0,
         first_name: first_name,
         mid_name: mid_name,
@@ -280,7 +283,7 @@ fn add_student_data(
         class: None,
     };
     let result =app_handle
-        .db(|db| database::add_student(db, student_data));
+        .db(|db| students::add_student(db, student_data));
     match result{
         Ok(_value)=>{
             info!("Student Added");
@@ -296,7 +299,7 @@ fn add_student_data(
 #[tauri::command]
 fn get_student_detail_data(app_handle: AppHandle, id: i32) -> Result<String, String> {
     let student = app_handle
-        .db(|db| database::get_student_detail(db, id));
+        .db(|db| students::get_student_detail(db, id));
     match student{
         Ok(value)=>{
             let student_string = serde_json::to_string(&value).unwrap();
@@ -330,7 +333,7 @@ fn update_student_data(
     class_id: i32,
     roll_no: i32
 ) -> Result<i32, String> {
-    let student_data = database::Student {
+    let student_data = students::Student {
         id: id,
         first_name: first_name,
         mid_name: mid_name,
@@ -352,7 +355,7 @@ fn update_student_data(
         class_id: class_id,
         class: None,
     };
-    let result = app_handle.db(|db| database::update_student_detail(db, student_data, id));
+    let result = app_handle.db(|db| students::update_student_detail(db, student_data, id));
     match result{
         Ok(_value)=>{
             let msg = format!("Student updated id: {}", id);
@@ -368,8 +371,8 @@ fn update_student_data(
 }
 
 #[tauri::command]
-fn count_student_row(app_handler: AppHandle) -> Result<i32, String> {
-    let count = app_handler.db(|db| database::count_student_row(db));
+fn count_student_row(app_handler: AppHandle, is_active: bool, class_id: Option<i32>) -> Result<i32, String> {
+    let count = app_handler.db(|db| students::count_student_row(db, is_active, class_id));
     match count{
         Ok(value) => {
             return Ok(value);
@@ -383,7 +386,7 @@ fn count_student_row(app_handler: AppHandle) -> Result<i32, String> {
 
 #[tauri::command]
 fn change_student_status_data(app_handle: AppHandle, student_id: i32, new_status: bool)-> i32{
-    let result = app_handle.db(|db| database::change_student_status(db, new_status, student_id));
+    let result = app_handle.db(|db| students::change_student_status(db, new_status, student_id));
     match result{
         Ok(_value)=>{
             return 200;
@@ -422,7 +425,7 @@ fn add_student_charge_data(app_handle: AppHandle, student_id: i32, charge_id: i3
 
 #[tauri::command]
 fn get_student_previous_due_data(app_handle: AppHandle, student_id: i32)-> Result<f32, String>{
-    let result = app_handle.db(|db| database::get_student_previous_due(db, student_id));
+    let result = app_handle.db(|db| students::get_student_previous_due(db, student_id));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -744,7 +747,7 @@ fn get_monthly_payment_data(app_handle: AppHandle) -> Result<f32, String>{
 // payment commands
 #[tauri::command]
 fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks: Option<String> )->Result<i32, String>{
-    let payment_data = database::Payment { 
+    let payment_data = payment::Payment { 
         id: 0, 
         student_id: student_id, 
         student_first_name: None, 
@@ -753,7 +756,7 @@ fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks
         amount: amount, 
         remarks: remarks
     };
-    let result = app_handle.db_mut(|db| database::add_payment(db, payment_data));
+    let result = app_handle.db_mut(|db| payment::add_payment(db, payment_data));
 
     match result{
         Ok(_value)=>{
@@ -769,7 +772,7 @@ fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks
 
 #[tauri::command]
 fn get_payment_data(app_handle: AppHandle, page: i32, limit: i32, student_id: Option<i32>)-> Result<String, String>{
-    let result = app_handle.db(|db| database::get_payment(db, page, limit, student_id));
+    let result = app_handle.db(|db| payment::get_payment(db, page, limit, student_id));
     match result{
         Ok(data)=>{
             let payment_string = serde_json::to_string(&data).unwrap();
@@ -782,8 +785,8 @@ fn get_payment_data(app_handle: AppHandle, page: i32, limit: i32, student_id: Op
 }
 
 #[tauri::command]
-fn get_payment_detail_data(app_handle: AppHandle, id: i32) -> Result<database::Payment, String>{
-    let result = app_handle.db(|db| database::get_payment_detail(db, id) );
+fn get_payment_detail_data(app_handle: AppHandle, id: i32) -> Result<payment::Payment, String>{
+    let result = app_handle.db(|db| payment::get_payment_detail(db, id) );
     match result{
         Ok(value)=>{
             Ok(value)
@@ -797,7 +800,7 @@ fn get_payment_detail_data(app_handle: AppHandle, id: i32) -> Result<database::P
 
 #[tauri::command]
 fn count_payment_rows(app_handle: AppHandle, student_id: Option<i32>) -> Result<i32, String>{
-    let result = app_handle.db(|db| database::count_payment_rows(db, student_id));
+    let result = app_handle.db(|db| payment::count_payment_rows(db, student_id));
     match result{
         Ok(value)=>{
             return Ok(value);

@@ -1,33 +1,14 @@
+use crate::helpers::{get_current_date, get_current_date_time};
 use rusqlite::{params, Connection, Result};
 use serde::Serialize;
 use std::fs;
 use std::path::PathBuf;
 use tauri::AppHandle;
-use crate::helpers::{get_current_date, get_current_date_time};
 
 //
 const CURRENT_DB_VERSION: u32 = 1;
 
 // Note: The Fees table is the main table which contains all the transactions/records teh ones with charge id are charges and ones with payment id are payment
-#[derive(Debug, Serialize)]
-pub struct Setting {
-    pub organization_name: String,
-    pub pan_no: i32,
-    pub email: Option<String>,
-    pub phone_no: String,
-    pub location: String,
-    pub image: String,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
-}
-
-#[derive(Debug, Serialize)]
-pub struct Class {
-    pub id: i32,
-    pub class: String,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
-}
 
 #[derive(Debug, Serialize)]
 pub struct Charges {
@@ -39,42 +20,6 @@ pub struct Charges {
     pub class: Option<String>,
 }
 
-#[derive(Debug, Serialize)]
-pub struct Student {
-    pub id: i32,
-    pub first_name: String,
-    pub mid_name: String,
-    pub last_name: String,
-    pub address: String,
-    pub father_name: String,
-    pub mother_name: String,
-    pub date_of_birth: Option<String>,
-    pub gender: String,
-    pub roll_no: i32,
-    pub phone_no: Option<String>,
-    pub email: Option<String>,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
-    pub guardian_name: Option<String>,
-    pub guardian_relation: Option<String>,
-    pub emergency_contact: Option<String>,
-    pub is_active: bool,
-    pub class_id: i32,
-    pub class: Option<String>,
-}
-
-
-#[derive(Debug, Serialize)]
-pub struct Payment {
-    pub id: i32,
-    pub student_id: i32,
-    pub student_first_name: Option<String>,
-    pub student_last_name: Option<String>,
-    pub created_at: String,
-    pub amount: f32,
-    pub remarks: Option<String>,
-}
-
 /*
 Represent the join table for student_charges, charges and class
 The id is of the charge table
@@ -83,7 +28,6 @@ The id is of the charge table
 pub struct StudentCharges {
     pub id: i32,
     pub class_id: i32,
-    pub is_regular: bool,
     pub charge_title: String,
     pub student_id: Option<i32>,
     pub student_charge_id: Option<i32>, // the id of the student charge table
@@ -264,255 +208,23 @@ pub fn upgrade_database_if_needed(
     Ok(())
 }
 
-pub fn get_app_log(path: PathBuf) -> Result<String, std::io::Error> {
-    let file_content = fs::read_to_string(path);
-    return file_content;
-}
-
-pub fn add_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqlite::Error> {
-    db.execute(
-        "
-    INSERT INTO settings (organization_name, pan_no, location, phone_no, image, email) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
-    ",
-        params![
-            setting_data.organization_name,
-            setting_data.pan_no,
-            setting_data.location,
-            setting_data.phone_no,
-            setting_data.image,
-            setting_data.email
-        ],
-    )?;
-
-    Ok(())
-}
-
-pub fn get_settings(db: &Connection) -> Result<Setting, rusqlite::Error> {
-    let mut statement = db.prepare("SELECT * FROM settings limit 1")?;
-    let setting_result = statement.query_row::<Setting, _, _>([], |row| {
-        Ok(Setting {
-            organization_name: row.get("organization_name")?,
-            image: row.get("image")?,
-            email: row.get("email")?,
-            location: row.get("location")?,
-            pan_no: row.get("pan_no")?,
-            phone_no: row.get("phone_no")?,
-            created_at: row.get("created_at")?,
-            updated_at: row.get("updated_at")?,
-        })
-    })?;
-    Ok(setting_result)
-}
-
-pub fn update_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqlite::Error> {
-    let current_date = get_current_date_time();
-    db.execute("UPDATE settings SET organization_name = ?1, image = ?2, email = ?3, location = ?4, pan_no = ?5, phone_no = ?6, updated_at = ?7;", 
-    params![setting_data.organization_name, setting_data.image, setting_data.email, setting_data.location, setting_data.pan_no, setting_data.phone_no, current_date])?;
-    Ok(())
-}
-
-// class
-pub fn add_class(class: String, db: &Connection) -> Result<(), rusqlite::Error> {
-    let current_date = get_current_date_time();
-    let class_obj = Class {
-        class: class,
-        id: 0,
-        created_at: None,
-        updated_at: Some(current_date),
-    };
-    db.execute(
-        "
-    INSERT INTO class(class, updated_at) values(?1, ?2);
-    ",
-        params![class_obj.class, class_obj.updated_at],
-    )?;
-
-    Ok(())
-}
-
-pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<Class>, rusqlite::Error> {
-    let offset_value = (page - 1) * limit;
-    let mut data: Vec<Class> = Vec::new();
-    let mut statement = db.prepare("Select * from class limit ?1 offset ?2;")?;
-    let class_iter = statement.query_map(params![limit, offset_value], |row| {
-        Ok(Class {
-            class: row.get("class")?,
-            id: row.get("id")?,
-            created_at: row.get("created_at")?,
-            updated_at: row.get("updated_at")?,
-        })
-    })?;
-    for item in class_iter {
-        data.push(item.unwrap());
-    }
-    Ok(data)
-}
-
-pub fn update_class(db: &Connection, id: i32, class: String) -> Result<(), rusqlite::Error> {
-    let current_date = get_current_date_time();
-    db.execute(
-        "UPDATE class SET class = ?1, updated_at = ?3 where id = ?2",
-        params![class, id, current_date],
-    )?;
-    Ok(())
-}
-
-pub fn count_class_rows(db: &Connection) -> Result<i32, rusqlite::Error> {
-    let mut statement = db.prepare("SELECT count(id) as count from class limit 1;")?;
-    let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
-
-    Ok(count)
-}
-// student
-
-pub fn add_student(db: &Connection, student_data: Student) -> Result<(), rusqlite::Error> {
-    db.execute("
-    INSERT INTO students (first_name, mid_name, last_name, address, father_name, mother_name, date_of_birth, phone_no, email, guardian_name,guardian_relation, emergency_contact, class_id, gender, roll_no)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15)
-    ", (student_data.first_name, student_data.mid_name, student_data.last_name, student_data.address, student_data.father_name, student_data.mother_name, student_data.date_of_birth, student_data.phone_no, student_data.email, student_data.guardian_name, student_data.guardian_relation, student_data.emergency_contact, student_data.class_id, student_data.gender, student_data.roll_no))?;
-    Ok(())
-}
-
-pub fn get_student(
-    db: &Connection,
-    page: i32,
-    limit: i32,
-    class_id: Option<i32>,
-) -> Result<Vec<Student>, rusqlite::Error> {
-    let offset_value = (page - 1) * limit;
-    let mut data: Vec<Student> = Vec::new();
-    let map_row = |row: &rusqlite::Row| -> Result<Student> {
-        Ok(Student {
-            id: row.get("id")?,
-            class: row.get("class")?,
-            first_name: row.get("first_name")?,
-            last_name: row.get("last_name")?,
-            mid_name: row.get("mid_name")?,
-            address: row.get("address")?,
-            father_name: row.get("father_name")?,
-            is_active: row.get("is_active")?,
-            class_id: row.get("class_id")?,
-            mother_name: row.get("mother_name")?,
-            gender: row.get("gender")?,
-            roll_no: row.get("roll_no")?,
-            date_of_birth: row.get("date_of_birth")?,
-            phone_no: None,
-            email: None,
-            created_at: None,
-            updated_at: None,
-            guardian_name: None,
-            emergency_contact: None,
-            guardian_relation: None,
-        })
-    };
-    if let Some(id) = class_id {
-        let query = "Select * from students inner join class on students.class_id = class.id where class_id = ?3 limit ?1 offset ?2;";
-        let mut statement = db.prepare(query)?;
-
-        let student_iter = statement.query_map(params![limit, offset_value, id], map_row)?;
-        for student in student_iter {
-            data.push(student.unwrap());
-        }
-        return Ok(data);
-    } else {
-        let query = "Select * from students inner join class on students.class_id = class.id limit ?1 offset ?2;";
-        let mut statement = db.prepare(query)?;
-        let student_iter = statement.query_map(params![limit, offset_value], map_row)?;
-        for student in student_iter {
-            data.push(student.unwrap());
-        }
-        return Ok(data);
-    };
-}
-
-pub fn get_student_detail(db: &Connection, id: i32) -> Result<Student, rusqlite::Error> {
-    let mut statement = db.prepare(
-        "SELECT * FROM students inner join class on students.class_id = class.id where students.id = ?1",
-    )?;
-    let student_detail = statement.query_row(params![id], |row| {
-        Ok(Student {
-            id: row.get("id")?,
-            class: row.get("class")?,
-            first_name: row.get("first_name")?,
-            last_name: row.get("last_name")?,
-            mid_name: row.get("mid_name")?,
-            address: row.get("address")?,
-            father_name: row.get("father_name")?,
-            is_active: row.get("is_active")?,
-            class_id: row.get("class_id")?,
-            mother_name: row.get("mother_name")?,
-            gender: row.get("gender")?,
-            roll_no: row.get("roll_no")?,
-            date_of_birth: row.get("date_of_birth")?,
-            phone_no: row.get("phone_no")?,
-            email: row.get("email")?,
-            created_at: row.get("created_at")?,
-            updated_at: row.get("updated_at")?,
-            guardian_name: row.get("guardian_name")?,
-            emergency_contact: row.get("emergency_contact")?,
-            guardian_relation: row.get("guardian_relation")?,
-        })
-    })?;
-
-    Ok(student_detail)
-}
-pub fn update_student_detail(
-    db: &Connection,
-    student_data: Student,
-    student_id: i32,
-) -> Result<(), rusqlite::Error> {
-    let date_string = get_current_date_time();
-    println!("{}", student_data.class_id);
-    println!("{}", student_id);
-    db.execute(
-        "UPDATE students SET first_name = ?1, mid_name = ?2, last_name = ?3, address = ?4, father_name = ?5, mother_name = ?6, date_of_birth = ?7, phone_no = ?8, email = ?9, updated_at = ?10, guardian_name = ?11, emergency_contact = ?12  where id = ?13; ", 
-        params![student_data.first_name, student_data.mid_name, student_data.last_name, student_data.address, student_data.father_name, student_data.mother_name, student_data.date_of_birth, student_data.phone_no, student_data.email, date_string, student_data.guardian_name, student_data.emergency_contact, student_id])?;
-    Ok(())
-}
-
-pub fn change_student_status(
-    db: &Connection,
-    new_status: bool,
-    student_id: i32,
-) -> Result<(), rusqlite::Error> {
-    let date_string = get_current_date_time();
-    db.execute(
-        "
-    UPDATE students SET is_active = ?1, updated_at = ?2 where id = ?3
-    ",
-        params![new_status, date_string, student_id],
-    )?;
-    Ok(())
-}
-
-pub fn count_student_row(db: &Connection) -> Result<i32, rusqlite::Error> {
-    let mut statement = db.prepare(" Select count(id) as count from students limit 1;")?;
-    let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
-    Ok(count)
-}
-
-pub fn get_student_previous_due(db: &Connection, student_id: i32) -> Result<f32, rusqlite::Error> {
-    let mut statement = db.prepare("select sum( case  when payment_id is null then amount else -amount end ) as sum from fees left join students on fees.student_id = students.id where student_id = ?1 and strftime('%m', fees.created_at) < strftime('%m', 'now');")?;
-    let amount = statement.query_row(params![student_id], |row| row.get::<&str, f32>("sum"))?;
-    Ok(amount)
-}
-
-
-
 // student charges
 pub fn get_student_charges(
     db: &Connection,
     student_id: i32,
 ) -> Result<Vec<StudentCharges>, rusqlite::Error> {
-    let mut statement = db.prepare("select charge.*, student_charges.*, class.*, student_charges.id as sc_id from charge left join student_charges on charge.id = student_charges.charge_id inner join class on charge.class_id = class.id  where (student_id = ?1 or student_id is null ) ;")?;
+    // let mut statement = db.prepare("select charge.*, student_charges.*, class.*, student_charges.id as sc_id from charge left join student_charges on charge.id = student_charges.charge_id inner join class on charge.class_id = class.id  where (student_id = ?1 or student_id is null ) ;")?;
     // let mut statement = db.prepare("select ch.id, ch.class_id, ch.charge_title, ch.amount, ch.is_regular, stc.id, stc.student_id, stc.charge_id, cl.id, cl.class from charge as ch left join student_charges as stc on ch.id = stc.charge_id inner join class as cl on ch.class_id = cl.id  where (stc.student_id = ?1 or stc.student_id is null ) ;")?;
-
+    let mut statement = db.prepare(
+        "select *, sc.id as sc_id from charge left join (
+        select distinct student_id, charge_id, id from student_charges where student_id = ?1
+    ) as sc on charge.id = sc.charge_id left join class on charge.class_id = class.id ;",
+    )?;
     let student_charges_iter = statement.query_map(params![student_id], |row| {
         Ok(StudentCharges {
             id: row.get("id")?,
             student_charge_id: row.get("sc_id")?,
             student_id: row.get("student_id")?,
-            is_regular: row.get("is_regular")?,
             class_id: row.get("class_id")?,
             charge_title: row.get("charge_title")?,
             amount: row.get("amount")?,
@@ -629,8 +341,16 @@ pub fn add_charge_bulk(
     Ok(())
 }
 
-pub fn add_charge(db: &Connection, amount: f32, charge_title: String, class_id: i32) -> Result<(), rusqlite::Error>{
-    db.execute("INSERT INTO charges(amount, charge_title, class_id) values(?1, ?2, ?3);", params![amount, charge_title, class_id])?;
+pub fn add_charge(
+    db: &Connection,
+    amount: f32,
+    charge_title: String,
+    class_id: i32,
+) -> Result<(), rusqlite::Error> {
+    db.execute(
+        "INSERT INTO charges(amount, charge_title, class_id) values(?1, ?2, ?3);",
+        params![amount, charge_title, class_id],
+    )?;
     Ok(())
 }
 
@@ -692,116 +412,6 @@ pub fn apply_charges(db: &mut Connection, charge_id: i32) -> Result<(), rusqlite
     Ok(())
 }
 
-
-
-// payment
-pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rusqlite::Error> {
-    let transaction = db.transaction()?;
-    transaction.execute(
-        "
-    INSERT INTO payment (amount, student_id, remarks) values (?1, ?2, ?3);
-    ",
-        params![
-            payment_data.amount,
-            payment_data.student_id,
-            payment_data.remarks
-        ],
-    )?;
-    let id = transaction.last_insert_rowid();
-    // TODO important the logic
-    transaction.execute(
-        "
-    INSERT INTO fees (student_id, amount, title, payment_id) VALUES (?1, ?2, ?3, ?4);
-    ",
-        params![payment_data.student_id, payment_data.amount, "Payment", id],
-    )?;
-    transaction.commit()?;
-    Ok(())
-}
-
-pub fn get_payment(
-    db: &Connection,
-    page: i32,
-    limit: i32,
-    student_id: Option<i32>,
-) -> Result<Vec<Payment>, rusqlite::Error> {
-    let offset_value = (page - 1) * limit;
-    let mut data: Vec<Payment> = Vec::new();
-    match student_id {
-        Some(value) => {
-            let  query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 limit ?1 offset ?2";
-            let mut statement = db.prepare(query)?;
-            let payment_iter = statement.query_map(params![limit, offset_value, value], |row| {
-                Ok(Payment {
-                    id: row.get("id")?,
-                    student_id: row.get("student_id")?,
-                    student_first_name: row.get("first_name")?,
-                    student_last_name: row.get("last_name")?,
-                    amount: row.get("amount")?,
-                    created_at: row.get("created_at")?,
-                    remarks: row.get("remarks")?,
-                })
-            })?;
-            for payment in payment_iter {
-                data.push(payment.unwrap());
-            }
-            Ok(data)
-        }
-        None => {
-            let query = "Select * from payment inner join students on payment.student_id = students.id limit ?1 offset ?2";
-            let mut statement = db.prepare(query)?;
-            let payment_iter = statement.query_map(params![limit, offset_value], |row| {
-                Ok(Payment {
-                    id: row.get("id")?,
-                    student_id: row.get("student_id")?,
-                    student_first_name: row.get("first_name")?,
-                    student_last_name: row.get("last_name")?,
-                    amount: row.get("amount")?,
-                    created_at: row.get("created_at")?,
-                    remarks: row.get("remarks")?,
-                })
-            })?;
-            for payment in payment_iter {
-                data.push(payment.unwrap());
-            }
-            Ok(data)
-        }
-    }
-}
-pub fn get_payment_detail(db: &Connection, id: i32) -> Result<Payment, rusqlite::Error> {
-    let mut statement = db.prepare("Select * from payment join students on payment.student_id = students.id where payment.id = ?1 limit 1;")?;
-    let data = statement.query_row(params![id], |row| {
-        Ok(Payment {
-            id: row.get("id")?,
-            amount: row.get("amount")?,
-            created_at: row.get("created_at")?,
-            remarks: row.get("remarks")?,
-            student_first_name: row.get("first_name")?,
-            student_id: row.get("student_id")?,
-            student_last_name: row.get("last_name")?,
-        })
-    })?;
-    Ok(data)
-}
-pub fn count_payment_rows(
-    db: &Connection,
-    student_id: Option<i32>,
-) -> Result<i32, rusqlite::Error> {
-    match student_id {
-        Some(value) => {
-            let mut statement =
-                db.prepare("Select count(id) as count from payment where student_id = ?1 limit 1")?;
-            let count = statement.query_row(params![value], |row| row.get::<&str, i32>("count"))?;
-            Ok(count)
-        }
-        None => {
-            let mut statement = db.prepare("Select count(id) as count from payment limit 1")?;
-            let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
-            Ok(count)
-        }
-    }
-}
-
 pub fn backup(app_handle: &AppHandle) -> Result<(u64, PathBuf), std::io::Error> {
     let mut app_dir = app_handle
         .path_resolver()
@@ -815,4 +425,3 @@ pub fn backup(app_handle: &AppHandle) -> Result<(u64, PathBuf), std::io::Error> 
     let result = fs::copy(db_path, &backup_path)?;
     Ok((result, backup_path))
 }
-
