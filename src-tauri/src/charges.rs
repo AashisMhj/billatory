@@ -29,7 +29,7 @@ pub fn get_student_of_charge(db: &Connection, charge_id:i32)-> Result<Vec<Charge
         SELECT DISTINCT student_id, charge_id
            FROM student_charges
            WHERE charge_id = ?1
-       ) AS sc on students.ID = sc.student_id left join class on students.id = class.id;
+       ) AS sc on students.ID = sc.student_id left join class on students.class_id = class.id;
     ";
     let mut statement = db.prepare(query)?;
 
@@ -66,11 +66,11 @@ pub fn get_charge_detail(db: &Connection, charge_id:i32) -> Result<Charge, rusql
     Ok(charge_detail)
 }
 
-pub fn apply_charges_student(db: &mut Connection, charge_id: i32,amount:f32, charge_title:String, student_ids: Vec<i32>) -> Result<(), rusqlite::Error>{
+pub fn apply_charges_student(db: &mut Connection, charge_id: i32,amount:f32, charge_title:String, student_ids: Vec<i32>, nepali_month: i32, nepali_year: i32) -> Result<(), rusqlite::Error>{
     let transaction = db.transaction()?;
 
     for student_id in student_ids{
-        transaction.execute("INSERT INTO fees (student_id, amount, title, charge_id) VALUES (?1, ?2, ?3, ?4);", params![student_id, amount, charge_title,charge_id ])?;
+        transaction.execute("INSERT INTO fees (student_id, amount, title, charge_id, year, month) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", params![student_id, amount, charge_title,charge_id, nepali_year, nepali_month ])?;
     }
 
     transaction.commit()?;

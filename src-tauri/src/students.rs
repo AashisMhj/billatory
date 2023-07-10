@@ -1,6 +1,6 @@
 use rusqlite::{params, Connection, Result};
 use serde::Serialize;
-use crate::helpers::{ get_current_date_time};
+use crate::helpers::get_current_date_time;
 
 #[derive(Debug, Serialize)]
 pub struct StudentMinType{
@@ -157,8 +157,8 @@ pub fn update_student_detail(
     println!("{}", student_data.class_id);
     println!("{}", student_id);
     db.execute(
-        "UPDATE students SET first_name = ?1, mid_name = ?2, last_name = ?3, address = ?4, father_name = ?5, mother_name = ?6, date_of_birth = ?7, phone_no = ?8, email = ?9, updated_at = ?10, guardian_name = ?11, emergency_contact = ?12  where id = ?13; ", 
-        params![student_data.first_name, student_data.mid_name, student_data.last_name, student_data.address, student_data.father_name, student_data.mother_name, student_data.date_of_birth, student_data.phone_no, student_data.email, date_string, student_data.guardian_name, student_data.emergency_contact, student_id])?;
+        "UPDATE students SET first_name = ?1, mid_name = ?2, last_name = ?3, address = ?4, father_name = ?5, mother_name = ?6, date_of_birth = ?7, phone_no = ?8, email = ?9, updated_at = ?10, guardian_name = ?11, emergency_contact = ?12, guardian_relation = ?13,  roll_no = ?14, class_id = ?15  where id = ?16; ", 
+        params![student_data.first_name, student_data.mid_name, student_data.last_name, student_data.address, student_data.father_name, student_data.mother_name, student_data.date_of_birth, student_data.phone_no, student_data.email, date_string, student_data.guardian_name, student_data.emergency_contact, student_data.guardian_relation, student_data.roll_no, student_data.class_id,  student_id])?;
     Ok(())
 }
 

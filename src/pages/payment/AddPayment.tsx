@@ -4,17 +4,17 @@ import { Formik } from "formik";
 import * as Yup from 'yup';
 //
 
-import { getStudents } from "@/services/student.service";
+import { getAllActiveStudents, getStudents } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
 import { getClasses } from "@/services/class.service";
 //
 import { SnackBarContext } from "@/context/snackBar";
-import { StudentClassType, StudentType } from "@/types";
+import { StudentClassType, StudentMiniType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 
 type StudentListType = {
     show: boolean
-} & StudentType;
+} & StudentMiniType;
 
 export default function AddPaymentPage() {
     const [students, setStudents] = useState<Array<StudentListType>>([]);
@@ -31,18 +31,15 @@ export default function AddPaymentPage() {
         }))
     }
     useEffect(() => {
-        getStudents(1, 5000)
+        getAllActiveStudents()
             .then(data => {
-                if (typeof data === "string") {
-                    const student_data = JSON.parse(data) as Array<StudentType>;
-                    if (student_data.length > 0) {
-                        setStudents(student_data.map((value) => {
-                            return {
-                                ...value,
-                                show: true
-                            }
-                        }));
-                    }
+                if(Array.isArray(data)){
+                    setStudents(data.map((value) => {
+                        return {
+                            ...value,
+                            show: true
+                        }
+                    }));
                 }
             })
             .catch(err => console.log(err));
@@ -113,7 +110,7 @@ export default function AddPaymentPage() {
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="student">Student Name</InputLabel>
                                         <Select onChange={handleChange} name="student_id">
-                                            {students.filter(item => item.show).map((student) => <MenuItem value={student.id}>{`${student.first_name} ${student.last_name} class:${student.class}`}</MenuItem>)}
+                                            {students.filter(item => item.show).map((student) => <MenuItem value={student.id}>{`${student.first_name} ${student.last_name}`}</MenuItem>)}
                                         </Select>
                                     </Stack>
                                 </Grid>

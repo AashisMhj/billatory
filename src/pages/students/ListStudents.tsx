@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from 'react';
 import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Tooltip, Pagination, Typography, IconButton } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
+import FemaleIcon from '@mui/icons-material/Female';
+import MaleIcon from '@mui/icons-material/Male';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 //
@@ -31,7 +33,7 @@ export default function ListStudents() {
     const [is_open_filter_modal, setOpenFilterModal] = useState(false);
     const [show_active, setShowActive] = useState(true);
     const [disable_id, setDisableId] = useState<number | null>(null);
-    const {showAlert} = useContext(SnackBarContext);
+    const { showAlert } = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
@@ -47,25 +49,25 @@ export default function ListStudents() {
         setShowActive(value.show_active);
     }
 
-    function changeStatus(id: number, checked: boolean){
+    function changeStatus(id: number, checked: boolean) {
         updateStudentStatus(id, checked)
-        .then(_ => {
-            showAlert('Student Status Updated', 'success');
-            fetchData();
-        })
-        .catch(err => {
-            showAlert('Failed to Update Status '+err, 'error');
-            console.log(err)
-        })
+            .then(_ => {
+                showAlert('Student Status Updated', 'success');
+                fetchData();
+            })
+            .catch(err => {
+                showAlert('Failed to Update Status ' + err, 'error');
+                console.log(err)
+            })
     }
 
     function handleSwitchChange(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, student_id: number) {
-        if(checked){
+        if (checked) {
             changeStatus(student_id, checked);
-        }else{
+        } else {
             setDisableId(student_id);
         }
-        
+
     }
 
     function fetchData() {
@@ -150,12 +152,13 @@ export default function ListStudents() {
                             </TableHead>
                             <TableBody>
                                 {
-                                    student_data.map((student: StudentType, index:number) => (
+                                    student_data.map((student: StudentType, index: number) => (
                                         <TableRow key={student.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell component="th" scope='row' align='left'>
                                                 {index + 1}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
+                                                {student.gender === "male" ? <MaleIcon /> : <FemaleIcon />}
                                                 {`${student.first_name} ${student.last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>

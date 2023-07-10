@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react';
-import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
+import { Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -10,8 +11,10 @@ import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { addStudent } from '@/services/student.service';
 import { SnackBarContext } from '@/context/snackBar';
+import paths from '@/routes/path';
 
 export default function AddStudentPage() {
+    const navigate = useNavigate();
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const {showAlert} = useContext(SnackBarContext)
     useEffect(() => {
@@ -91,7 +94,7 @@ export default function AddStudentPage() {
                         )
                             .then((data) => {
                                 showAlert('Student Added', 'success');
-                                // TODO navigate
+                                navigate(paths.studentsList);
                             })
                             .catch((error) => {
                                 console.log(error);

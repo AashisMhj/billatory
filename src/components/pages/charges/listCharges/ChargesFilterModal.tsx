@@ -1,16 +1,18 @@
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
 import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, Select, Stack, SxProps, Typography } from "@mui/material";
 //
 import AnimateButton from "@/components/@extended/AnimateButton";
-import { ClassFilterType } from "@/types";
+import { ChargesFilterType, StudentClassType } from "@/types";
+import { getClasses } from "@/services/class.service";
 
 interface Props {
     open: boolean,
     handleClose: () => void,
-    onSubmit: (value: ClassFilterType) => void,
-    value: ClassFilterType
+    onSubmit: (value: ChargesFilterType) => void,
+    value: ChargesFilterType
 }
 const style: SxProps = {
     position: 'absolute' as 'absolute',
@@ -25,7 +27,18 @@ const style: SxProps = {
 
 const DropDownItems = [10, 20, 30];
 
-export default function EditModal({ open, handleClose, onSubmit, value }: Props) {
+export default function ChargesFilterModal({ open, handleClose, onSubmit, value }: Props) {
+    const [classes, setClasses] = useState<Array<StudentClassType>>([])
+    useEffect(() => {
+        getClasses(1, 10000)
+            .then((data) => {
+                if (typeof data === "string") {
+                    const class_data = JSON.parse(data);
+                    setClasses(class_data);
+                }
+            })
+            .catch(error => console.log(error))
+    }, []);
     return (
         <Modal
             open={open && value !== null}
@@ -40,14 +53,15 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                 </Box>
                 <Formik initialValues={{ ...value, submit: null }}
                     validationSchema={Yup.object().shape({
-                        limit: Yup.string().trim().required('Class Title is Required')
+                        limit: Yup.string().trim().required('Class Title is Required'),
+                        class: Yup.number()
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
+                            console.log(values);
                             setStatus({ success: false });
-                            // TODO update 
                             setSubmitting(false);
-                            onSubmit({ limit: values.limit });
+                            onSubmit({ limit: values.limit, class_id: values.class_id });
                             handleClose();
                         } catch (error) {
                             setStatus(false);
@@ -57,7 +71,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                         }
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, values }) => (
+                    {({ errors, handleChange, handleSubmit, isSubmitting, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -66,6 +80,16 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                                         <Select labelId="limit" id='limit' value={values.limit} name="limit" onChange={handleChange}>
                                             {
                                                 DropDownItems.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                            }
+                                        </Select>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Stack spacing={1}>
+                                        <InputLabel htmlFor="class" error={Boolean(errors.class_id)}>Class</InputLabel>
+                                        <Select labelId="class" id="class" value={values.class_id} name='class_id' onChange={handleChange}>
+                                            {
+                                                classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
                                             }
                                         </Select>
                                     </Stack>

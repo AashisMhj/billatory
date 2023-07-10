@@ -128,7 +128,7 @@ const NavItem = ({ item, level }:Props) => {
           primary={
             <Typography variant="h6" sx={{ 
               // color: isSelected ? iconSelectedColor : textColor 
-              color: "black"
+              color: 'primary'
               }}>
               {item.title}
             </Typography>

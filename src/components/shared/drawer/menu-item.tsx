@@ -5,7 +5,6 @@ import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 // assets
 import { NavGroupType } from '@/types'

@@ -4,9 +4,9 @@ import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icon
 import {Link as RouterLink} from 'react-router-dom';
 //
 import { ChargesType, ChargesFilterType } from '@/types';
-import { getCharges, getChargeCount, applyCharge } from '@/services/charge.service';
+import { getCharges, getChargeCount } from '@/services/charge.service';
 import { getNoOfPage, addComma } from '@/utils/helper-function';
-import { AddChargeModal, EditChargeModal } from '@/components/pages/charges/listCharges';
+import { AddChargeModal, EditChargeModal, ChargesFilterModal } from '@/components/pages/charges/listCharges';
 import { SnackBarContext } from '@/context/snackBar';
 import paths from '@/routes/path';
 //
@@ -25,9 +25,10 @@ export default function ListCharges() {
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRow] = useState<number>(0);
-    const [filter_class, setFilterClass] = useState<number | null>(null);
+    const [filter_class, setFilterClass] = useState<number >();
     const [is_edit_modal_open, setIsEditModalOpen] = useState(false);
     const [is_add_model_open, setIsAddModalOpen] = useState(false);
+    const [is_filter_modal_open, setIsFilterModalOpen] = useState(false);
     const [edit_data, setEditData] = useState<ChargesType | null>(null);
     const { showAlert } = useContext(SnackBarContext);
 
@@ -36,8 +37,8 @@ export default function ListCharges() {
     }
 
     function handleFilterSubmit(value: ChargesFilterType) {
-        if (value.class) {
-            setFilterClass(value.class);
+        if (value.class_id) {
+            setFilterClass(value.class_id);
         }
         if (limit !== value.limit) {
             setLimit(value.limit);
@@ -45,17 +46,20 @@ export default function ListCharges() {
     }
 
     function fetchData() {
-        getCharges(page, limit)
+        getCharges(page, limit, filter_class)
             .then((data) => {
                 if (typeof data === "string") {
                     const charges_data = JSON.parse(data);
                     setCharges(charges_data);
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                showAlert('Error '+err, 'error');
+                console.log(err);
+            });
 
         // 
-        getChargeCount()
+        getChargeCount( filter_class)
             .then(data => {
                 if (typeof data === "number") {
                     setTotalRow(data);
@@ -71,7 +75,7 @@ export default function ListCharges() {
 
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [page, limit, filter_class]);
     return (
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -84,7 +88,7 @@ export default function ListCharges() {
                             <IconButton color='warning' onClick={() => setIsAddModalOpen(true)} >
                                 <PlusCircleFilled />
                             </IconButton>
-                            <IconButton color='info' >
+                            <IconButton color='info' onClick={() => setIsFilterModalOpen(true)} >
                                 <FilterOutlined />
                             </IconButton>
                         </Grid>
@@ -118,8 +122,8 @@ export default function ListCharges() {
                             <TableHead>
                                 <TableRow>
                                     {
-                                        tableHeads.map((item: string) => (
-                                            <TableCell key={item} padding='normal' sortDirection={false}>{item}</TableCell>
+                                        tableHeads.map((item: string, index) => (
+                                            <TableCell key={index} padding='normal' sortDirection={false}>{item}</TableCell>
                                         ))
                                     }
                                 </TableRow>
@@ -167,6 +171,7 @@ export default function ListCharges() {
             </Grid>
             <AddChargeModal open={is_add_model_open} handleClose={() => setIsAddModalOpen(false)} onSubmit={() => fetchData()} />
             <EditChargeModal data={edit_data} open={is_edit_modal_open} handleClose={() => setIsEditModalOpen(false)} onSubmit={() => fetchData()} />
+            <ChargesFilterModal open={is_filter_modal_open} value={{class_id: filter_class, limit}} handleClose={() => setIsFilterModalOpen(false) } onSubmit={handleFilterSubmit} />
         </>
     )
 }

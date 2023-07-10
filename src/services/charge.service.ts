@@ -33,9 +33,10 @@ export function getChargeDetail(chargeId:number){
     })
 }
 
-export function getCharges(page:number, limit:number){
+export function getCharges(page:number, limit:number, classId?: number){
+    console.log(classId);
     return invoke('get_charge_data', {
-        page, limit
+        page, limit, classId
     })
 }
 
@@ -70,17 +71,21 @@ export function applyChargeAll(charge_id:number){
     });
 }
 
-export function applyCharge(charge_id:number, student_ids: Array<number>, amount: number, chargeTitle: string){
+export function applyCharge(charge_id:number, student_ids: Array<number>, amount: number, chargeTitle: string, nepaliMonth: number, nepaliYear: number){
     return invoke('apply_charges_student_data', {
         chargeId: charge_id,
         studentIds: student_ids,
         amount,
-        chargeTitle
+        chargeTitle,
+        nepaliMonth, 
+        nepaliYear
     })
 }
 
-export function getChargeCount(){
-    return invoke('count_charges_row');
+export function getChargeCount(classId?: number){
+    return invoke('count_charges_row', {
+        classId
+    });
 }
 
 export function addStudentCharge(studentId:number, chargeId:number){

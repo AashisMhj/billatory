@@ -19,7 +19,7 @@ const NavGroup = ({ item }:Props) => {
       case 'collapse':
         return (
           <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-            collapse - only available in paid version
+            collapse Not Available
           </Typography>
         );
       case 'item':

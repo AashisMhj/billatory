@@ -46,8 +46,6 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
     useEffect(() => {
         getAllActiveStudents()
             .then((data) => {
-                console.log('student');
-                console.log(data);
                 setAllStudents(data as Array<StudentMiniType>)
             })
             .catch(error => console.log(error))

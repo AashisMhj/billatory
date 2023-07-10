@@ -1,9 +1,8 @@
-import { Button, Checkbox, Grid, InputLabel, IconButton, List, ListItem, ListItemButton, ListItemText, OutlinedInput, Paper, Stack, Typography } from '@mui/material';
+import { Button, Checkbox, Grid, InputLabel, IconButton, List, ListItem, ListItemButton, ListItemText, OutlinedInput, Paper, Stack, Typography, Select, MenuItem } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 //
 import { applyCharge, getChargeDetail, getStudentOfCharge } from '@/services/charge.service';
-import { getClasses } from '@/services/class.service';
 import { SnackBarContext } from '@/context/snackBar';
 import { CloseOutlined } from '@mui/icons-material';
 
@@ -18,12 +17,29 @@ interface StudentCharge {
     display: boolean
 }
 
+const months = [
+    { month_name: "Baisakh", value: 1, },
+    { month_name: "Jestha", value: 2, },
+    { month_name: "Asar", value: 3, },
+    { month_name: "Shrawan", value: 4, },
+    { month_name: "Bhadra", value: 5, },
+    { month_name: "Aswin", value: 6, },
+    { month_name: "Kartik", value: 7, },
+    { month_name: "Mangsir", value: 8, },
+    { month_name: "Poush", value: 9, },
+    { month_name: "Magh", value: 10, },
+    { month_name: "Falgun", value: 11, },
+    { month_name: "Chaitra", value: 12, },
+]
+
 export default function ApplyChargesPage() {
     const [selected_student, setSelectedStudent] = useState<Array<StudentCharge>>([]);
     const [all_students, setAllStudents] = useState<Array<StudentCharge>>([]);
     const [charge_title, setChargeTitle] = useState('');
     const [charge_amount, setChargeAmount] = useState(0);
     const [search_text, setSearchText] = useState('');
+    const [selected_year, setSelectedYear] = useState(2080);
+    const [selected_month, setSelectedMonth] = useState(months[0].value);
     const { showAlert } = useContext(SnackBarContext);
 
     const { id } = useParams();
@@ -48,14 +64,11 @@ export default function ApplyChargesPage() {
 
     function handleSearchChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setSearchText(event.target.value);
-        // TODO filter
     }
 
-    function removeSelectedUser(remove_index:number){
+    function removeSelectedUser(remove_index: number) {
         let temp = [...selected_student];
         temp.splice(remove_index, 1);
-        console.log(temp);
-        console.log(remove_index);
         setSelectedStudent(temp);
     }
 
@@ -64,8 +77,8 @@ export default function ApplyChargesPage() {
             const parsed_id = parseInt(id);
             if (parsed_id) {
                 const selected_students_id = selected_student.map((item) => item.id);
-                applyCharge(parsed_id, selected_students_id, charge_amount, charge_title)
-                    .then(data => {
+                applyCharge(parsed_id, selected_students_id, charge_amount, charge_title, selected_month, selected_year)
+                    .then(_ => {
                         showAlert('Charges applied', 'success');
                     })
                     .catch(error => {
@@ -86,9 +99,9 @@ export default function ApplyChargesPage() {
         setSelectedStudent(all_students.filter((item) => item.charge_id));
     }, [all_students]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const lower_search = search_text.toLowerCase();
-        if(search_text && search_text.trim().length > 0){
+        if (search_text && search_text.trim().length > 0) {
             setAllStudents(all_students.map(e => {
                 const display = (e.first_name.toLowerCase().includes(lower_search) || e.last_name.toLowerCase().includes(lower_search));
                 return {
@@ -96,8 +109,8 @@ export default function ApplyChargesPage() {
                     display
                 }
             }))
-        }else{
-            setAllStudents(all_students.map(el => ({...el, display: true})))
+        } else {
+            setAllStudents(all_students.map(el => ({ ...el, display: true })))
         }
     }, [search_text])
 
@@ -109,7 +122,7 @@ export default function ApplyChargesPage() {
                     .then((data) => {
                         console.log(data)
                         // TODO set selected student
-                        if(Array.isArray(data)){
+                        if (Array.isArray(data)) {
                             setAllStudents(data.map((item => {
                                 return {
                                     ...item,
@@ -125,7 +138,6 @@ export default function ApplyChargesPage() {
                 //
                 getChargeDetail(parse_id)
                     .then((data) => {
-                        console.log(data, 'detail');
                         if (typeof data === "object" && data !== null && 'charge_title' in data && 'amount' in data) {
                             if (typeof data.charge_title === "string") {
                                 setChargeTitle(data.charge_title);
@@ -137,12 +149,6 @@ export default function ApplyChargesPage() {
                         }
                     })
                     .catch(error => console.log(error));
-
-                getClasses(1, 99999)
-                    .then(data => {
-                        console.log(data);
-                    })
-                    .catch(error => console.error(error))
             }
         }
     }, [])
@@ -180,6 +186,30 @@ export default function ApplyChargesPage() {
                             </Stack>
                         </Grid>
                         <Grid item xs={3}>
+                            <Stack spacing={1}>
+                                <InputLabel htmlFor="year" required={true}>Year</InputLabel>
+                                <OutlinedInput
+                                    id="year"
+                                    type="number"
+                                    value={selected_year}
+                                    name="organization_name"
+                                    onChange={(event) => setSelectedYear(parseInt(event.target.value))}
+                                    placeholder="Current Year"
+                                    fullWidth
+                                />
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Stack spacing={1}>
+                                <InputLabel htmlFor="month" required={true}>Year</InputLabel>
+                                <Select labelId="month"  value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
+                                    }
+                                </Select>
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={3}>
                             <Button variant='contained' onClick={handleSubmit}>Apply</Button>
                         </Grid>
                     </Grid>
@@ -210,12 +240,12 @@ export default function ApplyChargesPage() {
                 </Grid>
                 <Grid item xs={3} padding={1} spacing={2}>
                     <Typography variant='h5'>Selected Total: {selected_student.length}</Typography>
-                    <List dense sx={{width: '100%', bgcolor: 'Background.paper'}}>
+                    <List dense sx={{ width: '100%', bgcolor: 'Background.paper' }}>
                         {
                             selected_student.map((item, index) => (
                                 <ListItem key={item.id} secondaryAction={<IconButton edge="end" onClick={() => removeSelectedUser(index)} >
                                     <CloseOutlined />
-                                </IconButton> }>
+                                </IconButton>}>
                                     <ListItemButton>
                                         <ListItemText primary={`${item.first_name} ${item.last_name}`} />
                                     </ListItemButton>

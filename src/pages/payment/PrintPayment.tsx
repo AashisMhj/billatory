@@ -9,6 +9,7 @@ import { PaymentType } from "@/types";
 import { SettingsContext } from "@/context/settings";
 import { convertToWords } from "@/utils/helper-function";
 import '@/components/pages/payment/printPayment/payment-slip.css';
+import paymentFrame from "@/components/pages/payment/PaymentTemplate";
 
 
 export default function PrintPaymentPage() {
@@ -26,22 +27,51 @@ export default function PrintPaymentPage() {
     });
     const { value } = useContext(SettingsContext);
 
+    // function printDocument() {
+    //     try {
+    //         if (slipRef.current) {
+    //             iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
+    //                 iframeRef.current?.contentWindow?.document.open();
+    //                 iframeRef.current?.contentWindow?.document.close();
+    //             })
+    //             iframeRef.current?.contentWindow?.document.write(slipRef.current.innerHTML);
+    //             iframeRef.current?.contentWindow?.print();
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+
+    //     }
+
+    // }
+
     function printDocument() {
         try {
-            if (slipRef.current) {
-                iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
-                    iframeRef.current?.contentWindow?.document.open();
-                    iframeRef.current?.contentWindow?.document.close();
-                })
-                iframeRef.current?.contentWindow?.document.write(slipRef.current.innerHTML);
-                iframeRef.current?.contentWindow?.print();
-            }
+            iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
+
+            })
+
+            iframeRef.current?.contentWindow?.print();
         } catch (error) {
-            console.log(error);
-
+            console.log(error)
         }
-
     }
+
+    useEffect(() => {
+        iframeRef.current?.contentWindow?.document.open();
+        iframeRef.current?.contentWindow?.document.close();
+        iframeRef.current?.contentWindow?.document.write(paymentFrame({
+            organization_name: value.organization_name,
+            amount: payment_info.amount,
+            current_date: current_date,
+            amount_words: convertToWords(payment_info.amount),
+            location: value.location,
+            pan_no: value.pan_no,
+            payee: 'Jhon Doe',
+            payment_id: payment_info.id,
+            phone_no: value.phone_no,
+        }));
+
+    }, [payment_info]);
 
     useEffect(() => {
         if (id) {
@@ -67,7 +97,7 @@ export default function PrintPaymentPage() {
                     <Grid item xs={12}>
                         <Button variant="contained" onClick={printDocument} >Print</Button>
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <PaymentSlip
                             ref={slipRef}
                             organization_name={value.organization_name}
@@ -80,9 +110,9 @@ export default function PrintPaymentPage() {
                             payment_id={payment_info.id}
                             phone_no={value.phone_no}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
-                        <iframe ref={iframeRef} width="100%" style={{ aspectRatio: '3/1', display: 'none' }}></iframe>
+                        <iframe ref={iframeRef} width="100%" style={{ aspectRatio: "1/1.41" }}></iframe>
                     </Grid>
                 </Grid>
             </Box>

@@ -147,7 +147,7 @@ export interface StudentsTableFilterType{
 }
 
 export interface ChargesFilterType{
-    class?: number,
+    class_id?: number,
     limit: number
 }
 

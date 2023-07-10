@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -11,9 +11,11 @@ import { StudentType, StudentClassType, GenderType } from '@/types';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { updateStudent, getStudentDetail } from '@/services/student.service';
+import paths from '@/routes/path';
 
 export default function EditStudentPage() {
-    const {showAlert} = useContext(SnackBarContext);
+    const navigate = useNavigate();
+    const { showAlert } = useContext(SnackBarContext);
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const [student_data, setStudentData] = useState<StudentType | null>(null);
     const { id } = useParams();
@@ -94,7 +96,9 @@ export default function EditStudentPage() {
                                 emergency_contact: values.emergency_contact
                             })
                                 .then((data) => {
-                                     showAlert('Student Data Updated', 'success');
+                                    showAlert('Student Data Updated', 'success');
+                                    navigate(paths.studentsList);
+
                                 })
                                 .catch((error) => {
                                     console.log(error);
@@ -333,7 +337,7 @@ export default function EditStudentPage() {
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                                            Add
+                                            Update
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

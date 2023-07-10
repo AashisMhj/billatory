@@ -13,6 +13,8 @@ pub struct Fees {
     pub created_at: String,
     pub updated_at: Option<String>,
     pub amount: f32,
+    pub year: i32, 
+    pub month: i32,
     pub title: Option<String>,
     pub description: Option<String>,
     pub charge_id: Option<i32>,
@@ -24,8 +26,8 @@ pub struct Fees {
 // fees
 pub fn add_fees(db: &Connection, fee_data: Fees) -> Result<(), rusqlite::Error> {
     db.execute("
-    INSERT INTO fees (student_id, amount, title, description, charge_id) VALUES (?1, ?2 , ?3, ?4, ?5);
-    ", params![fee_data.student_id, fee_data.amount, fee_data.charge_title, fee_data.description, fee_data.charge_id]).unwrap();
+    INSERT INTO fees (student_id, amount, title, description, charge_id, year, month) VALUES (?1, ?2 , ?3, ?4, ?5, ?6, ?7);
+    ", params![fee_data.student_id, fee_data.amount, fee_data.charge_title, fee_data.description, fee_data.charge_id, fee_data.year, fee_data.month]).unwrap();
     Ok(())
 }
 
@@ -43,6 +45,8 @@ pub fn get_fees(
         Ok(Fees {
             id: row.get("id")?,
             amount: row.get("amount")?,
+            year: row.get("year")?,
+            month: row.get("month")?,
             charge_id: row.get("charge_id")?,
             description: row.get("description")?,
             created_at: row.get("created_at")?,
@@ -146,6 +150,8 @@ pub fn get_current_month_student_fee(
             description: row.get("description")?,
             created_at: row.get("created_at")?,
             student_id: row.get("student_id")?,
+            year: row.get("year")?,
+            month: row.get("month")?,
             student_first_name: row.get("first_name")?,
             student_last_name: row.get("last_name")?,
             title: row.get("title")?,
@@ -163,8 +169,8 @@ pub fn get_current_month_student_fee(
 
 pub fn update_fee(db: &Connection, fees_data: Fees)-> Result<(), rusqlite::Error>{
     let current_date_time = get_current_date_time();
-    db.execute("UPDATE fees SET student_id = ?1, amount = ?2, title = ?3, description = ?4, charge_id = ?5, updated_at = ?6 where id = ?7 ", 
-    params![fees_data.student_id, fees_data.amount, fees_data.title, fees_data.description, fees_data.charge_id,current_date_time, fees_data.id])?;
+    db.execute("UPDATE fees SET student_id = ?1, amount = ?2, title = ?3, description = ?4, charge_id = ?5, updated_at = ?6, year = ?7, month = ?8 where id = ?9 ", 
+    params![fees_data.student_id, fees_data.amount, fees_data.title, fees_data.description, fees_data.charge_id,current_date_time, fees_data.year, fees_data.month, fees_data.id])?;
     Ok(())
 }
 

@@ -114,12 +114,12 @@ pub fn upgrade_database_if_needed(
             class_id INTEGER NOT NULL,
             charge_title text not null,
             amount REAL NOT NULL,
-            is_regular boolean,
+            is_regular boolean default true,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME,
             deleted boolean default false,
             FOREIGN KEY(class_id) REFERENCES class(id)
-        )
+        );
         ",
             (),
         )?;
@@ -189,6 +189,8 @@ pub fn upgrade_database_if_needed(
             student_id INTEGER NOT NULL,
             created_at datetime default current_timestamp,
             updated_at datetime,
+            year integer not null,
+            month integer not null,
             amount real not null,
             payment_id INTEGER DEFAULT NULL,
             title text,
@@ -202,6 +204,7 @@ pub fn upgrade_database_if_needed(
         ",
             (),
         )?;
+
 
         tx.commit()?;
     }
@@ -300,13 +303,11 @@ pub fn get_charges(
     db: &Connection,
     page: i32,
     limit: i32,
+    class_id: Option<i32>
 ) -> Result<Vec<Charges>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<Charges> = Vec::new();
-    let mut statement = db.prepare(
-        "Select * from charge inner join class on charge.class_id = class.id limit ?1 offset ?2;",
-    )?;
-    let charge_iter = statement.query_map(params![limit, offset_value], |row| {
+    let map_row = |row: &rusqlite::Row| -> Result<Charges> {
         Ok(Charges {
             id: row.get("id")?,
             amount: row.get("amount")?,
@@ -315,26 +316,40 @@ pub fn get_charges(
             is_regular: row.get("is_regular")?,
             class: row.get("class")?,
         })
-    })?;
-    for charge in charge_iter {
-        data.push(charge.unwrap());
+    };
+    if let Some(id) = class_id {
+        let query = "Select * from charge inner join class on charge.class_id = class.id where class_id = ?3 order by id desc limit ?1 offset ?2;";
+        let mut statement = db.prepare(query)?;
+        let charge_iter = statement.query_map(params![limit, offset_value, id], map_row)?;
+        for charge in charge_iter {
+            data.push(charge.unwrap());
+        }
+        Ok(data)
+    }else{
+        let query = "Select * from charge inner join class on charge.class_id = class.id order by id desc limit ?1 offset ?2;";
+        let mut statement = db.prepare(query)?;
+        let charge_iter = statement.query_map(params![limit, offset_value], map_row)?;
+        for charge in charge_iter {
+            data.push(charge.unwrap());
+        }
+        Ok(data)
     }
-    Ok(data)
 }
 
+// not used
+// previously used to insert a charge for multiple class
 pub fn add_charge_bulk(
     db: &mut Connection,
     charge_title: String,
     amount: f32,
     classes: Vec<i32>,
-    is_regular: bool,
 ) -> Result<(), rusqlite::Error> {
     let transaction = db.transaction()?;
 
     for class_id in classes {
         transaction.execute(
-            "INSERT INTO charge (amount, class_id, charge_title, is_regular) VALUES (?1, ?2, ?3, ?4);",
-            params![amount, class_id, charge_title, is_regular],
+            "INSERT INTO charge (amount, class_id, charge_title) VALUES (?1, ?2, ?3, ?4);",
+            params![amount, class_id, charge_title],
         )?;
     }
     transaction.commit()?;
@@ -348,7 +363,7 @@ pub fn add_charge(
     class_id: i32,
 ) -> Result<(), rusqlite::Error> {
     db.execute(
-        "INSERT INTO charges(amount, charge_title, class_id) values(?1, ?2, ?3);",
+        "INSERT INTO charge(amount, charge_title, class_id) values(?1, ?2, ?3);",
         params![amount, charge_title, class_id],
     )?;
     Ok(())
@@ -368,12 +383,22 @@ pub fn update_charge(
     Ok(())
 }
 
-pub fn count_charges_row(db: &Connection) -> Result<i32, rusqlite::Error> {
-    let mut statement = db.prepare("Select count(id) as count from charge")?;
-    let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
-    Ok(count)
+pub fn count_charges_row(db: &Connection, class_id: Option<i32>) -> Result<i32, rusqlite::Error> {
+    if let Some(id) = class_id {
+        let mut statement = db.prepare("Select count(id) as count from charge where class_id = ?1")?;
+        let count = statement.query_row([id], |row| row.get::<&str, i32>("count"))?;
+        Ok(count)
+    }else {
+
+        let mut statement = db.prepare("Select count(id) as count from charge")?;
+        let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
+        Ok(count)
+    }
 }
 
+
+// Not used
+// previously used to apply charges directly
 pub fn apply_charges(db: &mut Connection, charge_id: i32) -> Result<(), rusqlite::Error> {
     let transaction = db.transaction()?;
     let mut student_statement = transaction.prepare("select * from student_charges inner join charge on student_charges.charge_id = charge.id where charge_id = ?1")?;
