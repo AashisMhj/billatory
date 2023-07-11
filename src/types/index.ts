@@ -114,6 +114,8 @@ export interface FeesType{
     created_at: string,
     updated_at?: string,
     amount: number,
+    year: number,
+    month: number,
     title: string,
     class_id: number,
     class?: string,
@@ -130,6 +132,8 @@ export interface PaymentType{
     student_id: number,
     class_id: number,
     class?: string,
+    payee: string,
+    account_name: string,
     student_first_name?: string,
     student_mid_name? : string,
     student_last_name? : string,
@@ -152,9 +156,12 @@ export interface ChargesFilterType{
 }
 
 export interface FeesFilterType{
-    class?: number,
     limit: number,
-    charge?: number
+    class_id?: number,
+    charge?: number,
+    student_id?: number,
+    month?: number,
+    year?: number,
 }
 
 export interface BillItems{

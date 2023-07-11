@@ -79,7 +79,6 @@ export function getStudentFees(student_id:number){
         studentId: student_id,
         page: 1,
         limit: 1000,
-        remaining: false,
     })
 
 }
@@ -92,14 +91,19 @@ export function updateStudentStatus(student_id:number, checked:boolean){
 }
 
 
-export function getStudentPreviousDue(student_id:number){
+
+export function getStudentPreviousDue(student_id:number, nepaliMonth:number, nepaliYear: number){
     return invoke('get_student_previous_due_data', {
-        studentId: student_id
+        studentId: student_id,
+        nepaliMonth,
+        nepaliYear
     });
 }
 
-export function getStudentCurrentMonthStudentFees(student_id:number){
+export function getStudentCurrentMonthStudentFees(student_id:number, nepaliMonth:number, nepaliYear: number){
     return invoke('get_current_month_student_fee_data', {
-        studentId: student_id
+        studentId: student_id,
+        nepaliMonth,
+        nepaliYear
     })
 }

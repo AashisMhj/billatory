@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
+import NepaliDate from "nepali-date-converter";
 //
 import AnalyticCard from "./AnalyticCard";
 import {addComma} from '@/utils/helper-function';
@@ -12,8 +13,11 @@ export default function AnalyticSection(){
     const [total_classes, setTotalClasses] = useState(0);
     const [monthly_payment, setMonthlyPayment] = useState(0);
     const [monthly_charge, setMonthlyCharge] = useState(0);
+    const d = new NepaliDate( Date.now());
 
     useEffect(()=>{
+        const current_nepali_month = d.getMonth() + 1;
+        const current_nepali_year = d.getYear();
         getStudentRowCount(true)
             .then((student_count) => {
                 if(typeof student_count === "number"){
@@ -30,7 +34,7 @@ export default function AnalyticSection(){
             } )
             .catch(error => console.log(error));
 
-        getMonthlyFee()
+        getMonthlyFee(current_nepali_month, current_nepali_year)
             .then(data => {
                 if(typeof data === "number"){
                     setMonthlyCharge(data);
@@ -38,7 +42,7 @@ export default function AnalyticSection(){
             })
             .catch(error => console.log(error));
 
-        getMonthlyPayment()
+        getMonthlyPayment(current_nepali_month, current_nepali_year)
             .then(data => {
                 if(typeof data === "number"){
                     setMonthlyPayment(data);

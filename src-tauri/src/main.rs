@@ -27,7 +27,6 @@ fn greet(my_name: &str) -> String {
 #[tauri::command]
 fn get_log_data(app_handle: AppHandle) -> Result<String, String>{
     let log_path = app_handle.path_resolver().app_log_dir().unwrap();
-    println!("{}", log_path.display());
     let result = settings::get_app_log(log_path.join("student-billing.log"));
     match result{
         Ok(value)=>{
@@ -424,8 +423,8 @@ fn add_student_charge_data(app_handle: AppHandle, student_id: i32, charge_id: i3
 }
 
 #[tauri::command]
-fn get_student_previous_due_data(app_handle: AppHandle, student_id: i32)-> Result<f32, String>{
-    let result = app_handle.db(|db| students::get_student_previous_due(db, student_id));
+fn get_student_previous_due_data(app_handle: AppHandle, student_id: i32, nepali_month: i32, nepali_year: i32)-> Result<f32, String>{
+    let result = app_handle.db(|db| fees::get_student_previous_due(db, student_id, nepali_month, nepali_year));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -438,8 +437,8 @@ fn get_student_previous_due_data(app_handle: AppHandle, student_id: i32)-> Resul
 }
 
 #[tauri::command]
-fn get_current_month_student_fee_data(app_handle: AppHandle, student_id: i32) -> Result<Vec<fees::Fees>, String>{
-    let result = app_handle.db(|db| fees::get_current_month_student_fee(db, student_id));
+fn get_current_month_student_fee_data(app_handle: AppHandle, student_id: i32,  nepali_month: i32, nepali_year: i32) -> Result<Vec<fees::Fees>, String>{
+    let result = app_handle.db(|db| fees::get_current_month_student_fee(db, student_id, nepali_month, nepali_year));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -623,15 +622,15 @@ fn count_charges_row(app_handle: AppHandle, class_id: Option<i32>) -> Result<i32
 
 // fees commands
 #[tauri::command]
-fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32, charge_title: String, year: i32, month: i32 ) -> Result<i32, String>{
+fn add_fee_data(app_handle: AppHandle,amount: f32,charge_id:i32, student_id: i32, charge_title: String, nepali_year: i32, nepali_month: i32 ) -> Result<i32, String>{
     let fees_data = fees::Fees{
         amount: amount,
         charge_id: Some(charge_id),
         student_id: student_id,
         charge_title: Some(charge_title),
         created_at: " ".to_string(),
-        year: year,
-        month: month,
+        year: nepali_year,
+        month: nepali_month,
         description: None,
         student_first_name: None,
         student_last_name: None,
@@ -691,8 +690,8 @@ fn update_fee_data(app_handle: AppHandle, amount: f32, id: i32, charge_title: St
 
 
 #[tauri::command]
-fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, student_id: Option<i32>)-> Result<Vec<fees::Fees>, String>{
-    let result = app_handle.db(|db| fees::get_fees(db, page, limit, remaining, student_id));
+fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32,class_id: Option<i32>, year: Option<i32>, month: Option<i32>, charge_id: Option<i32>, student_id: Option<i32>)-> Result<Vec<fees::Fees>, String>{
+    let result = app_handle.db(|db| fees::get_fees(db, page, limit, student_id, class_id, year, month, charge_id));
     match result{
         Ok(value)=>{
             return Ok(value);
@@ -706,8 +705,8 @@ fn get_fee_data(app_handle: AppHandle, page: i32, limit: i32, remaining:bool, st
 
 
 #[tauri::command]
-fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32>)->Result<i32, String>{
-    let result = app_handle.db(|db| fees::count_fees_row(db, remaining, student_id));
+fn count_fees_row(app_handle: AppHandle, class_id: Option<i32>, year: Option<i32>, month: Option<i32>, charge_id: Option<i32>, student_id: Option<i32>)->Result<i32, String>{
+    let result = app_handle.db(|db| fees::count_fees_row(db, student_id, class_id, year, month, charge_id));
     match result{
         Ok(value)=>{
             return Ok(value);
@@ -720,8 +719,8 @@ fn count_fees_row(app_handle: AppHandle, remaining: bool, student_id: Option<i32
 }
 
 #[tauri::command]
-fn get_monthly_fee_data(app_handle: AppHandle)-> Result<f32, String>{
-    let result = app_handle.db(|db| fees::get_monthly_fee(db));
+fn get_monthly_fee_data(app_handle: AppHandle, nepali_month: i32, nepali_year: i32)-> Result<f32, String>{
+    let result = app_handle.db(|db| fees::get_monthly_fee(db, nepali_year, nepali_month));
     match result{
         Ok(value)=>{
             Ok(value)
@@ -734,8 +733,8 @@ fn get_monthly_fee_data(app_handle: AppHandle)-> Result<f32, String>{
 }
 
 #[tauri::command]
-fn get_monthly_payment_data(app_handle: AppHandle) -> Result<f32, String>{
-    let result = app_handle.db(|db| fees::get_monthly_payment(db));
+fn get_monthly_payment_data(app_handle: AppHandle, nepali_month: i32, nepali_year: i32) -> Result<f32, String>{
+    let result = app_handle.db(|db| fees::get_monthly_payment(db,nepali_year, nepali_month ));
     match result{
         Ok(value) => {
             Ok(value)
@@ -749,12 +748,16 @@ fn get_monthly_payment_data(app_handle: AppHandle) -> Result<f32, String>{
 
 // payment commands
 #[tauri::command]
-fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, remarks: Option<String> )->Result<i32, String>{
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32, remarks: Option<String> )->Result<i32, String>{
     let payment_data = payment::Payment { 
         id: 0, 
         student_id: student_id, 
+        account_name: account_name,
+        payee: payee,
         student_first_name: None, 
         student_last_name: None, 
+        year: nepali_year,
+        month: nepali_month,
         created_at: "".to_string(), 
         amount: amount, 
         remarks: remarks

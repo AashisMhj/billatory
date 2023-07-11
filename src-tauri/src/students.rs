@@ -154,8 +154,6 @@ pub fn update_student_detail(
     student_id: i32,
 ) -> Result<(), rusqlite::Error> {
     let date_string = get_current_date_time();
-    println!("{}", student_data.class_id);
-    println!("{}", student_id);
     db.execute(
         "UPDATE students SET first_name = ?1, mid_name = ?2, last_name = ?3, address = ?4, father_name = ?5, mother_name = ?6, date_of_birth = ?7, phone_no = ?8, email = ?9, updated_at = ?10, guardian_name = ?11, emergency_contact = ?12, guardian_relation = ?13,  roll_no = ?14, class_id = ?15  where id = ?16; ", 
         params![student_data.first_name, student_data.mid_name, student_data.last_name, student_data.address, student_data.father_name, student_data.mother_name, student_data.date_of_birth, student_data.phone_no, student_data.email, date_string, student_data.guardian_name, student_data.emergency_contact, student_data.guardian_relation, student_data.roll_no, student_data.class_id,  student_id])?;
@@ -187,10 +185,4 @@ pub fn count_student_row(db: &Connection,is_active: bool, class_id: Option<i32>)
         let student_count = statement.query_row(params![is_active], |row| row.get::<&str, i32>("count"))?;
         Ok(student_count)
     }
-}
-
-pub fn get_student_previous_due(db: &Connection, student_id: i32) -> Result<f32, rusqlite::Error> {
-    let mut statement = db.prepare("select sum( case  when payment_id is null then amount else -amount end ) as sum from fees left join students on fees.student_id = students.id where student_id = ?1 and strftime('%m', fees.created_at) < strftime('%m', 'now');")?;
-    let amount = statement.query_row(params![student_id], |row| row.get::<&str, f32>("sum"))?;
-    Ok(amount)
 }

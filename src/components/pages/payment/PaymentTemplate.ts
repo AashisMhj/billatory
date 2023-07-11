@@ -7,10 +7,11 @@ interface Props{
     amount: number 
     amount_words: string,
     current_date: string,
-    payee: string
+    payee: string,
+    account_name: string
 }
 
-export default function paymentFrame({organization_name, location, pan_no, phone_no, payment_id, amount, current_date, amount_words, payee}:Props) {
+export default function paymentFrame({organization_name, location, pan_no, phone_no, payment_id, amount, current_date, amount_words, payee, account_name}:Props) {
     return `
     <!DOCTYPE html>
         <html lang="en">
@@ -49,7 +50,7 @@ export default function paymentFrame({organization_name, location, pan_no, phone
                 </div>
                 </br>
                 <p class="fs-5 fw-bold" style="font-family:Diphylleia">
-                    Received with thanks from ${payee}  </br> as per the bill no ______ by Cash/Draft/Cheque No. _____________ </br>the sum of rupees ${amount_words} </br>On the account of ___
+                    Received with thanks from ${payee}  </br> as per the bill no ______ by Cash/Draft/Cheque No. _____________ </br>the sum of rupees ${amount_words} </br>On the account of ${account_name}
                 </p>
             
                 

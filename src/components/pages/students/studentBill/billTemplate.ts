@@ -1,4 +1,6 @@
 import { BillProps } from "@/types";
+import { addComma } from "@/utils/helper-function";
+
 
 export default function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class }: BillProps){
     return `
@@ -15,8 +17,8 @@ export default function billFrame({ bill_items, previous_due, pan_no, phone_no, 
             <div class="card-body">
                 <div class="container">
                 <div class="row">
-                    <div class="col-6 "> PAN No.: 302720211 </div>
-                    <div class="col-6 text-end"> Ph No.: 061-538298 </div>
+                    <div class="col-6 "> PAN No.: ${pan_no} </div>
+                    <div class="col-6 text-end"> Ph No.: ${phone_no} </div>
                 </div>
                 <div class="col-md-12">
                     <div class="text-center">
@@ -28,15 +30,15 @@ export default function billFrame({ bill_items, previous_due, pan_no, phone_no, 
                 <div class="row ">
                     <div class="col-sm-8 col-lg-10 col-8">
                     <ul class="list-unstyled">
-                        <li class="text-muted">BILL No.: </li>
-                        <li class="text-muted">Name: </li>
-                        <li class="text-muted">Month: </li>
+                        <li class="text-muted">BILL No.: ${bill_no} </li>
+                        <li class="text-muted">Name: ${student_name}</li>
+                        <li class="text-muted">Month:${month} </li>
                     </ul>
                     </div>
                     <div class="col-sm-4 col-lg-2 col-4">
                     <ul class="list-unstyled">
-                        <li class="text-muted">Date: </li>
-                        <li class="text-muted">Class:  </li>
+                        <li class="text-muted">Date: ${date} </li>
+                        <li class="text-muted">Class: ${student_class}  </li>
                         <li class="text-muted">Roll No.: ${roll_no} </li>
                     </ul>
                     </div>
@@ -61,31 +63,31 @@ export default function billFrame({ bill_items, previous_due, pan_no, phone_no, 
                         <td>
                             <ul class="list-unstyled">
                             ${
-                                bill_items.map(item => `<li>${item.amount}</li>`).join(' ')
+                                bill_items.map(item => `<li>${addComma(item.amount)}</li>`).join(' ')
                             }
                             </ul>
                         </td>
                         <td>
                             <ul class="list-unstyled">
                             ${
-                                bill_items.map(item => `<li></li>`).join(' ')
+                                bill_items.map(_ => `<li></li>`).join(' ')
                             }
                             </ul>
                         </td>
                         </tr>
                         <tr><td class="text-end">Total</td>
-                        <td>${total_sum}</td>
+                        <td>${addComma(total_sum)}</td>
                         <td></td>
                         </tr>
                         
                         <tr>
                         <td class="text-end">Last Dues</td>
-                        <td>${previous_due}</td>
+                        <td>${addComma(previous_due)}</td>
                         <td></td>
                         </tr>
                         <tr>
                         <td class="text-end">Grand Total</td>
-                        <td>${total_sum + previous_due}</td>
+                        <td>${addComma(total_sum + previous_due)}</td>
                         <td></td>
                         </tr>
                     </tbody>

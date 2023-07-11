@@ -2,22 +2,22 @@ import { useState, useEffect } from "react";
 import { Formik } from "formik";
 import * as Yup from 'yup';
 import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
-import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
 //
+import { Months } from "@/utils/constants";
 import AnimateButton from "@/components/@extended/AnimateButton";
-import { StudentsTableFilterType, StudentClassType } from "@/types";
+import { FeesFilterType, StudentClassType, StudentMiniType } from "@/types";
 import { getClasses } from "@/services/class.service";
+import { getAllActiveStudents } from "@/services/student.service";
 
-enum ActiveOptions  {
-    yes="YES",
-    no="NO"
-}
+
 
 interface Props {
     open: boolean,
     handleClose: () => void,
-    onSubmit: (value: StudentsTableFilterType) => void,
-    value: StudentsTableFilterType
+    onSubmit: (value: FeesFilterType) => void,
+    value: FeesFilterType,
+    clearFilter: () => void
 }
 const style: SxProps = {
     position: 'absolute' as 'absolute',
@@ -32,9 +32,10 @@ const style: SxProps = {
 
 const DropDownItems = [10, 20, 30];
 
-export default function StudentsTableFilter({ open, handleClose, onSubmit, value }: Props) {
+export default function FeesFilterModal({ open, handleClose, onSubmit, value, clearFilter }: Props) {
 
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
+    const [all_students, setAllStudents] = useState<Array<StudentMiniType>>([])
 
     useEffect(() => {
         getClasses(1, 10000)
@@ -44,7 +45,15 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                     setClasses(class_data);
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error));
+
+        getAllActiveStudents()
+            .then(data => {
+                if (typeof data === "object") {
+                    setAllStudents(data as Array<StudentMiniType>)
+                }
+            })
+            .catch(error => console.error(error))
     }, [])
     return (
         <Modal
@@ -58,17 +67,16 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
-                <Formik initialValues={{ ...value, show_active: value.show_active ? ActiveOptions.yes : ActiveOptions.no, submit: null }}
+                <Formik initialValues={{ ...value, submit: null }}
                     validationSchema={Yup.object().shape({
                         limit: Yup.string().trim().required('Limit is Required'),
-                        class: Yup.number(),
+                        class_id: Yup.number(),
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
                             setStatus({ success: false });
-                            // TODO update 
                             setSubmitting(false);
-                            onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active === ActiveOptions.yes });
+                            onSubmit({ limit: values.limit, class_id: values.class_id, charge: values.charge, student_id: values.student_id, year: values.year, month: values.month });
                             handleClose();
                         } catch (error) {
                             setStatus(false);
@@ -78,7 +86,7 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                         }
                     }}
                 >
-                    {({ errors, handleChange, handleSubmit, isSubmitting, values }) => (
+                    {({ errors, handleChange, handleSubmit, isSubmitting, values, touched, handleBlur }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -94,7 +102,7 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="class">Class</InputLabel>
-                                        <Select labelId="class" id="class" value={values.class} name='class' onChange={handleChange}>
+                                        <Select labelId="class" id="class" value={values.class_id} name='class_id' onChange={handleChange}>
                                             {
                                                 classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
                                             }
@@ -102,13 +110,39 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <FormControl>
-                                        <FormLabel id="student-status-radio-group-label">Active?</FormLabel>
-                                        <RadioGroup row={true} defaultValue={false} value={values.show_active} onChange={handleChange} name="show_active">
-                                            <FormControlLabel value={ActiveOptions.yes} control={<Radio />} label="Yes" />
-                                            <FormControlLabel value={ActiveOptions.no} control={<Radio />} label="No" />
-                                        </RadioGroup>
-                                    </FormControl>
+                                    <Stack spacing={1}>
+                                        <InputLabel htmlFor="student_id">Students</InputLabel>
+                                        <Select labelId="student_id" id="student_id" value={values.student_id} name='student_id' onChange={handleChange} error={Boolean(errors.student_id && touched.student_id)}>
+                                            {
+                                                all_students.map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
+                                            }
+                                        </Select>
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Stack spacing={1}>
+                                        <InputLabel htmlFor="year" >Year</InputLabel>
+                                        <OutlinedInput id="year" type="number" value={values.year} onBlur={handleBlur} onChange={handleChange} name='year' fullWidth error={Boolean(touched.year && errors.year)} />
+                                        {
+                                            touched.year && errors.year && (
+                                                <FormHelperText error id="year-error-helper">
+                                                    {errors.year}
+                                                </FormHelperText>
+                                            )
+                                        }
+                                    </Stack>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Stack spacing={1}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="month">Month</InputLabel>
+                                            <Select labelId="month" id="month" value={values.month} name='month' onChange={handleChange}>
+                                                {
+                                                    Months.map((mo) => <MenuItem value={mo.value}>{mo.month_name}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </Stack>
+                                    </Stack>
                                 </Grid>
                                 {errors.submit && (
                                     <Grid item xs={12}>
@@ -119,6 +153,13 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
                                             Update
+                                        </Button>
+                                    </AnimateButton>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <AnimateButton>
+                                        <Button disableElevation disabled={isSubmitting} fullWidth size="large" variant="outlined" color="secondary" onClick={clearFilter}>
+                                            Clear Filter
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

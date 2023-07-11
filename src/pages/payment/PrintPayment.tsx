@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import { Box, Button, Container, Grid } from "@mui/material";
 //
-import { PaymentSlip } from "@/components/pages/payment/printPayment";
+// import { PaymentSlip } from "@/components/pages/payment/printPayment";
 import { getPaymentDetail } from "@/services/payment.service";
 import { PaymentType } from "@/types";
 import { SettingsContext } from "@/context/settings";
@@ -15,7 +15,7 @@ import paymentFrame from "@/components/pages/payment/PaymentTemplate";
 export default function PrintPaymentPage() {
     const { id } = useParams();
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const slipRef = useRef<HTMLDivElement>(null);
+    // const slipRef = useRef<HTMLDivElement>(null);
     const current_date = moment().format('YYYY-MM-DD');
 
     const [payment_info, setPaymentInfo] = useState<PaymentType>({
@@ -24,6 +24,8 @@ export default function PrintPaymentPage() {
         created_at: '',
         class_id: 0,
         id: 0,
+        account_name: '',
+        payee: ''
     });
     const { value } = useContext(SettingsContext);
 
@@ -66,12 +68,15 @@ export default function PrintPaymentPage() {
             amount_words: convertToWords(payment_info.amount),
             location: value.location,
             pan_no: value.pan_no,
-            payee: 'Jhon Doe',
+            payee: payment_info.payee,
             payment_id: payment_info.id,
             phone_no: value.phone_no,
+            account_name: payment_info.account_name
         }));
 
     }, [payment_info]);
+
+    console.log(payment_info);
 
     useEffect(() => {
         if (id) {

@@ -6,6 +6,10 @@ use serde::Serialize;
 pub struct Payment {
     pub id: i32,
     pub student_id: i32,
+    pub payee: String,
+    pub year: i32,
+    pub month: i32,
+    pub account_name: String,
     pub student_first_name: Option<String>,
     pub student_last_name: Option<String>,
     pub created_at: String,
@@ -20,21 +24,23 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rus
     let transaction = db.transaction()?;
     transaction.execute(
         "
-    INSERT INTO payment (amount, student_id, remarks) values (?1, ?2, ?3);
+    INSERT INTO payment (amount, student_id, remarks, payee, account_name) values (?1, ?2, ?3, ?4, ?5);
     ",
         params![
             payment_data.amount,
             payment_data.student_id,
-            payment_data.remarks
+            payment_data.remarks,
+            payment_data.payee,
+            payment_data.account_name
         ],
     )?;
     let id = transaction.last_insert_rowid();
     // TODO important the logic
     transaction.execute(
         "
-    INSERT INTO fees (student_id, amount, title, payment_id) VALUES (?1, ?2, ?3, ?4);
+    INSERT INTO fees (student_id, amount, title, payment_id, year, month ) VALUES (?1, ?2, ?3, ?4, ?5, ?6);
     ",
-        params![payment_data.student_id, payment_data.amount, "Payment", id],
+        params![payment_data.student_id, payment_data.amount, "Payment", id, payment_data.year, payment_data.month],
     )?;
     transaction.commit()?;
     Ok(())
@@ -50,11 +56,15 @@ pub fn get_payment(
     let mut data: Vec<Payment> = Vec::new();
     match student_id {
         Some(value) => {
-            let  query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 limit ?1 offset ?2";
+            let  query = "Select * from payment inner join students on payment.student_id = students.id where student_id = ?3 order by id desc limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value, value], |row| {
                 Ok(Payment {
                     id: row.get("id")?,
+                    payee: row.get("payee")?,
+                    account_name: row.get("account_name")?,
+                    year: row.get("year")?,
+                    month: row.get("year")?,
                     student_id: row.get("student_id")?,
                     student_first_name: row.get("first_name")?,
                     student_last_name: row.get("last_name")?,
@@ -69,12 +79,16 @@ pub fn get_payment(
             Ok(data)
         }
         None => {
-            let query = "Select * from payment inner join students on payment.student_id = students.id limit ?1 offset ?2";
+            let query = "Select * from payment inner join students on payment.student_id = students.id order by id desc limit ?1 offset ?2";
             let mut statement = db.prepare(query)?;
             let payment_iter = statement.query_map(params![limit, offset_value], |row| {
                 Ok(Payment {
                     id: row.get("id")?,
                     student_id: row.get("student_id")?,
+                    payee: row.get("payee")?,
+                    year: 0,
+                    month: 0,
+                    account_name: row.get("account_name")?,
                     student_first_name: row.get("first_name")?,
                     student_last_name: row.get("last_name")?,
                     amount: row.get("amount")?,
@@ -95,6 +109,10 @@ pub fn get_payment_detail(db: &Connection, id: i32) -> Result<Payment, rusqlite:
         Ok(Payment {
             id: row.get("id")?,
             amount: row.get("amount")?,
+            year: 0,
+            month: 0,
+            payee: row.get("payee")?,
+            account_name: row.get("account_name")?,
             created_at: row.get("created_at")?,
             remarks: row.get("remarks")?,
             student_first_name: row.get("first_name")?,

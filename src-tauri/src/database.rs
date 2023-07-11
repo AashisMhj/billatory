@@ -175,6 +175,8 @@ pub fn upgrade_database_if_needed(
             created_at datetime default current_timestamp,
             amount real not null,
             remarks text,
+            payee text not null,
+            account_name text not null,
             deleted boolean default false,
             FOREIGN KEY(student_id) references students(id)
         );
@@ -199,12 +201,12 @@ pub fn upgrade_database_if_needed(
             deleted boolean default false,
             FOREIGN key(student_id) references students(id),
             FOREIGN KEY(charge_id) REFERENCES charge(id),
-            FOREIGN KEY(payment_id) REFERENCES payment(id)
+            FOREIGN KEY(payment_id) REFERENCES payment(id),
+            unique(student_id,charge_id,month, year, month)
         )
         ",
             (),
         )?;
-
 
         tx.commit()?;
     }
@@ -303,7 +305,7 @@ pub fn get_charges(
     db: &Connection,
     page: i32,
     limit: i32,
-    class_id: Option<i32>
+    class_id: Option<i32>,
 ) -> Result<Vec<Charges>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<Charges> = Vec::new();
@@ -325,7 +327,7 @@ pub fn get_charges(
             data.push(charge.unwrap());
         }
         Ok(data)
-    }else{
+    } else {
         let query = "Select * from charge inner join class on charge.class_id = class.id order by id desc limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
         let charge_iter = statement.query_map(params![limit, offset_value], map_row)?;
@@ -385,17 +387,16 @@ pub fn update_charge(
 
 pub fn count_charges_row(db: &Connection, class_id: Option<i32>) -> Result<i32, rusqlite::Error> {
     if let Some(id) = class_id {
-        let mut statement = db.prepare("Select count(id) as count from charge where class_id = ?1")?;
+        let mut statement =
+            db.prepare("Select count(id) as count from charge where class_id = ?1")?;
         let count = statement.query_row([id], |row| row.get::<&str, i32>("count"))?;
         Ok(count)
-    }else {
-
+    } else {
         let mut statement = db.prepare("Select count(id) as count from charge")?;
         let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
         Ok(count)
     }
 }
-
 
 // Not used
 // previously used to apply charges directly

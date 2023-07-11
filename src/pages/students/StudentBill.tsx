@@ -1,14 +1,15 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import { Box, Button, Container } from "@mui/material"
-import moment from "moment";
+import NepaliDate from "nepali-date-converter";
+import { useParams } from "react-router-dom";
 //
 import { Bill } from "@/components/pages/students/studentBill"
 import { BillItems, FeesType, StudentType } from "@/types"
 import { getStudentDetail, getStudentPreviousDue } from "@/services/student.service";
-import { useParams } from "react-router-dom";
 import { SettingsContext } from "@/context/settings";
 import { getStudentCurrentMonthStudentFees } from "@/services/student.service";
 import billFrame from "@/components/pages/students/studentBill/billTemplate";
+import { Months } from "@/utils/constants";
 
 
 export default function StudentBillPage() {
@@ -18,9 +19,10 @@ export default function StudentBillPage() {
     const [previous_due, setPreviousDue] = useState(0);
     const [student_detail, setStudentDetail] = useState<StudentType | null>(null);
     const [current_month_due, setCurrentMonthDue] = useState<Array<FeesType>>([]);
-    const current_month = moment().format("MM");
-    const current_date = moment().format('YYYY-MM-DD');
     const [total_sum, setTotalSum] = useState(0);
+    const nepali_date = new NepaliDate(Date.now());
+    const nepali_month = nepali_date.getMonth() + 1;
+    const nepali_year = nepali_date.getYear();
 
     const { id } = useParams();
 
@@ -58,11 +60,11 @@ export default function StudentBillPage() {
             iframeRef.current?.contentWindow?.document.write(billFrame({
                 previous_due:previous_due,
                 total_sum: total_sum, 
-                bill_no: 1111, 
-                month: current_month, 
+                bill_no: 0, 
+                month: Months[nepali_month] ? Months[nepali_month].month_name : '', 
                 student_class: student_detail?.class || '', 
                 bill_items: current_month_due, 
-                date: current_date, 
+                date: nepali_date.format('YYYY-MM-DD'), 
                 roll_no: student_detail?.roll_no || 0, 
                 organization_name: value.organization_name, 
                 pan_no: value.pan_no, 
@@ -73,13 +75,14 @@ export default function StudentBillPage() {
         } catch (error) {
 
         }
-    }, [])
+    }, [student_detail, total_sum])
 
     useEffect(() => {
         calculateTotalSum();
     }, [student_detail])
 
     useEffect(() => {
+        
         if (id) {
             const parsed_id = parseInt(id);
             if (parsed_id) {
@@ -92,16 +95,21 @@ export default function StudentBillPage() {
                     })
                     .catch(error => console.log(error));
 
-                getStudentPreviousDue(parsed_id)
+                getStudentPreviousDue(parsed_id, nepali_month, nepali_year)
                     .then(data => {
+                        console.log(data);
                         if (typeof data === "number") {
                             setPreviousDue(data);
                         }
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        console.log('previous');
+                        console.log(error)
+                    });
 
-                getStudentCurrentMonthStudentFees(parsed_id)
+                getStudentCurrentMonthStudentFees(parsed_id, nepali_month, nepali_year)
                     .then(data => {
+                        console.log(data);
                         setCurrentMonthDue(data as Array<FeesType>);
                     })
                     .catch(error => console.log(error))

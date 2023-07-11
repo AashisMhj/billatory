@@ -1,12 +1,14 @@
 import {invoke} from "@tauri-apps/api";
 
 
-export function addFee(amount: number, chargeId: number, studentId: number, chargeTitle: string){
+export function addFee(amount: number, chargeId: number, studentId: number, chargeTitle: string, nepaliYear: number, nepaliMonth: number){
     return invoke('add_fee_data', { 
         chargeId,
         amount,
         studentId,
-        chargeTitle
+        chargeTitle,
+        nepaliYear, 
+        nepaliMonth
     });
 
 }
@@ -19,25 +21,32 @@ export function updateFee(amount: number, chargeTitle: string, id: number){
     })
 }
 
-export function getFees(page:number, limit:number, student_id?:number, remaining=false,){
+export function getFees(page:number, limit:number, classId?: number,  student_id?:number, chargeId?: number, year?:number, month?: number, ){
     return invoke('get_fee_data', {
         page,
         limit,
-        remaining,
-        studentId: student_id
+        classId,
+        studentId: student_id,
+        chargeId,
+        year,
+        month
     })
 }
 
-export function getFeeRowCount(remaining=false){
+export function getFeeRowCount(classId?: number, studentId?: number, chargeId?: number, year?: number, month?: number){
     return invoke('count_fees_row', {
-        remaining
+        classId, studentId, chargeId, year, month
     });
 }
 
-export function getMonthlyFee(){
-    return invoke('get_monthly_fee_data');
+export function getMonthlyFee(nepaliMonth: number, nepaliYear: number){
+    return invoke('get_monthly_fee_data', {
+        nepaliMonth, nepaliYear
+    });
 }
 
-export function getMonthlyPayment(){
-    return invoke('get_monthly_payment_data');
+export function getMonthlyPayment(nepaliMonth: number, nepaliYear: number){
+    return invoke('get_monthly_payment_data', {
+        nepaliMonth, nepaliYear
+    });
 }

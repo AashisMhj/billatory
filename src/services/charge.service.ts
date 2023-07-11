@@ -34,7 +34,6 @@ export function getChargeDetail(chargeId:number){
 }
 
 export function getCharges(page:number, limit:number, classId?: number){
-    console.log(classId);
     return invoke('get_charge_data', {
         page, limit, classId
     })

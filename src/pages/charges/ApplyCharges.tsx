@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { applyCharge, getChargeDetail, getStudentOfCharge } from '@/services/charge.service';
 import { SnackBarContext } from '@/context/snackBar';
 import { CloseOutlined } from '@mui/icons-material';
-
+import { Months } from '@/utils/constants';
 
 interface StudentCharge {
     id: number,
@@ -17,20 +17,6 @@ interface StudentCharge {
     display: boolean
 }
 
-const months = [
-    { month_name: "Baisakh", value: 1, },
-    { month_name: "Jestha", value: 2, },
-    { month_name: "Asar", value: 3, },
-    { month_name: "Shrawan", value: 4, },
-    { month_name: "Bhadra", value: 5, },
-    { month_name: "Aswin", value: 6, },
-    { month_name: "Kartik", value: 7, },
-    { month_name: "Mangsir", value: 8, },
-    { month_name: "Poush", value: 9, },
-    { month_name: "Magh", value: 10, },
-    { month_name: "Falgun", value: 11, },
-    { month_name: "Chaitra", value: 12, },
-]
 
 export default function ApplyChargesPage() {
     const [selected_student, setSelectedStudent] = useState<Array<StudentCharge>>([]);
@@ -39,7 +25,7 @@ export default function ApplyChargesPage() {
     const [charge_amount, setChargeAmount] = useState(0);
     const [search_text, setSearchText] = useState('');
     const [selected_year, setSelectedYear] = useState(2080);
-    const [selected_month, setSelectedMonth] = useState(months[0].value);
+    const [selected_month, setSelectedMonth] = useState(Months[0].value);
     const { showAlert } = useContext(SnackBarContext);
 
     const { id } = useParams();
@@ -179,7 +165,7 @@ export default function ApplyChargesPage() {
                                     type="text"
                                     value={charge_amount}
                                     name="organization_name"
-                                    onChange={(event) => setChargeAmount(parseInt(event.target.value))}
+                                    onChange={(event) => setChargeAmount(parseInt(event.target.value) || 0)}
                                     placeholder="amount"
                                     fullWidth
                                 />
@@ -204,7 +190,7 @@ export default function ApplyChargesPage() {
                                 <InputLabel htmlFor="month" required={true}>Year</InputLabel>
                                 <Select labelId="month"  value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
                                     {
-                                        months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
+                                        Months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
                                     }
                                 </Select>
                             </Stack>

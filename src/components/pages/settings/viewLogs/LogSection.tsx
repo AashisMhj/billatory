@@ -70,7 +70,6 @@ export default function LogSection() {
         // TODO set system logs
         getAppLog()
             .then((data) => {
-                console.log(data);
                 if (typeof data === "string") {
                     const lines = data.split('\n');
                     const logs: Array<LogType | null> = lines.map((item, index) => {
@@ -80,7 +79,7 @@ export default function LogSection() {
                             const date = matches[1];
                             const time = matches[2];
                             const error = matches[3];
-                            const module = matches[4];
+                            // const module = matches[4];
                             const message = matches[5];
                             const log:LogType = {
                                 id: index,
