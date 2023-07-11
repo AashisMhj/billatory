@@ -1,7 +1,18 @@
-# Tauri + React + Typescript
+# Student Billing System
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+## prerequesit 
+- Rust, cargo
+- Nodejs and a package manager
 
-## Recommended IDE Setup
+## Installation guild
+```bash
+# install cargo packages
+cd src-tauri
+cargo build
+## install npm packages
+cd ..
+yarn
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## running in development mode
+yarn tauri dev
+```

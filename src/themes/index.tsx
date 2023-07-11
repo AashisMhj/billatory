@@ -16,6 +16,7 @@ import componentsOverride from './overrides';
 interface Props{
   children: ReactNode
 }
+
 export default function ThemeCustomization({ children }:Props) {
   // TOKNOW OLD two variables passed here
   const theme = Palette('light');
@@ -24,6 +25,8 @@ export default function ThemeCustomization({ children }:Props) {
   const themeTypography = Typography(`'Public Sans', sans-serif`);
   const themeCustomShadows = useMemo(() => CustomShadows(theme), [theme]);
 
+
+  
   const themeOptions:ThemeOptions = useMemo(
     () => ({
       breakpoints: {

@@ -7,8 +7,6 @@ import { Box, Toolbar, useMediaQuery } from '@mui/material';
 
 // project import
 import { Header, Drawer, AppAlert } from '@/components/shared';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import navigation from '@/components/shared/drawer/menu-item';
 import { SideBarContext } from '@/context/sideBar';
 
 

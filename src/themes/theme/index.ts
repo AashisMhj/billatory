@@ -1,6 +1,8 @@
 // ==============================|| PRESET THEME - THEME SELECTOR ||============================== //
 
-const Theme = (colors) => {
+import { PalettesProps } from "@ant-design/colors";
+
+const Theme = (colors:PalettesProps) => {
     const { blue, red, gold, cyan, green, grey } = colors;
     const greyColors = {
       0: grey[0],
