@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { TableContainer, Table, IconButton, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
-import { EditFilled, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
+import { Link as RouterLink } from 'react-router-dom';
+import { TableContainer, Table, IconButton, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid } from '@mui/material';
+import { EditFilled, PlusCircleFilled, FilterOutlined, ShareAltOutlined } from '@ant-design/icons';
 //
 import { StudentClassType, ClassFilterType } from '@/types';
 import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, FilterModal, AddClassModal } from '@/components/pages/class/listClasses';
 import {getNoOfPage} from '@/utils/helper-function';
+import paths from '@/routes/path';
 
 const tableHeads = [
     'Class',
@@ -114,9 +116,9 @@ export default function ListClasses() {
                             <TableBody>
                                 {
                                     classes.map((cl, index) => (
-                                        <TableRow key={cl.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                        <TableRow key={`${cl.id}-${index}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell component="th" scope='row' align='left'>
-                                                {cl.class}
+                                                {cl.class} <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`}><IconButton> <ShareAltOutlined /> </IconButton></RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {cl.created_at}

@@ -186,3 +186,20 @@ pub fn count_student_row(db: &Connection,is_active: bool, class_id: Option<i32>)
         Ok(student_count)
     }
 }
+
+
+pub fn bulk_update_student_class(db: &Connection, class_id: i32, student_ids: Vec<i32>) -> Result<(), rusqlite::Error>{
+    let date_string = get_current_date_time();
+    let joined_ids = student_ids.iter().map(|number|  number.to_string()).collect::<Vec<String>>().join(",");
+    let query = format!( "UPDATE students set class_id = ?1, updated_at = ?2 where id in ( {} )", joined_ids);
+    db.execute(query.as_str(), params![class_id, date_string])?;
+    Ok(())
+}
+
+pub fn bulk_update_student_status(db: &Connection ,new_status: bool, student_ids: Vec<i32>) -> Result<(), rusqlite::Error>{
+    let date_string = get_current_date_time();
+    let joined_ids = student_ids.iter().map(|number|  number.to_string()).collect::<Vec<String>>().join(",");
+    let query = format!( "UPDATE students set is_active = ?1, updated_at = ?2 where id in ( {} )", joined_ids);
+    db.execute(query.as_str(), params![new_status, date_string])?;
+    Ok(())
+}

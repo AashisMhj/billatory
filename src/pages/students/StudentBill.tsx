@@ -3,12 +3,11 @@ import { Box, Button, Container } from "@mui/material"
 import NepaliDate from "nepali-date-converter";
 import { useParams } from "react-router-dom";
 //
-import { Bill } from "@/components/pages/students/studentBill"
 import { BillItems, FeesType, StudentType } from "@/types"
 import { getStudentDetail, getStudentPreviousDue } from "@/services/student.service";
 import { SettingsContext } from "@/context/settings";
 import { getStudentCurrentMonthStudentFees } from "@/services/student.service";
-import billFrame from "@/components/pages/students/studentBill/billTemplate";
+import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
 import { Months } from "@/utils/constants";
 
 
@@ -53,11 +52,11 @@ export default function StudentBillPage() {
         iframeRef.current?.contentWindow?.print();
     }
 
-    useEffect(() => {
+    useEffect(() => { iframeRef.current?.contentWindow?.document.write
         try {
             iframeRef.current?.contentWindow?.document.open();
             iframeRef.current?.contentWindow?.document.close();
-            iframeRef.current?.contentWindow?.document.write(billFrame({
+            const content = billFrame({
                 previous_due:previous_due,
                 total_sum: total_sum, 
                 bill_no: 0, 
@@ -71,7 +70,8 @@ export default function StudentBillPage() {
                 phone_no: value.phone_no, 
                 location: value.location, 
                 student_name: `${student_detail?.first_name} ${student_detail?.last_name}`, 
-            }));
+            });
+            iframeRef.current?.contentWindow?.document.write(getBillPageLayout(content));
         } catch (error) {
 
         }

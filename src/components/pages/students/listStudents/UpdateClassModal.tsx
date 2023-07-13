@@ -8,17 +8,14 @@ import AnimateButton from "@/components/@extended/AnimateButton";
 import { StudentsTableFilterType, StudentClassType } from "@/types";
 import { getClasses } from "@/services/class.service";
 import { DropdownLimitValues } from "@/utils/constants";
+import { bulkUpdateStudentClass } from "@/services/student.service";
 
-enum ActiveOptions  {
-    yes="YES",
-    no="NO"
-}
 
 interface Props {
     open: boolean,
     handleClose: () => void,
-    onSubmit: (value: StudentsTableFilterType) => void,
-    value: StudentsTableFilterType
+    onSubmit: () => void,
+    student_ids: Array<number>
 }
 const style: SxProps = {
     position: 'absolute' as 'absolute',
@@ -32,7 +29,7 @@ const style: SxProps = {
 }
 
 
-export default function StudentsTableFilter({ open, handleClose, onSubmit, value }: Props) {
+export default function UpdateStudentClassModal({ open, handleClose, onSubmit, student_ids }: Props) {
 
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
 
@@ -45,37 +42,43 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                 }
             })
             .catch(error => console.log(error))
-    }, [])
+    }, []);
+
     return (
         <Modal
-            open={open && value !== null}
+            open={open}
             onClose={handleClose}
         >
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
-                    <Typography variant="h5" >Filter Data</Typography>
+                    <Typography variant="h5" >Update Student Class Data</Typography>
                     <IconButton onClick={() => handleClose()}>
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
-                <Formik initialValues={{ ...value, show_active: value.show_active ? ActiveOptions.yes : ActiveOptions.no, submit: null }}
+                <Formik initialValues={{ class_id: 0, submit: null }}
                     validationSchema={Yup.object().shape({
-                        limit: Yup.string().trim().required('Limit is Required'),
-                        class: Yup.number(),
+                        class_id: Yup.number().min(1, 'Please Select the class').required('Please Select the class'),
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                        try {
-                            setStatus({ success: false });
-                            // TODO update 
-                            setSubmitting(false);
-                            onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active === ActiveOptions.yes });
-                            handleClose();
-                        } catch (error) {
-                            setStatus(false);
-                            if (error instanceof Error) {
-                                setErrors({ submit: error.message });
-                            }
-                        }
+                        setStatus({ success: false });
+                        bulkUpdateStudentClass(values.class_id, student_ids)
+                            .then(data => {
+                                setStatus({ success: true });
+                                onSubmit();
+                                handleClose();
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                setStatus(false);
+                                if (err instanceof Error) {
+                                    setErrors({ submit: err.message });
+                                }
+                            }).finally(()=>{
+                                setSubmitting(false);
+                                handleClose();
+                            })
+
                     }}
                 >
                     {({ errors, handleChange, handleSubmit, isSubmitting, values }) => (
@@ -83,32 +86,13 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="limit">Limit</InputLabel>
-                                        <Select labelId="limit" id='limit' value={values.limit} name="limit" onChange={handleChange}>
-                                            {
-                                                DropdownLimitValues.map((item) => <MenuItem value={item}>{item}</MenuItem>)
-                                            }
-                                        </Select>
-                                    </Stack>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Stack spacing={1}>
-                                        <InputLabel htmlFor="class">Class</InputLabel>
-                                        <Select labelId="class" id="class" value={values.class} name='class' onChange={handleChange}>
+                                        <InputLabel htmlFor="class" error={Boolean(errors.class_id)}>Class</InputLabel>
+                                        <Select labelId="class" id="class" value={values.class_id} name='class_id' onChange={handleChange}>
                                             {
                                                 classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
                                             }
                                         </Select>
                                     </Stack>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControl>
-                                        <FormLabel id="student-status-radio-group-label">Active?</FormLabel>
-                                        <RadioGroup row={true} defaultValue={false} value={values.show_active} onChange={handleChange} name="show_active">
-                                            <FormControlLabel value={ActiveOptions.yes} control={<Radio />} label="Yes" />
-                                            <FormControlLabel value={ActiveOptions.no} control={<Radio />} label="No" />
-                                        </RadioGroup>
-                                    </FormControl>
                                 </Grid>
                                 {errors.submit && (
                                     <Grid item xs={12}>

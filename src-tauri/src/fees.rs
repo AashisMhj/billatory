@@ -218,7 +218,7 @@ pub fn get_student_previous_due(db: &Connection, student_id: i32, nepali_month: 
         format!("{}", nepali_month)
     };
 
-    let query = format!("select sum( case  when payment_id is null then amount else -amount end ) as sum  from fees where student_id = ?1 and Date(year || '-' || case WHEN month < 10 THEN '0' || month ELSE CAST(month AS TEXT) END || '-01') < Date('{}' || '-' || '{}'  || '-01') ;", nepali_year, formatted_month);
+    let query = format!("select ifnull( sum( case  when payment_id is null then amount else -amount end ), 0) as sum  from fees where student_id = ?1 and Date(year || '-' || case WHEN month < 10 THEN '0' || month ELSE CAST(month AS TEXT) END || '-01') < Date('{}' || '-' || '{}'  || '-01') ;", nepali_year, formatted_month);
     let mut statement = db.prepare(query.as_str())?;
     let amount = statement.query_row(params![student_id], |row| row.get::<&str, f32>("sum"))?;
     Ok(amount)

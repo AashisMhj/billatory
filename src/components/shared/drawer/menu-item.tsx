@@ -53,16 +53,9 @@ const student: NavGroupType = {
 
 const transaction: NavGroupType = {
     id: 'transaction',
-    title: 'Transactions', 
-    type: 'group', 
+    title: 'Transactions',
+    type: 'group',
     children: [
-        {
-            id: 'f-fees',
-            title: 'Transactions',
-            type: 'item',
-            url: paths.listFees,
-            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
-        },
         {
             id: 'f-charges',
             title: 'Charges',
@@ -70,6 +63,14 @@ const transaction: NavGroupType = {
             url: paths.listCharges,
             icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
         },
+        {
+            id: 'f-fees',
+            title: 'Transactions',
+            type: 'item',
+            url: paths.listFees,
+            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+        },
+
     ]
 }
 

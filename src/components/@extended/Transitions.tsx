@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { ReactNode, forwardRef } from 'react';
 
 // material-ui
@@ -54,9 +53,5 @@ const Transitions = forwardRef(({ children, position='top-left', type='grow', ..
   );
 });
 
-Transitions.defaultProps = {
-  type: 'grow',
-  position: 'top-left'
-};
 
 export default Transitions;

@@ -12,3 +12,5 @@ export const Months = [
     { month_name: "Falgun", value: 11, },
     { month_name: "Chaitra", value: 12, },
 ]
+
+export const DropdownLimitValues = [10, 20, 30, 50, 80, 100];

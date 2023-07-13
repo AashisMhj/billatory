@@ -12,14 +12,14 @@ export interface NavItemType {
     type: string,
     url: string,
     target?: boolean,
-    icon?: (is_open:boolean) => ReactNode,
-    breadcrumbs? :boolean,
+    icon?: (is_open: boolean) => ReactNode,
+    breadcrumbs?: boolean,
     external?: boolean
-    disabled? :boolean
-    chip? : ChipProps
+    disabled?: boolean
+    chip?: ChipProps
 }
 
-export interface NavGroupType{
+export interface NavGroupType {
     id: string,
     title: string,
     type: string,
@@ -28,7 +28,7 @@ export interface NavGroupType{
 
 export type log_types = "ERROR" | "INFO" | "WARN";
 
-export interface LogType{
+export interface LogType {
     id: number,
     type: log_types,
     description: string,
@@ -36,10 +36,10 @@ export interface LogType{
     title: string
 }
 
-export interface SettingsType{
+export interface SettingsType {
     organization_name: string,
     pan_no: number,
-    email? : string,
+    email?: string,
     image: string,
     location: string,
     phone_no: string,
@@ -47,14 +47,14 @@ export interface SettingsType{
     updated_at?: string
 }
 
-export interface StudentClassType{
+export interface StudentClassType {
     class: string,
     created_at: string,
     updated_at: string,
     id: number
 }
 
-export interface ChargesType{
+export interface ChargesType {
     id: number,
     class_id: number,
     charge_title: string,
@@ -64,7 +64,7 @@ export interface ChargesType{
     is_regular: boolean
 }
 
-export interface StudentChargeType{
+export interface StudentChargeType {
     id: number,
     charge_id: number,
     student_id?: number,
@@ -75,20 +75,20 @@ export interface StudentChargeType{
     class_id?: number
 }
 
-export interface StudentMiniType{
+export interface StudentMiniType {
     id: number,
     first_name: string,
     last_name: string,
     class_id: number,
 }
 
-export interface StudentType{
+export interface StudentType {
     id: number,
     first_name: string,
     last_name: string,
     mid_name?: string,
     father_name: string,
-    mother_name : string,
+    mother_name: string,
     class_id: number,
     class?: string,
     gender: GenderType,
@@ -105,7 +105,7 @@ export interface StudentType{
     is_active: boolean,
 }
 
-export interface FeesType{
+export interface FeesType {
     id: number,
     student_id: number,
     student_first_name?: string,
@@ -122,10 +122,10 @@ export interface FeesType{
     description?: string,
     charge_id: number,
     charge_title?: string,
-    payment_id?: number 
+    payment_id?: number
 }
 
-export interface PaymentType{
+export interface PaymentType {
     id: number,
     created_at: string,
     amount: number,
@@ -135,27 +135,27 @@ export interface PaymentType{
     payee: string,
     account_name: string,
     student_first_name?: string,
-    student_mid_name? : string,
-    student_last_name? : string,
+    student_mid_name?: string,
+    student_last_name?: string,
 }
 
 
-export interface ClassFilterType{
+export interface ClassFilterType {
     limit: number
 }
 
-export interface StudentsTableFilterType{
+export interface StudentsTableFilterType {
     limit: number,
     show_active: boolean,
     class?: number
 }
 
-export interface ChargesFilterType{
+export interface ChargesFilterType {
     class_id?: number,
     limit: number
 }
 
-export interface FeesFilterType{
+export interface FeesFilterType {
     limit: number,
     class_id?: number,
     charge?: number,
@@ -164,18 +164,18 @@ export interface FeesFilterType{
     year?: number,
 }
 
-export interface BillItems{
+export interface BillItems {
     title: string,
     amount: number,
     index: number
 }
 
-export interface BillProps{
+export interface BillProps {
     date: string,
     student_class: string,
     student_name: string,
     roll_no: number,
-    bill_items: Array< FeesType>,
+    bill_items: Array<FeesType>,
     previous_due: number,
     total_sum: number,
     month: string,
@@ -184,4 +184,18 @@ export interface BillProps{
     location: string,
     pan_no: number,
     phone_no: string
+}
+
+export interface PaymentProps {
+    organization_name: string
+    location: string
+    pan_no: number
+    phone_no: string
+    payment_id: number
+    amount: number
+    amount_words: string,
+    current_date: string,
+    payee: string,
+    account_name: string
+
 }

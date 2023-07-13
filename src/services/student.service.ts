@@ -107,3 +107,17 @@ export function getStudentCurrentMonthStudentFees(student_id:number, nepaliMonth
         nepaliYear
     })
 }
+
+export function bulkUpdateStudentClass(classId: number, studentIds: Array<number>){
+    return invoke('bulk_update_student_class_data', {
+        classId,
+        studentIds
+    })
+}
+
+export function bulkUpdateStudentStatus(newStatus: boolean, studentIds: Array<number>){
+    return invoke('bulk_update_student_status_data', {
+        newStatus,
+        studentIds
+    })
+}
