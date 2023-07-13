@@ -162,6 +162,22 @@ fn get_class_data(app_handle: AppHandle, page: i32, limit: i32) -> Result<String
 }
 
 #[tauri::command]
+fn get_class_only_data(app_handle: AppHandle) -> Result<Vec<classes::ClassMini>, String> {
+    let items = app_handle
+        .db(|db| classes::get_class_only( db));
+    match items{
+        Ok(value)=>{
+            Ok(value)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            return Err(error.to_string())
+        }
+    }
+}
+
+
+#[tauri::command]
 fn add_class_data(app_handle: AppHandle, class: &str) -> Result<i32, String> {
     let result = app_handle
         .db(|db| classes::add_class(class.to_string(), db));
@@ -868,6 +884,7 @@ fn main() {
             get_class_data,
             add_class_data,
             update_class_data,
+            get_class_only_data,
             count_class_rows,
             // student commands
             get_student_data,

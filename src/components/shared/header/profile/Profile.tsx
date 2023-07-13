@@ -14,20 +14,18 @@ import {
   Popper,
   Stack,
   Tab,
-  Tabs,
-  Typography
-} from '@mui/material';
+  Tabs} from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import { SettingsContext } from '@/context/settings';
 // project import
 import MainCard from '@/components/layouts/MainCard';
 import Transitions from '@/components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
-import SettingTab from './SettingsTab';
 
 // assets
 
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
 type Props = {
@@ -65,7 +63,9 @@ const Profile = () => {
   };
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
+    console.log('closing')
     if (anchorRef.current && anchorRef.current.contains(event.target as Node)) {
+      console.log('closing')
       return;
     }
     setOpen(false);
@@ -73,14 +73,10 @@ const Profile = () => {
 
   const [value, setValue] = useState(0);
 
-  const handleChange = (event:React.ChangeEvent<HTMLInputElement>, newValue:any) => {
-    setValue(newValue);
-  };
-
   const iconBackColorOpen = 'grey.300';
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box sx={{ flexShrink: 0, ml: 0.75 }} onBlur={() => setOpen(false)}>
       <ButtonBase
         sx={{
           p: 0.25,
@@ -96,6 +92,7 @@ const Profile = () => {
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={SettingValue.image} sx={{ width: 40, height: 40 }} />
+          <ArrowDropDownIcon />
         </Stack>
       </ButtonBase>
       <Popper
@@ -149,7 +146,7 @@ const Profile = () => {
                     {open && (
                       <>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                          <Tabs variant="fullWidth" value={value} onChange={(event:any, value:any) => null} aria-label="profile tabs">
+                          <Tabs variant="fullWidth" value={value} onChange={(event:any, value:any) => setValue(value)} aria-label="profile tabs">
                             <Tab
                               sx={{
                                 display: 'flex',

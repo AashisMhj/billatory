@@ -6,15 +6,15 @@ import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import Print from '@mui/icons-material/Print';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 //
 import paths from '@/routes/path';
 import { StudentType, StudentsTableFilterType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage } from '@/utils/helper-function';
-import { StudentsTableFilter, DisableConfirmModal, BulkPrintModal, UpdateStudentClassModal, UpdateStudentStatusModal } from '@/components/pages/students/listStudents';
+import { StudentsTableFilter, DisableConfirmModal, BulkPrintModal, UpdateStudentClassModal, UpdateStudentStatusModal, ApplyChargeModal } from '@/components/pages/students/listStudents';
 import { SnackBarContext } from '@/context/snackBar';
-import { Print } from '@mui/icons-material';
 
 const tableHeads = [
     'checkbox',
@@ -52,6 +52,7 @@ export default function ListStudents() {
     const [show_bulk_print, setShowBulkPrint] = useState(false);
     const [show_update_class_modal, setShowUpdateClassModal] = useState(false);
     const [show_update_status_modal, setShowStatusModal] = useState(false);
+    const [show_apply_charge_modal, setShowApplyChargeModal] = useState(false);
     const { showAlert } = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
@@ -174,7 +175,8 @@ export default function ListStudents() {
                     <Box sx={{ display: 'flex', gap: '8px'}}>
                         <Button startIcon={<Print />} variant='outlined' sx={{ borderRadius: '50px' }} onClick={handleBulkPrint} disabled={checkbox_ids.length === 0}>Print</Button>
                         <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
-                        <Button startIcon={<Print />} variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
+                        <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
+                        <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
 
                     </Box>
                 </Grid>
@@ -289,6 +291,7 @@ export default function ListStudents() {
             <BulkPrintModal open={show_bulk_print} onSubmit={() => null} handleClose={() => setShowBulkPrint(false)} student_ids={checkbox_ids} />
             <UpdateStudentClassModal open={show_update_class_modal} student_ids={checkbox_ids} handleClose={() => setShowUpdateClassModal(false)} onSubmit={fetchData} />
             <UpdateStudentStatusModal open={show_update_status_modal} student_ids={checkbox_ids} handleClose={() => setShowStatusModal(false)} new_status={!show_active} onSubmit={fetchData} />
+            <ApplyChargeModal open={show_apply_charge_modal} student_ids={checkbox_ids} handleClose={() => setShowApplyChargeModal(false)} onSubmit={() => null} />
         </>
     )
 }

@@ -41,13 +41,10 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
                         class: Yup.string().trim().required('Class Title is Required')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                        console.log('submitting');
-                        console.log(values);
                         setStatus({ success: false });
                         if (values && values.id && values.amount && values.charge_title) {
                             updateCharge({ amount: values.amount, id: values.id, charge_title: values.charge_title })
                                 .then((data) => {
-                                    console.log(data);
                                     if (data === 200) {
                                         setSubmitting(false);
                                         handleClose();
@@ -55,7 +52,7 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
                                     }
                                 })
                                 .catch(err => {
-                                    console.log(err);
+                                    console.error(err);
                                     setStatus(false);
                                     if (err instanceof Error) {
                                         setErrors({ submit: err.message });

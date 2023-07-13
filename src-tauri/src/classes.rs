@@ -1,6 +1,6 @@
 use rusqlite::{params, Connection, Result};
 use serde::Serialize;
-use crate::helpers::{get_current_date_time};
+use crate::helpers::get_current_date_time;
 
 
 #[derive(Debug, Serialize)]
@@ -10,6 +10,23 @@ pub struct Class {
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
+
+#[derive(Debug, Serialize)]
+pub struct ClassMini{
+    pub id: i32, 
+    pub class: String
+}
+
+#[derive(Debug, Serialize)]
+pub struct ClassTable {
+    pub id: i32,
+    pub class: String,
+    pub created_at: Option<String>,
+    pub updated_at: Option<String>,
+    pub male_count: i32,
+    pub female_count: i32
+}
+
 
 // class
 pub fn add_class(class: String, db: &Connection) -> Result<(), rusqlite::Error> {
@@ -30,16 +47,33 @@ pub fn add_class(class: String, db: &Connection) -> Result<(), rusqlite::Error> 
     Ok(())
 }
 
-pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<Class>, rusqlite::Error> {
+pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<ClassTable>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
-    let mut data: Vec<Class> = Vec::new();
-    let mut statement = db.prepare("Select * from class order by id desc limit ?1 offset ?2;")?;
+    let mut data: Vec<ClassTable> = Vec::new();
+    let mut statement = db.prepare("Select *, (select count(id) from students where gender = 'male' and class.id = students.class_id) as male_count, (select count(id) from students where gender = 'female' and class.id = students.class_id) as female_count from class order by id desc limit ?1 offset ?2;")?;
     let class_iter = statement.query_map(params![limit, offset_value], |row| {
-        Ok(Class {
+        Ok(ClassTable {
             class: row.get("class")?,
             id: row.get("id")?,
             created_at: row.get("created_at")?,
             updated_at: row.get("updated_at")?,
+            male_count: row.get("male_count")?,
+            female_count: row.get("female_count")?,
+        })
+    })?;
+    for item in class_iter {
+        data.push(item.unwrap());
+    }
+    Ok(data)
+}
+
+pub fn get_class_only( db: &Connection) -> Result<Vec<ClassMini>, rusqlite::Error> {
+    let mut data: Vec<ClassMini> = Vec::new();
+    let mut statement = db.prepare("Select class, id from class order by id desc limit ?1 offset ?2;")?;
+    let class_iter = statement.query_map(params![], |row| {
+        Ok(ClassMini {
+            class: row.get("class")?,
+            id: row.get("id")?,
         })
     })?;
     for item in class_iter {

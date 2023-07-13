@@ -24,7 +24,7 @@ export default function AnalyticSection(){
                     setTotalStudents(student_count);
                 }
             })
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
 
         getClassRowCount()
             .then((class_count) =>{
@@ -32,7 +32,7 @@ export default function AnalyticSection(){
                     setTotalClasses(class_count);
                 }
             } )
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
 
         getMonthlyFee(current_nepali_month, current_nepali_year)
             .then(data => {

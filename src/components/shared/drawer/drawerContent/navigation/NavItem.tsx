@@ -1,4 +1,4 @@
-import {  RefAttributes, forwardRef, useContext, useEffect } from 'react';
+import {  RefAttributes, forwardRef, useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 // material-ui
@@ -21,11 +21,10 @@ interface Props{
 
 
 const NavItem = ({ item, level }:Props) => {
-  
+  const [is_selected, setIsSelected] = useState(false);
   const theme = useTheme();
   const { pathname } = useLocation();
-  const {openDrawer, is_open, openItems, changeOpenItems} = useContext(SideBarContext);
-//   const { drawerOpen, openItem } = useSelector((state) => state.menu);
+  const { is_open} = useContext(SideBarContext);
 
   let itemTarget = '_self';
   if (item.target) {
@@ -46,12 +45,13 @@ const NavItem = ({ item, level }:Props) => {
   
   const itemIcon = item.icon ? item.icon(is_open) : <></>;
 
-  const isSelected = openItems.findIndex((id) => id === item.id) > -1;
+
   // active menu item on page load
   useEffect(() => {
     if (pathname.includes(item.url)) {
-      // TODO
-      // dispatch(activeItem({ openItems: [item.id] }));
+      setIsSelected(true);
+    }else{
+      setIsSelected(false);
     }
     // eslint-disable-next-line
   }, [pathname]);
@@ -64,7 +64,7 @@ const NavItem = ({ item, level }:Props) => {
       {...listItemProps}
       disabled={item.disabled}
       onClick={() => itemHandler(item.id)}
-      selected={isSelected}
+      selected={is_selected}
       sx={{
         zIndex: 1201,
         pl: is_open ? `${level * 28}px` : 1.5,
@@ -100,7 +100,7 @@ const NavItem = ({ item, level }:Props) => {
         <ListItemIcon
           sx={{
             minWidth: 28,
-            color: isSelected ? iconSelectedColor : textColor,
+            color: is_selected ? iconSelectedColor : textColor,
             ...(!is_open && {
               borderRadius: 1.5,
               width: 36,
@@ -112,7 +112,7 @@ const NavItem = ({ item, level }:Props) => {
               }
             }),
             ...(!is_open &&
-              isSelected && {
+              is_selected && {
                 bgcolor: 'primary.lighter',
                 '&:hover': {
                   bgcolor: 'primary.lighter'
@@ -127,8 +127,8 @@ const NavItem = ({ item, level }:Props) => {
         <ListItemText
           primary={
             <Typography variant="h6" sx={{ 
-              // color: isSelected ? iconSelectedColor : textColor 
-              color: 'primary'
+              color: is_selected ? iconSelectedColor : textColor 
+              // color: 'primary'
               }}>
               {item.title}
             </Typography>

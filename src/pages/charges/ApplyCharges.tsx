@@ -106,7 +106,6 @@ export default function ApplyChargesPage() {
             if (parse_id) {
                 getStudentOfCharge(parse_id)
                     .then((data) => {
-                        console.log(data)
                         // TODO set selected student
                         if (Array.isArray(data)) {
                             setAllStudents(data.map((item => {
@@ -150,7 +149,7 @@ export default function ApplyChargesPage() {
                                     id="title"
                                     type="text"
                                     value={charge_title}
-                                    name="organization_name"
+                                    name="charge_title"
                                     onChange={(event) => setChargeTitle(event.target.value)}
                                     placeholder="Title"
                                     fullWidth
@@ -164,7 +163,7 @@ export default function ApplyChargesPage() {
                                     id="amount"
                                     type="text"
                                     value={charge_amount}
-                                    name="organization_name"
+                                    name="charge_amount"
                                     onChange={(event) => setChargeAmount(parseInt(event.target.value) || 0)}
                                     placeholder="amount"
                                     fullWidth

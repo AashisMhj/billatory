@@ -17,6 +17,7 @@ const MainLayout = () => {
 
   // drawer toggler
   const [open, setOpen] = useState(is_open);
+
   const handleDrawerToggle = () => {
     setOpen(!open);
     openDrawer(!open)
@@ -34,7 +35,7 @@ const MainLayout = () => {
     if (open !== is_open) setOpen(is_open);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
-
+  
   return (
     <>
       <Box sx={{ display: 'flex', width: '100%' }}>
@@ -42,7 +43,6 @@ const MainLayout = () => {
         <Drawer open={open} handleDrawerToggle={handleDrawerToggle} window={window} />
         <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
           <Toolbar />
-          {/* <Breadcrumbs navigation={navigation} title={true} /> */}
           <Outlet />
         </Box>
       </Box>

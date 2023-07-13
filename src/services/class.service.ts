@@ -17,6 +17,13 @@ export function getClasses(page:number, limit:number){
     });
 }
 
+/**
+ * get only classes
+ */
+export function getClassesOnly(){
+    return invoke('get_class_only_data');
+}
+
 export function updateClass(data:UpdateClassType){
     return invoke('update_class_data', {
         id: data.id,

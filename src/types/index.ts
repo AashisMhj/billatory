@@ -54,6 +54,15 @@ export interface StudentClassType {
     id: number
 }
 
+export interface ClassTableType {
+    class: string,
+    id: number,
+    created_at: string,
+    updated_at: string,
+    male_count: number,
+    female_count: number
+} 
+
 export interface ChargesType {
     id: number,
     class_id: number,

@@ -1,5 +1,5 @@
 const paths = {
-    dashboard: `/dashboard/`,
+    dashboard: `/dashboard/home`,
     // settings
     editSettings: `/dashboard/settings/edit`,
     viewLogs: `/dashboard/logs`,

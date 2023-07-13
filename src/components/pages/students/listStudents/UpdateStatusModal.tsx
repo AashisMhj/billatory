@@ -65,9 +65,6 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, n
                 >
                     {({ errors, handleSubmit, isSubmitting, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
-                            <pre>
-                                {JSON.stringify(errors)}
-                            </pre>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Typography variant="h4"> {new_status ? "Enable" : "Disable"} Status of {student_ids.length} students ?</Typography>

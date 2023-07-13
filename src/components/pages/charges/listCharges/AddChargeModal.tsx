@@ -37,7 +37,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                     setClasses(class_data);
                 }
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.error(error));
     }, [])
     return (
         <Modal

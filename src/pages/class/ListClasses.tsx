@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { TableContainer, Table, IconButton, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid } from '@mui/material';
-import { EditFilled, PlusCircleFilled, FilterOutlined, ShareAltOutlined } from '@ant-design/icons';
+import { EditFilled, PlusCircleFilled, FilterOutlined, UserOutlined } from '@ant-design/icons';
 //
-import { StudentClassType, ClassFilterType } from '@/types';
+import { ClassTableType, ClassFilterType } from '@/types';
 import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, FilterModal, AddClassModal } from '@/components/pages/class/listClasses';
 import {getNoOfPage} from '@/utils/helper-function';
@@ -11,19 +11,19 @@ import paths from '@/routes/path';
 
 const tableHeads = [
     'Class',
-    'Created At',
-    'Updated At',
+    'Male',
+    'Female',
     'Actions',
 ];
 
 export default function ListClasses() {
-    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
+    const [classes, setClasses] = useState<Array<ClassTableType>>([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total_page_count, setTotalPageCount] = useState(0);
     const [open_edit_modal, setOpenEditModal] = useState(false);
     const [open_add_modal, setOpenAddModal] = useState(false);
-    const [edit_data, setEditData] = useState<StudentClassType | null>(null);
+    const [edit_data, setEditData] = useState<ClassTableType | null>(null);
     const [open_filter_modal, setOpenFilterModal] = useState(false);
 
     function handlePaginationChange(_: any, new_page: number) {
@@ -54,7 +54,7 @@ export default function ListClasses() {
         setLimit(value.limit);
     }
 
-    function handleEditClick(_: any, data: StudentClassType) {
+    function handleEditClick(_: any, data: ClassTableType) {
         setOpenEditModal(true);
         setEditData(data);
     }
@@ -118,13 +118,13 @@ export default function ListClasses() {
                                     classes.map((cl, index) => (
                                         <TableRow key={`${cl.id}-${index}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell component="th" scope='row' align='left'>
-                                                {cl.class} <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`}><IconButton> <ShareAltOutlined /> </IconButton></RouterLink>
+                                                {cl.class} <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`}><IconButton><UserOutlined  /> </IconButton></RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {cl.created_at}
+                                                {cl.male_count}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {cl.updated_at}
+                                                {cl.female_count}
                                             </TableCell>
                                             <TableCell>
                                                 <IconButton color='primary' onClick={(event) => handleEditClick(event, cl)}>

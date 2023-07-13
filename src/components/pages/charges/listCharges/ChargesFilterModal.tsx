@@ -37,7 +37,7 @@ export default function ChargesFilterModal({ open, handleClose, onSubmit, value 
                     setClasses(class_data);
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, []);
     return (
         <Modal
@@ -58,7 +58,6 @@ export default function ChargesFilterModal({ open, handleClose, onSubmit, value 
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
-                            console.log(values);
                             setStatus({ success: false });
                             setSubmitting(false);
                             onSubmit({ limit: values.limit, class_id: values.class_id });
