@@ -74,22 +74,14 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
             }
             const bill = getBillPageLayout(content);
             iframeRef.current?.contentWindow?.document.open();
-            iframeRef.current?.contentWindow?.document.close();
             iframeRef.current?.contentWindow?.document.write(bill);
-            console.log(iframeRef.current?.contentWindow.document);
-            iframeRef.current?.contentWindow.addEventListener('beforeprint', () => {
-                console.log('before print');
-            })
-            if(iframeRef.current?.contentWindow){
-                console.log('has content');
-            }
+            iframeRef.current?.contentWindow?.document.close();
             iframeRef.current?.contentWindow?.print();
         } catch (error) {
             console.log(error);
             showAlert('Error '+error, 'error');
         } finally {
             setIsLoading(false);
-            handleClose();
         }
     }
 
@@ -113,7 +105,7 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                 <Box display='flex' justifyContent='center' marginTop="10px">
                     <Button variant="contained" disabled={is_loading} onClick={handlePrint} fullWidth > {is_loading ? <CircularProgress /> : "Print"}</Button>
                 </Box>
-                <iframe ref={iframeRef} src="" style={{ display: 'none' }}></iframe>
+                <iframe ref={iframeRef} style={{display: 'none'}}></iframe>
             </Box>
         </Modal>
     )

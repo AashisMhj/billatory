@@ -6,6 +6,7 @@ import { Box,  Theme, useMediaQuery } from '@mui/material';
 import HeaderTitle from './HeaderTitle';
 import Profile from './profile';
 import MobileSection from './MobileSection';
+import ThemeToggler from './ThemToggler';
 
 // ==============================|| HEADER - CONTENT ||============================== //
 
@@ -16,7 +17,6 @@ const HeaderContent = () => {
     <>
       {!matchesXs && <HeaderTitle />}
       {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
-
       {!matchesXs && <Profile />}
       {matchesXs && <MobileSection />}
     </>
