@@ -1,4 +1,3 @@
-// ==============================|| PRESET THEME - THEME SELECTOR ||============================== //
 
 import { PalettesProps } from "@ant-design/colors";
 

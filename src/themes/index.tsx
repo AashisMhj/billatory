@@ -1,16 +1,14 @@
-import { ReactNode, useMemo } from 'react';
-declare module '@mui/material/styles'{
-  
-}
+import { ReactNode, useMemo, useContext  } from 'react';
 // material-ui
 import { CssBaseline, StyledEngineProvider, ThemeOptions } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
 // project import
-import Palette from './palette';
+import Palette from './theme/light';
+import DarkPalette from './theme/dark';
 import Typography from './typography';
 import CustomShadows from './shadows';
 import componentsOverride from './overrides';
+import { ThemeContext } from '@/context/app-theme';
 
 // ==============================|| DEFAULT THEME - MAIN  ||============================== //
 interface Props{
@@ -20,6 +18,9 @@ interface Props{
 export default function ThemeCustomization({ children }:Props) {
   // TOKNOW OLD two variables passed here
   const theme = Palette('light');
+  const dark = DarkPalette('dark');
+
+  const {current_theme} = useContext(ThemeContext);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const themeTypography = Typography(`'Public Sans', sans-serif`);
@@ -45,11 +46,11 @@ export default function ThemeCustomization({ children }:Props) {
           paddingBottom: 8
         }
       },
-      palette: theme.palette,
+      palette: current_theme === "light" ? theme.palette : dark.palette,
       customShadows: themeCustomShadows,
       typography: themeTypography
     }),
-    [theme, themeTypography, themeCustomShadows]
+    [theme, themeTypography, themeCustomShadows, current_theme]
   );
 
   const themes = createTheme(themeOptions);

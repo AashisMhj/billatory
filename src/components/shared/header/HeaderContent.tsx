@@ -17,6 +17,7 @@ const HeaderContent = () => {
     <>
       {!matchesXs && <HeaderTitle />}
       {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
+      <ThemeToggler />
       {!matchesXs && <Profile />}
       {matchesXs && <MobileSection />}
     </>

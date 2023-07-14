@@ -208,3 +208,5 @@ export interface PaymentProps {
     account_name: string
 
 }
+
+export type ThemeTypes = "light" | "dark";
