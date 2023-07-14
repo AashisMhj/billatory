@@ -1,14 +1,19 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { Box, Button, Container } from "@mui/material"
+import { Box, Button, Container, Typography } from "@mui/material"
+import { Link as RouterLink } from "react-router-dom";
 import NepaliDate from "nepali-date-converter";
 import { useParams } from "react-router-dom";
+// icons
+import LeftCircleOutlined from "@ant-design/icons/LeftCircleOutlined";
+import PrinterFilledOutlined from "@ant-design/icons/PrinterOutlined";
 //
-import { BillItems, FeesType, StudentType } from "@/types"
+import { FeesType, StudentType } from "@/types"
 import { getStudentDetail, getStudentPreviousDue } from "@/services/student.service";
 import { SettingsContext } from "@/context/settings";
 import { getStudentCurrentMonthStudentFees } from "@/services/student.service";
 import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
 import { Months } from "@/utils/constants";
+import paths from "@/routes/path";
 
 
 export default function StudentBillPage() {
@@ -48,28 +53,29 @@ export default function StudentBillPage() {
     //     }
     // }
 
-    function handleClick(){
+    function handleClick() {
         iframeRef.current?.contentWindow?.print();
     }
 
-    useEffect(() => { iframeRef.current?.contentWindow?.document.write
+    useEffect(() => {
+        iframeRef.current?.contentWindow?.document.write
         try {
             iframeRef.current?.contentWindow?.document.open();
             iframeRef.current?.contentWindow?.document.close();
             const content = billFrame({
-                previous_due:previous_due,
-                total_sum: total_sum, 
-                bill_no: 0, 
-                month: Months[nepali_month] ? Months[nepali_month].month_name : '', 
-                student_class: student_detail?.class || '', 
-                bill_items: current_month_due, 
-                date: nepali_date.format('YYYY-MM-DD'), 
-                roll_no: student_detail?.roll_no || 0, 
-                organization_name: value.organization_name, 
-                pan_no: value.pan_no, 
-                phone_no: value.phone_no, 
-                location: value.location, 
-                student_name: `${student_detail?.first_name} ${student_detail?.last_name}`, 
+                previous_due: previous_due,
+                total_sum: total_sum,
+                bill_no: 0,
+                month: Months[nepali_month] ? Months[nepali_month].month_name : '',
+                student_class: student_detail?.class || '',
+                bill_items: current_month_due,
+                date: nepali_date.format('YYYY-MM-DD'),
+                roll_no: student_detail?.roll_no || 0,
+                organization_name: value.organization_name,
+                pan_no: value.pan_no,
+                phone_no: value.phone_no,
+                location: value.location,
+                student_name: `${student_detail?.first_name} ${student_detail?.last_name}`,
             });
             iframeRef.current?.contentWindow?.document.write(getBillPageLayout(content));
         } catch (error) {
@@ -82,7 +88,7 @@ export default function StudentBillPage() {
     }, [student_detail])
 
     useEffect(() => {
-        
+
         if (id) {
             const parsed_id = parseInt(id);
             if (parsed_id) {
@@ -121,27 +127,17 @@ export default function StudentBillPage() {
 
     return (
         <Container>
-            <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' gap={2} width="100%">
-                <Button variant="contained" onClick={handleClick}>Print</Button>
-                {/* <Bill
-                    ref={billRef}
-                    previous_due={previous_due}
-                    total_sum={total_sum}
-                    bill_no={1111}
-                    month={current_month}
-                    student_class={student_detail?.class || ''} 
-                    bill_items={current_month_due} 
-                    date={current_date} 
-                    // student detail
-                    student_name={`${student_detail?.first_name} ${student_detail?.last_name}`} 
-                    roll_no={student_detail?.roll_no || 0} 
-                    // organization detail
-                    organization_name={value.organization_name}
-                    pan_no={value.pan_no}
-                    phone_no={value.phone_no}
-                    location={value.location}
-                /> */}
-                <iframe ref={iframeRef} width="100%"  style={{ aspectRatio: "1/1.41" }} ></iframe>
+            <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' gap={6} width="100%">
+                <Box display='flex' width="100%" justifyContent='space-between' alignItems='center'>
+                    <RouterLink to={paths.studentsList}>
+                        <Button variant="contained" startIcon={<LeftCircleOutlined />}>
+                            Back
+                        </Button>
+                    </RouterLink>
+                    <Typography variant="h4">Print Bill</Typography>
+                    <Button variant="contained" endIcon={<PrinterFilledOutlined />} onClick={handleClick}>Print</Button>
+                </Box>
+                <iframe ref={iframeRef} width="100%" style={{ aspectRatio: "1/1.41" }} ></iframe>
             </Box>
         </Container>
     )

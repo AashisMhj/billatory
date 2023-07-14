@@ -5,12 +5,13 @@ import { EditOutlined, PlusCircleFilled, FilterOutlined, PrinterOutlined } from 
 //
 import paths from '@/routes/path';
 import { PaymentType } from '@/types';
-import { getNoOfPage } from '@/utils/helper-function';
+import { addComma, getNoOfPage } from '@/utils/helper-function';
 import { getPaymentRowCount, getPayments } from '@/services/payment.service';
 const tableHeads = [
     'Name',
     'Amount',
     'Payment Date',
+    'Payee',
     'Actions',
 ];
 
@@ -106,7 +107,10 @@ export default function ListPaymentPage() {
                                                 {`${payment.student_first_name} ${payment.student_last_name}`}
                                             </TableCell>
                                             <TableCell>
-                                                {payment.amount}
+                                                {addComma( payment.amount)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {payment.payee}
                                             </TableCell>
                                             <TableCell>
                                                 {payment.created_at}

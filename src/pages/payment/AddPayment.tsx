@@ -1,17 +1,19 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import { Formik, FormikErrors } from "formik";
 import * as Yup from 'yup';
 import NepaliDate from "nepali-date-converter";
 //
 type SetFieldValueType = (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void | FormikErrors<{ student_id: null; amount: number; remarks: string; payee: string; }>>;
-import { getAllActiveStudents, getStudents } from "@/services/student.service";
+import { getAllActiveStudents } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
 import { getClasses } from "@/services/class.service";
 //
 import { SnackBarContext } from "@/context/snackBar";
 import { StudentClassType, StudentMiniType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
+import paths from "@/routes/path";
 
 type StudentListType = {
     show: boolean
@@ -22,6 +24,7 @@ export default function AddPaymentPage() {
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const {showAlert} = useContext(SnackBarContext);
     const nepali_date =  new NepaliDate(Date.now());
+    const navigate = useNavigate();
 
     function filterStudent(selected_class: number | null, setFieldValue:SetFieldValueType) {
         const student_records = [...students];
@@ -39,7 +42,6 @@ export default function AddPaymentPage() {
         if(typeof event.target.value === "number" ){
             setFieldValue('student_id', event.target.value);
             const selected_student = students.find((el) => el.id === event.target.value);
-            console.log(selected_student);
             if(selected_student){
                 setFieldValue('account_name', `${selected_student.first_name} ${selected_student.last_name}`);
             }
@@ -102,6 +104,9 @@ export default function AddPaymentPage() {
                         })
                             .then((data) => {
                                 showAlert("Payment Added", 'success');
+                                if(typeof data === "number"){
+                                    navigate(paths.printPayment(data));
+                                }
                                 setErrors({});
                             })
                             .catch(err => {

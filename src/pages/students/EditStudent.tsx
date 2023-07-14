@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
 import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, Stack, Typography } from '@mui/material';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -12,6 +12,7 @@ import AnimateButton from '@/components/@extended/AnimateButton';
 import { getClasses } from '@/services/class.service';
 import { updateStudent, getStudentDetail } from '@/services/student.service';
 import paths from '@/routes/path';
+import { LeftCircleOutlined } from '@ant-design/icons';
 
 export default function EditStudentPage() {
     const navigate = useNavigate();
@@ -41,16 +42,22 @@ export default function EditStudentPage() {
                         setStudentData(student);
                     }
                 })
-                .catch(err => {
-                    console.log(err);
-                })
+                .catch(err => console.log(err))
         }
     }, [])
 
     if (student_data) {
         return (
             <Box>
-                < Typography variant='h4' > Edit Student Record</Typography >
+                <Box display='flex' alignItems='center' justifyContent='space-between'>
+                    <RouterLink to={paths.studentsList}>
+                        <Button startIcon={<LeftCircleOutlined />} variant='contained'>
+                            Back
+                        </Button>
+                    </RouterLink>
+                    < Typography variant='h4' > Edit Student Record</Typography >
+                    <div></div>
+                </Box>
                 <Formik
                     initialValues={{
                         ...student_data,
@@ -114,7 +121,9 @@ export default function EditStudentPage() {
                     {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
-                                <Grid item xs={12}><Typography variant='h6' color='secondary'>Basic Info</Typography></Grid>
+                                <Grid item xs={12}>
+                                    <Typography variant='h6' color='secondary'>Basic Info</Typography>
+                                </Grid>
                                 <Grid item xs={12}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={4}>

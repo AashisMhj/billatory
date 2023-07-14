@@ -794,7 +794,7 @@ fn get_monthly_payment_data(app_handle: AppHandle, nepali_month: i32, nepali_yea
 
 // payment commands
 #[tauri::command]
-fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32, remarks: Option<String> )->Result<i32, String>{
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32, remarks: Option<String> )->Result<i64, String>{
     let payment_data = payment::Payment { 
         id: 0, 
         student_id: student_id, 
@@ -811,9 +811,9 @@ fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: 
     let result = app_handle.db_mut(|db| payment::add_payment(db, payment_data));
 
     match result{
-        Ok(_value)=>{
+        Ok(value)=>{
             info!("Added Payment");
-            return Ok(200);
+            return Ok(value);
         }
         Err(error)=>{
             error!("{}", error);

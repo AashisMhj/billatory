@@ -184,12 +184,12 @@ pub fn get_current_month_student_fee(
     }else{
         format!("{}", nepali_month)
     };
-    let query = format!("select * from fees left join students on fees.student_id = students.id where student_id = ?1  and Date(year || '-' || case WHEN month < 10 THEN '0' || month ELSE CAST(month AS TEXT) END || '-01') = Date('{}' || '-' || '{}'  || '-01') ;", nepali_year, formatted_month);
+    let query = format!("select *, case  when payment_id is null then amount else -amount end as fee_amount from fees left join students on fees.student_id = students.id where student_id = ?1  and Date(year || '-' || case WHEN month < 10 THEN '0' || month ELSE CAST(month AS TEXT) END || '-01') = Date('{}' || '-' || '{}'  || '-01') ;", nepali_year, formatted_month);
     let mut statement = db.prepare(query.as_str())?;
     let fees_iter = statement.query_map([student_id], |row| {
         Ok(Fees {
             id: row.get("id")?,
-            amount: row.get("amount")?,
+            amount: row.get("fee_amount")?,
             charge_id: row.get("charge_id")?,
             description: row.get("description")?,
             created_at: row.get("created_at")?,

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid } from '@mui/material';
 import { EditOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
 //
 import { Months } from '@/utils/constants';
 import { FeesType, FeesFilterType } from '@/types';
-import { getNoOfPage, addComma } from '@/utils/helper-function';
+import { getNoOfPage, addComma, getSearchParams } from '@/utils/helper-function';
 import { getFeeRowCount, getFees } from '@/services/fees.service';
 import { AddFeeModal, FeesFilterModal } from '@/components/pages/fees/listFees';
 
@@ -18,13 +19,14 @@ const tableHeads = [
 
 
 export default function ListFees() {
+    const [searchParams] = useSearchParams();
     const [fees, setFees] = useState<Array<FeesType>>([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [total_rows, setTotalRows] = useState(0);
     const [open_filter_modal, setOpenFilterModal] = useState(false);
     const [filter_class_id, setFilterClassId] = useState<number | undefined>();
-    const [filter_student_id, setFilterStudentId] = useState<number | undefined>();
+    const [filter_student_id, setFilterStudentId] = useState<number | undefined>(getSearchParams(searchParams, "student_id"));
     const [filter_charge_id, setFilterChargeId] = useState<number | undefined>();
     const [filter_month, setFilterMonth] = useState<number | undefined>();
     const [filter_year, setFilterYear] = useState<number | undefined>();

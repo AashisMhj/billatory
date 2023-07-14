@@ -79,10 +79,10 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                         nepali_year: Yup.number().required('Year is Required'),
                         nepali_month: Yup.number().required('Month is Required')
                     })}
-                    onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                    onSubmit={async (values, {  setStatus, setSubmitting }) => {
                         setStatus({ success: false });
                         setSubmitting(true);
-                        applyCharge(values.charge_id, student_ids, values.amount, values.charge_title, values.nepali_month, values.nepali_month)
+                        applyCharge(values.charge_id, student_ids, values.amount, values.charge_title, values.nepali_month, values.nepali_year)
                             .then(_ => {
                                 showAlert('Charges applied', 'success');
                             })

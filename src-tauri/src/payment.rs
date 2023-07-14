@@ -1,7 +1,6 @@
 use rusqlite::{params, Connection, Result};
 use serde::Serialize;
 
-
 #[derive(Debug, Serialize)]
 pub struct Payment {
     pub id: i32,
@@ -17,10 +16,8 @@ pub struct Payment {
     pub remarks: Option<String>,
 }
 
-
-
 // payment
-pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rusqlite::Error> {
+pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<i64, rusqlite::Error> {
     let transaction = db.transaction()?;
     transaction.execute(
         "
@@ -36,14 +33,11 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<(), rus
     )?;
     let id = transaction.last_insert_rowid();
     // TODO important the logic
-    transaction.execute(
-        "
-    INSERT INTO fees (student_id, amount, title, payment_id, year, month ) VALUES (?1, ?2, ?3, ?4, ?5, ?6);
-    ",
+    transaction.execute("INSERT INTO fees (student_id, amount, title, payment_id, year, month ) VALUES (?1, ?2, ?3, ?4, ?5, ?6);",
         params![payment_data.student_id, payment_data.amount, "Payment", id, payment_data.year, payment_data.month],
     )?;
     transaction.commit()?;
-    Ok(())
+    Ok(id)
 }
 
 pub fn get_payment(

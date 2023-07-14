@@ -12,7 +12,7 @@ import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, Check
 import paths from '@/routes/path';
 import { StudentType, StudentsTableFilterType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
-import { getNoOfPage } from '@/utils/helper-function';
+import { getNoOfPage, getSearchParams } from '@/utils/helper-function';
 import { StudentsTableFilter, DisableConfirmModal, BulkPrintModal, UpdateStudentClassModal, UpdateStudentStatusModal, ApplyChargeModal } from '@/components/pages/students/listStudents';
 import { SnackBarContext } from '@/context/snackBar';
 
@@ -26,17 +26,6 @@ const tableHeads = [
     'Actions',
 ];
 
-function getSearchParams(searchParams: URLSearchParams, key: string): number | undefined {
-    const value = searchParams.get(key)
-    if (value) {
-        const parsed_id = parseInt(value);
-        if (parsed_id) {
-            return parsed_id;
-        }
-        return undefined;
-    }
-    return undefined;
-}
 
 export default function ListStudents() {
     const [searchParams] = useSearchParams();
@@ -222,7 +211,7 @@ export default function ListStudents() {
                                                 <Checkbox checked={checkbox_ids.includes(student.id)} onChange={(_, checked) => handleCheckBoxChange(checked, student.id)} />
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {student.gender === "male" ? <MaleIcon /> : <FemaleIcon />}
+                                                {student.gender === "male" ? <MaleIcon sx={{color: '#0000ff'}} /> : <FemaleIcon sx={{color: '#F89880'}} />}
                                                 {`${student.first_name} ${student.last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
@@ -253,8 +242,8 @@ export default function ListStudents() {
                                                         </IconButton>
                                                     </Tooltip>
                                                 </RouterLink>
-                                                <RouterLink to={paths.studentFees(student.id)}>
-                                                    <Tooltip title="Students Fees">
+                                                <RouterLink to={`${paths.listFees}?student_id=${student.id}`}>
+                                                    <Tooltip title="Students Transaction">
                                                         <IconButton color="success">
                                                             <CreditCardOutlinedIcon />
                                                         </IconButton>

@@ -128,7 +128,7 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                                     </tr>
                                     <tr>
                                         <td class="text-end">Grand Total</td>
-                                        <td>${total_sum - previous_due}</td>
+                                        <td>${total_sum + previous_due}</td>
                                         <td></td>
                                     </tr>
                                 </tbody>
