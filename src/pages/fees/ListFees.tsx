@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid } from '@mui/material';
+import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid, Tooltip } from '@mui/material';
 import { EditOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
 //
 import { Months } from '@/utils/constants';
@@ -8,11 +8,12 @@ import { FeesType, FeesFilterType } from '@/types';
 import { getNoOfPage, addComma, getSearchParams } from '@/utils/helper-function';
 import { getFeeRowCount, getFees } from '@/services/fees.service';
 import { AddFeeModal, FeesFilterModal } from '@/components/pages/fees/listFees';
+import { PageTitle } from '@/components/shared';
 
 const tableHeads = [
     'Student',
     'Fee',
-    'Year', 
+    'Year',
     'Month',
     'Amount'
 ]
@@ -36,7 +37,7 @@ export default function ListFees() {
     function handlePaginationChange(event: any, new_page: number) {
         setPage(new_page);
     }
-    function clearFilter(){
+    function clearFilter() {
         setLimit(10);
         setFilterClassId(undefined);
         setFilterStudentId(undefined);
@@ -44,30 +45,30 @@ export default function ListFees() {
         setFilterYear(undefined);
     }
 
-    function handleFilter(value: FeesFilterType){
+    function handleFilter(value: FeesFilterType) {
         console.log(value);
         setPage(1);
-        if(value.limit !== limit){
+        if (value.limit !== limit) {
             setLimit(value.limit)
         }
-        if(value.charge){
+        if (value.charge) {
             setFilterChargeId(value.charge);
         }
-        if(value.class_id){
+        if (value.class_id) {
             setFilterClassId(value.class_id);
         }
-        if(value.student_id){
+        if (value.student_id) {
             setFilterStudentId(value.student_id);
         }
-        if(value.month){
+        if (value.month) {
             setFilterMonth(value.month);
         }
-        if(value.year){
+        if (value.year) {
             setFilterYear(value.year);
         }
     }
     function fetchData() {
-        getFees(page, limit, filter_class_id, filter_student_id, filter_charge_id,  filter_year, filter_month)
+        getFees(page, limit, filter_class_id, filter_student_id, filter_charge_id, filter_year, filter_month)
             .then((data) => {
                 console.log(data);
                 setFees(data as Array<FeesType>);
@@ -75,7 +76,7 @@ export default function ListFees() {
             .catch(error => console.log(error));
 
         //
-        getFeeRowCount( filter_class_id, filter_student_id, filter_charge_id,  filter_year, filter_month)
+        getFeeRowCount(filter_class_id, filter_student_id, filter_charge_id, filter_year, filter_month)
             .then((data) => {
                 if (typeof data === "number") {
                     setTotalRows(data);
@@ -94,19 +95,20 @@ export default function ListFees() {
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
-                    <Grid container alignItems="center">
-                        <Grid item>
-                            <Typography variant='h4'>Fee Charges</Typography>
-                        </Grid>
-                        <Grid item>
-                            <IconButton color='warning' onClick={() => setOpenAddModal(true)}>
-                                <PlusCircleFilled />
-                            </IconButton>
-                            <IconButton color='info' onClick={() => setOpenFilterModal(true)} >
-                                <FilterOutlined />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
+                    <PageTitle title="Fees Transactions" actions={
+                        <>
+                            <Tooltip title="Add Fee Transaction">
+                                <IconButton size="large" color='warning' onClick={() => setOpenAddModal(true)}>
+                                    <PlusCircleFilled />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Filter Transactions">
+                                <IconButton size="large" color='info' onClick={() => setOpenFilterModal(true)} >
+                                    <FilterOutlined />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    } />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography>Total Count: {total_rows}</Typography>
@@ -154,7 +156,7 @@ export default function ListFees() {
                                             </TableCell>
                                             <TableCell>
                                                 {
-                                                    fee.month && Months[fee.month -1] ? Months[fee.month -1 ].month_name : ''
+                                                    fee.month && Months[fee.month - 1] ? Months[fee.month - 1].month_name : ''
                                                 }
                                             </TableCell>
                                             <TableCell>

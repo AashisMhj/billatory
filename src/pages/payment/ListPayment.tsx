@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
+import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid, Tooltip } from '@mui/material';
 import { EditOutlined, PlusCircleFilled, FilterOutlined, PrinterOutlined } from '@ant-design/icons';
 //
 import paths from '@/routes/path';
 import { PaymentType } from '@/types';
 import { addComma, getNoOfPage } from '@/utils/helper-function';
 import { getPaymentRowCount, getPayments } from '@/services/payment.service';
+import { PageTitle } from '@/components/shared';
 const tableHeads = [
     'Name',
     'Amount',
@@ -34,7 +35,7 @@ export default function ListPaymentPage() {
         //
         getPaymentRowCount()
             .then(data => {
-                if(typeof data === "number"){
+                if (typeof data === "number") {
                     setTotalRows(data);
                 }
             })
@@ -52,21 +53,22 @@ export default function ListPaymentPage() {
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
-                    <Grid container alignItems="center">
-                        <Grid item>
-                            <Typography variant='h4'>Payments</Typography>
-                        </Grid>
-                        <Grid item>
+                    <PageTitle title="Student Payments" actions={
+                        <>
                             <RouterLink to={paths.addPayment}>
-                                <IconButton color='warning'>
-                                    <PlusCircleFilled />
-                                </IconButton>
+                                <Tooltip title="Add Payment">
+                                    <IconButton size="large" color='warning'>
+                                        <PlusCircleFilled />
+                                    </IconButton>
+                                </Tooltip>
                             </RouterLink>
-                            <IconButton color='info' >
-                                <FilterOutlined />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
+                            <Tooltip title="Add Payment">
+                                <IconButton size="large" color='info' >
+                                    <FilterOutlined />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    } />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography>Total Count: {total_rows}</Typography>
@@ -107,7 +109,7 @@ export default function ListPaymentPage() {
                                                 {`${payment.student_first_name} ${payment.student_last_name}`}
                                             </TableCell>
                                             <TableCell>
-                                                {addComma( payment.amount)}
+                                                {addComma(payment.amount)}
                                             </TableCell>
                                             <TableCell>
                                                 {payment.payee}
@@ -117,9 +119,11 @@ export default function ListPaymentPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <RouterLink to={paths.printPayment(payment.id)}>
-                                                    <IconButton color='primary'>
-                                                        <PrinterOutlined />
-                                                    </IconButton>
+                                                    <Tooltip title="Print Payment Slip">
+                                                        <IconButton color='primary'>
+                                                            <PrinterOutlined />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </RouterLink>
                                             </TableCell>
                                         </TableRow>

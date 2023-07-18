@@ -22,7 +22,7 @@ const dashboard: NavGroupType = {
             title: 'Dashboard',
             type: 'item',
             url: paths.dashboard,
-            icon: (is_open: boolean) => <DashboardCustomizeOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
+            icon: (is_open: boolean) => <DashboardCustomizeOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
             breadcrumbs: false
         }
     ]
@@ -38,14 +38,23 @@ const student: NavGroupType = {
             title: 'Classes',
             type: 'item',
             url: paths.listClasses,
-            icon: (is_open: boolean) => <CorporateFareOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+            icon: (is_open: boolean) => <CorporateFareOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />
         },
         {
             id: 's-students',
             title: 'Students',
             type: 'item',
             url: paths.studentsList,
-            icon: (is_open: boolean) => <PersonOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+            icon: (is_open: boolean) => <PersonOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
+            children: [
+                {
+                    id: 's-students-add',
+                    title: 'Add Student',
+                    url: paths.createStudent,
+                    icon: (is_open) => <PersonOutlinedIcon style={{fontSize: is_open ? '1rem': '1.25rem'}} />,
+                    type: 'item'
+                }
+            ]
         },
 
     ]
@@ -61,14 +70,14 @@ const transaction: NavGroupType = {
             title: 'Charges',
             type: 'item',
             url: paths.listCharges,
-            icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
+            icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
         },
         {
             id: 'f-fees',
             title: 'Transactions',
             type: 'item',
             url: paths.listFees,
-            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />
+            icon: (is_open: boolean) => <FeedOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />
         },
 
     ]
@@ -84,7 +93,7 @@ const fees: NavGroupType = {
             title: 'Payment',
             type: 'item',
             url: paths.listPayment,
-            icon: (is_open: boolean) => <MonetizationOnOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25.rem' }} />,
+            icon: (is_open: boolean) => <MonetizationOnOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
         },
 
     ]

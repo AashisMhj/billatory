@@ -1,5 +1,5 @@
-import { HTMLAttributes, ReactNode, useRef, useState, useContext } from 'react';
-
+import { HTMLAttributes, ReactNode, useRef, useState, useContext, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -14,8 +14,11 @@ import {
   Popper,
   Stack,
   Tab,
-  Tabs} from '@mui/material';
+  Tabs
+} from '@mui/material';
+// icon
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 import { SettingsContext } from '@/context/settings';
 // project import
@@ -23,9 +26,6 @@ import MainCard from '@/components/layouts/MainCard';
 import Transitions from '@/components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 
-// assets
-
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
 type Props = {
@@ -50,11 +50,16 @@ function a11yProps(index: number) {
 
 const Profile = () => {
   const theme = useTheme();
-  const {value:SettingValue} = useContext(SettingsContext);
+  const pathname = useLocation().pathname;
+  const { value: SettingValue } = useContext(SettingsContext);
 
   const handleLogout = async () => {
     // logout
   };
+
+  useEffect(()=>{
+    setOpen(false);
+  },[pathname])
 
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -63,9 +68,7 @@ const Profile = () => {
   };
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
-    console.log('closing')
     if (anchorRef.current && anchorRef.current.contains(event.target as Node)) {
-      console.log('closing')
       return;
     }
     setOpen(false);
@@ -76,7 +79,7 @@ const Profile = () => {
   const iconBackColorOpen = 'grey.300';
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }} onBlur={() => setOpen(false)}>
+    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
       <ButtonBase
         sx={{
           p: 0.25,
@@ -146,7 +149,7 @@ const Profile = () => {
                     {open && (
                       <>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                          <Tabs variant="fullWidth" value={value} onChange={(event:any, value:any) => setValue(value)} aria-label="profile tabs">
+                          <Tabs variant="fullWidth" value={value} onChange={(event: any, value: any) => setValue(value)} aria-label="profile tabs">
                             <Tab
                               sx={{
                                 display: 'flex',

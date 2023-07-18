@@ -10,6 +10,7 @@ import Print from '@mui/icons-material/Print';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 //
 import paths from '@/routes/path';
+import { PageTitle } from '@/components/shared';
 import { StudentType, StudentsTableFilterType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage, getSearchParams } from '@/utils/helper-function';
@@ -58,7 +59,7 @@ export default function ListStudents() {
         setShowActive(value.show_active);
     }
 
-    function handleBulkPrint(){
+    function handleBulkPrint() {
         setShowBulkPrint(true);
     }
 
@@ -70,7 +71,7 @@ export default function ListStudents() {
             })
             .catch(err => {
                 showAlert('Failed to Update Status ' + err, 'error');
-                console.log(err)
+                console.error(err)
             })
     }
 
@@ -82,7 +83,6 @@ export default function ListStudents() {
         } else {
             let temp = [...checkbox_ids];
             const index = temp.indexOf(student_id);
-            console.log(index);
             if (index >= 0) {
                 temp.splice(index, 1);
                 setCheckBoxIds(temp);
@@ -144,28 +144,30 @@ export default function ListStudents() {
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
                     <Grid container alignItems="center">
-                        <Grid item>
-                            <Typography variant='h4'>Students</Typography>
-                        </Grid>
-                        <Grid item>
-                            <RouterLink to={paths.createStudent}>
-                                <IconButton color='warning'>
-                                    <PlusCircleFilled />
-                                </IconButton>
-                            </RouterLink>
-                            <IconButton color='info' onClick={() => setOpenFilterModal(true)}>
-                                <FilterOutlined />
-                            </IconButton>
-
-                        </Grid>
+                        <PageTitle title='Students' actions={
+                            <>
+                                <RouterLink to={paths.createStudent}>
+                                    <Tooltip title="Add Student">
+                                        <IconButton size="large" color='warning'>
+                                            <PlusCircleFilled />
+                                        </IconButton>
+                                    </Tooltip>
+                                </RouterLink>
+                                <Tooltip title="Filter Student Data">
+                                    <IconButton size="large" color='info' onClick={() => setOpenFilterModal(true)}>
+                                        <FilterOutlined />
+                                    </IconButton>
+                                </Tooltip>
+                            </>
+                        } />
                     </Grid>
                 </Grid>
                 <Grid item xs={12} >
-                    <Box sx={{ display: 'flex', gap: '8px'}}>
+                    <Box sx={{ display: 'flex', gap: '8px' }}>
                         <Button startIcon={<Print />} variant='outlined' sx={{ borderRadius: '50px' }} onClick={handleBulkPrint} disabled={checkbox_ids.length === 0}>Print</Button>
-                        <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
-                        <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
-                        <Button  variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
+                        <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
+                        <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
+                        <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
 
                     </Box>
                 </Grid>
@@ -211,7 +213,7 @@ export default function ListStudents() {
                                                 <Checkbox checked={checkbox_ids.includes(student.id)} onChange={(_, checked) => handleCheckBoxChange(checked, student.id)} />
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
-                                                {student.gender === "male" ? <MaleIcon sx={{color: '#0000ff'}} /> : <FemaleIcon sx={{color: '#F89880'}} />}
+                                                {student.gender === "male" ? <MaleIcon sx={{ color: '#0000ff' }} /> : <FemaleIcon sx={{ color: '#F89880' }} />}
                                                 {`${student.first_name} ${student.last_name}`}
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
@@ -230,35 +232,35 @@ export default function ListStudents() {
                                             <TableCell>
                                                 <RouterLink to={paths.editStudent(student.id)}>
                                                     <Tooltip title="Edit Info">
-                                                        <IconButton color='primary'>
+                                                        <IconButton size='large' color='primary'>
                                                             <EditFilled />
                                                         </IconButton>
                                                     </Tooltip>
                                                 </RouterLink>
                                                 <RouterLink to={paths.detailStudent(student.id)}>
                                                     <Tooltip title="Student Detail">
-                                                        <IconButton color='info'>
+                                                        <IconButton size='large' color='info'>
                                                             <InfoCircleOutlined />
                                                         </IconButton>
                                                     </Tooltip>
                                                 </RouterLink>
                                                 <RouterLink to={`${paths.listFees}?student_id=${student.id}`}>
                                                     <Tooltip title="Students Transaction">
-                                                        <IconButton color="success">
+                                                        <IconButton size='large' color="success">
                                                             <CreditCardOutlinedIcon />
                                                         </IconButton>
                                                     </Tooltip>
                                                 </RouterLink>
                                                 <RouterLink to={paths.studentBill(student.id)}>
                                                     <Tooltip title="Student Bill">
-                                                        <IconButton color="success">
+                                                        <IconButton size='large' color="success">
                                                             <ReceiptIcon />
                                                         </IconButton>
                                                     </Tooltip>
                                                 </RouterLink>
                                                 <RouterLink to={paths.studentCharges(student.id)}>
                                                     <Tooltip title="Student Charges">
-                                                        <IconButton color="primary">
+                                                        <IconButton size='large' color="primary">
                                                             <CheckCircleOutlined />
                                                         </IconButton>
                                                     </Tooltip>

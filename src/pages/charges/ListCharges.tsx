@@ -1,8 +1,9 @@
 import { useEffect, useState, useContext } from 'react';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid } from '@mui/material';
+import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid, Tooltip } from '@mui/material';
 import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
-import {Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 //
+import { PageTitle } from '@/components/shared';
 import { ChargesType, ChargesFilterType } from '@/types';
 import { getCharges, getChargeCount } from '@/services/charge.service';
 import { getNoOfPage, addComma } from '@/utils/helper-function';
@@ -25,7 +26,7 @@ export default function ListCharges() {
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRow] = useState<number>(0);
-    const [filter_class, setFilterClass] = useState<number >();
+    const [filter_class, setFilterClass] = useState<number>();
     const [is_edit_modal_open, setIsEditModalOpen] = useState(false);
     const [is_add_model_open, setIsAddModalOpen] = useState(false);
     const [is_filter_modal_open, setIsFilterModalOpen] = useState(false);
@@ -54,18 +55,18 @@ export default function ListCharges() {
                 }
             })
             .catch(err => {
-                showAlert('Error '+err, 'error');
-                console.log(err);
+                showAlert('Error ' + err, 'error');
+                console.error(err);
             });
 
         // 
-        getChargeCount( filter_class)
+        getChargeCount(filter_class)
             .then(data => {
                 if (typeof data === "number") {
                     setTotalRow(data);
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
     }
 
     function handleEditClick(_: any, data: ChargesType) {
@@ -80,22 +81,20 @@ export default function ListCharges() {
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
-                    <Grid container alignItems="center">
-                        <Grid item>
-                            <Typography variant='h4'>Fee Charges</Typography>
-                        </Grid>
-                        <Grid item>
-                            <IconButton color='warning' onClick={() => setIsAddModalOpen(true)} >
-                                <PlusCircleFilled />
-                            </IconButton>
-                            <IconButton color='info' onClick={() => setIsFilterModalOpen(true)} >
-                                <FilterOutlined />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-
+                    <PageTitle title="Fee Charges" actions={
+                        <>
+                            <Tooltip title="Add Charge">
+                                <IconButton size='large' color='warning' onClick={() => setIsAddModalOpen(true)} >
+                                    <PlusCircleFilled />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Filter Charges">
+                                <IconButton size='large' color='info' onClick={() => setIsFilterModalOpen(true)} >
+                                    <FilterOutlined />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    } />
                 </Grid>
                 <Grid item xs={12}>
                     Total Row count: {total_rows}
@@ -152,9 +151,11 @@ export default function ListCharges() {
                                                 </RouterLink>
                                             </TableCell>
                                             <TableCell>
-                                                <IconButton color='primary' onClick={(event) => handleEditClick(event, charge)}>
-                                                    <EditOutlined />
-                                                </IconButton>
+                                                <Tooltip title="Edit Charge">
+                                                    <IconButton size='large' color='primary' onClick={(event) => handleEditClick(event, charge)}>
+                                                        <EditOutlined />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -171,7 +172,7 @@ export default function ListCharges() {
             </Grid>
             <AddChargeModal open={is_add_model_open} handleClose={() => setIsAddModalOpen(false)} onSubmit={() => fetchData()} />
             <EditChargeModal data={edit_data} open={is_edit_modal_open} handleClose={() => setIsEditModalOpen(false)} onSubmit={() => fetchData()} />
-            <ChargesFilterModal open={is_filter_modal_open} value={{class_id: filter_class, limit}} handleClose={() => setIsFilterModalOpen(false) } onSubmit={handleFilterSubmit} />
+            <ChargesFilterModal open={is_filter_modal_open} value={{ class_id: filter_class, limit }} handleClose={() => setIsFilterModalOpen(false)} onSubmit={handleFilterSubmit} />
         </>
     )
 }

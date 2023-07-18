@@ -14,6 +14,7 @@ export interface NavItemType {
     target?: boolean,
     icon?: (is_open: boolean) => ReactNode,
     breadcrumbs?: boolean,
+    children?: Array<NavItemType>,
     external?: boolean
     disabled?: boolean
     chip?: ChipProps

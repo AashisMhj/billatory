@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, Table, IconButton, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid } from '@mui/material';
+import { TableContainer, Table, IconButton, Tooltip, TableCell, TableHead, TableRow, TableBody, Pagination, Grid } from '@mui/material';
 import { EditFilled, PlusCircleFilled, FilterOutlined, UserOutlined } from '@ant-design/icons';
 //
+import { PageTitle } from '@/components/shared';
 import { ClassTableType, ClassFilterType } from '@/types';
 import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, FilterModal, AddClassModal } from '@/components/pages/class/listClasses';
-import {getNoOfPage} from '@/utils/helper-function';
+import { getNoOfPage } from '@/utils/helper-function';
 import paths from '@/routes/path';
 
 const tableHeads = [
@@ -42,7 +43,7 @@ export default function ListClasses() {
         //
         getClassRowCount()
             .then(data => {
-                if(typeof data === "number"){
+                if (typeof data === "number") {
                     setTotalPageCount(data);
                 }
             })
@@ -68,19 +69,20 @@ export default function ListClasses() {
         <>
             <Grid container rowSpacing={4.5} columnSpacing={2.75}>
                 <Grid item xs={12}>
-                    <Grid container alignItems="center">
-                        <Grid item>
-                            <Typography variant='h4'>Classes</Typography>
-                        </Grid>
-                        <Grid item>
-                            <IconButton color='warning' onClick={() => setOpenAddModal(true)}>
-                                <PlusCircleFilled />
-                            </IconButton>
-                            <IconButton color='info' onClick={() => setOpenFilterModal(true)}>
-                                <FilterOutlined />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
+                    <PageTitle title="Classes" actions={
+                        <>
+                            <Tooltip title="Add Class">
+                                <IconButton size='large' color='warning' onClick={() => setOpenAddModal(true)}>
+                                    <PlusCircleFilled />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Filter Class Data">
+                                <IconButton size='large' color='info' onClick={() => setOpenFilterModal(true)}>
+                                    <FilterOutlined />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    } />
                 </Grid>
                 <Grid item xs={12}>
                     Total no of Class: {total_page_count}
@@ -118,7 +120,11 @@ export default function ListClasses() {
                                     classes.map((cl, index) => (
                                         <TableRow key={`${cl.id}-${index}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
                                             <TableCell component="th" scope='row' align='left'>
-                                                {cl.class} <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`}><IconButton><UserOutlined  /> </IconButton></RouterLink>
+                                                {cl.class} <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`}>
+                                                    <Tooltip title={`Show Student of ${cl.class}`} >
+                                                        <IconButton><UserOutlined /> </IconButton>
+                                                    </Tooltip>
+                                                </RouterLink>
                                             </TableCell>
                                             <TableCell component="th" scope='row' align='left'>
                                                 {cl.male_count}
@@ -127,9 +133,11 @@ export default function ListClasses() {
                                                 {cl.female_count}
                                             </TableCell>
                                             <TableCell>
-                                                <IconButton color='primary' onClick={(event) => handleEditClick(event, cl)}>
-                                                    <EditFilled />
-                                                </IconButton>
+                                                <Tooltip title="Edit Data">
+                                                    <IconButton color='primary' onClick={(event) => handleEditClick(event, cl)}>
+                                                        <EditFilled />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     ))
