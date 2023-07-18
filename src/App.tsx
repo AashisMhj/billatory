@@ -1,16 +1,19 @@
 import { useState, useEffect, useContext } from 'react';
+import { PalettesProps } from '@ant-design/colors';
+import { Color, PaletteMode } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 //
-import { SnackBarProvider } from './context/snackBar';
 import Routes from '@/routes';
 import ThemeCustomization from '@/themes';
 import ScrollTop from '@/components/layouts/ScrollTop';
-import { SettingsContext } from '@/context/settings';
 import LoadingPage from './pages/Loading';
 import { getSettings } from './services/settings.service';
-import { useNavigate } from 'react-router-dom';
 import paths from './routes/path';
-import { PalettesProps } from '@ant-design/colors';
-import { Color, PaletteMode } from '@mui/material';
+import { SettingsContext } from '@/context/settings';
+import { SnackBarProvider } from './context/snackBar';
+import { AppThemeProvider } from './context/app-theme';
+
+
 declare module '@mui/material/styles' {
   interface Theme {
     status: {
@@ -136,15 +139,17 @@ const App = () => {
       })
   }, []);
   return (
-    <ThemeCustomization>
-      <SnackBarProvider>
-        <ScrollTop>
-          {
-            is_loading ? <LoadingPage /> : <Routes />
-          }
-        </ScrollTop>
-      </SnackBarProvider>
-    </ThemeCustomization>
+    <AppThemeProvider>
+      <ThemeCustomization>
+        <SnackBarProvider>
+          <ScrollTop>
+            {
+              is_loading ? <LoadingPage /> : <Routes />
+            }
+          </ScrollTop>
+        </SnackBarProvider>
+      </ThemeCustomization>
+    </AppThemeProvider>
   )
 }
 
