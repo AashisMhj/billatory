@@ -5,6 +5,8 @@ import AddCardOutlinedIcon from '@mui/icons-material/AddCardOutlined';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import AddIcon from '@mui/icons-material/Add';
 
 // assets
 import { NavGroupType } from '@/types'
@@ -46,16 +48,15 @@ const student: NavGroupType = {
             type: 'item',
             url: paths.studentsList,
             icon: (is_open: boolean) => <PersonOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
-            children: [
-                {
-                    id: 's-students-add',
-                    title: 'Add Student',
-                    url: paths.createStudent,
-                    icon: (is_open) => <PersonOutlinedIcon style={{fontSize: is_open ? '1rem': '1.25rem'}} />,
-                    type: 'item'
-                }
-            ]
         },
+        {
+            id: 's-students-add',
+            title: 'Add Student',
+            url: paths.createStudent,
+            icon: (is_open) => <PersonAddAltIcon style={{fontSize: is_open ? '1rem': '1.25rem'}} />,
+            type: 'item',
+            level: 2
+        }
 
     ]
 };
@@ -67,7 +68,7 @@ const transaction: NavGroupType = {
     children: [
         {
             id: 'f-charges',
-            title: 'Charges',
+            title: 'Fee Charges',
             type: 'item',
             url: paths.listCharges,
             icon: (is_open: boolean) => <AddCardOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
@@ -94,6 +95,14 @@ const fees: NavGroupType = {
             type: 'item',
             url: paths.listPayment,
             icon: (is_open: boolean) => <MonetizationOnOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
+        },
+        {
+            id: 'f-payments',
+            title: 'Payment',
+            type: 'item',
+            url: paths.listPayment,
+            icon: (is_open: boolean) => <AddIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
+            level: 2
         },
 
     ]

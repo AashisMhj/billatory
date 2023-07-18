@@ -7,30 +7,15 @@ import NavItem from './NavItem';
 import { NavGroupType } from '@/types';
 
 // ==============================|| NAVIGATION - LIST GROUP ||============================== //
-interface Props{
+interface Props {
   item: NavGroupType
 }
-const NavGroup = ({ item }:Props) => {
+const NavGroup = ({ item }: Props) => {
 
-  const {is_open} = useContext(SideBarContext);
+  const { is_open } = useContext(SideBarContext);
 
   const navCollapse = item.children?.map((menuItem) => {
-    switch (menuItem.type) {
-      case 'collapse':
-        return (
-          <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-            collapse Not Available
-          </Typography>
-        );
-      case 'item':
-        return <NavItem key={menuItem.id} item={menuItem} level={1} />;
-      default:
-        return (
-          <Typography key={menuItem.id} variant="h6" color="error" align="center">
-            Fix - Group Collapse or Items
-          </Typography>
-        );
-    }
+    return  <NavItem key={menuItem.id} item={menuItem} level={menuItem.level || 1} />;
   });
 
   return (

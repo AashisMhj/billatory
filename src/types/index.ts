@@ -12,12 +12,12 @@ export interface NavItemType {
     type: string,
     url: string,
     target?: boolean,
+    level?: number,
     icon?: (is_open: boolean) => ReactNode,
     breadcrumbs?: boolean,
-    children?: Array<NavItemType>,
-    external?: boolean
-    disabled?: boolean
-    chip?: ChipProps
+    external?: boolean,
+    disabled?: boolean,
+    chip?: ChipProps,
 }
 
 export interface NavGroupType {

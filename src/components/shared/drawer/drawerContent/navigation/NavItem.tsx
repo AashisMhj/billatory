@@ -48,7 +48,8 @@ const NavItem = ({ item, level }:Props) => {
 
   // active menu item on page load
   useEffect(() => {
-    if (pathname.includes(item.url)) {
+    const formattedPathname = pathname.split("?")[0];
+    if (formattedPathname === item.url) {
       setIsSelected(true);
     }else{
       setIsSelected(false);
@@ -128,7 +129,6 @@ const NavItem = ({ item, level }:Props) => {
           primary={
             <Typography variant="h6" sx={{ 
               color: is_selected ? iconSelectedColor : textColor 
-              // color: 'primary'
               }}>
               {item.title}
             </Typography>

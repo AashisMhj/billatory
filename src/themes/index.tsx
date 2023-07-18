@@ -17,10 +17,9 @@ interface Props{
 
 export default function ThemeCustomization({ children }:Props) {
   // TOKNOW OLD two variables passed here
-  const theme = Palette('light');
-  const dark = DarkPalette('dark');
-
+  
   const {current_theme} = useContext(ThemeContext);
+  const theme = Palette('light');
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const themeTypography = Typography(`'Public Sans', sans-serif`);
@@ -46,7 +45,7 @@ export default function ThemeCustomization({ children }:Props) {
           paddingBottom: 8
         }
       },
-      palette: current_theme === "light" ? theme.palette : dark.palette,
+      palette: theme.palette,
       customShadows: themeCustomShadows,
       typography: themeTypography
     }),
