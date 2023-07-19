@@ -7,7 +7,7 @@ export default function AppAlert() {
     const { is_open, message, message_type,setSnackBarStatus  } = useContext(SnackBarContext);
 
     return (
-        <Snackbar open={is_open} autoHideDuration={6000} onClose={() => setSnackBarStatus(false)} anchorOrigin={{vertical: 'top', horizontal: 'center'}} sx={{width: '100%'}}>
+        <Snackbar open={is_open} autoHideDuration={9000} onClose={() => setSnackBarStatus(false)} anchorOrigin={{vertical: 'top', horizontal: 'center'}} sx={{width: '100%'}}>
             <Alert onClose={() => setSnackBarStatus(false)} severity={message_type} sx={{ width: '100%' }}>
                 {message}
             </Alert>

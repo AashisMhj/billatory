@@ -32,7 +32,7 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Edit Charge</Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>

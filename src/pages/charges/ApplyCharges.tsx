@@ -6,6 +6,8 @@ import { applyCharge, getChargeDetail, getStudentOfCharge } from '@/services/cha
 import { SnackBarContext } from '@/context/snackBar';
 import { CloseOutlined } from '@mui/icons-material';
 import { Months } from '@/utils/constants';
+import { PageTitle } from '@/components/shared';
+import FormContainer from '@/components/layouts/FormContainer';
 
 interface StudentCharge {
     id: number,
@@ -32,12 +34,10 @@ export default function ApplyChargesPage() {
 
     function handleCheckBoxChange(value: boolean, student: StudentCharge) {
         if (value) {
-            // TODO add 
             let temp = [...selected_student];
             temp.push(student);
             setSelectedStudent(temp);
         } else {
-            // TODo remove
             let index = selected_student.findIndex(i => i.id === student.id);
             if (index !== -1) {
                 let temp = [...selected_student];
@@ -106,7 +106,6 @@ export default function ApplyChargesPage() {
             if (parse_id) {
                 getStudentOfCharge(parse_id)
                     .then((data) => {
-                        // TODO set selected student
                         if (Array.isArray(data)) {
                             setAllStudents(data.map((item => {
                                 return {
@@ -117,7 +116,7 @@ export default function ApplyChargesPage() {
                         }
                     })
                     .catch(error => {
-                        console.log(error)
+                        console.error(error)
                     });
 
                 //
@@ -139,105 +138,116 @@ export default function ApplyChargesPage() {
     }, [])
     return (
         <>
-            <Grid container spacing={3}>
+            <Grid container rowSpacing={2} columnSpacing={2}>
                 <Grid item xs={12}>
-                    <Grid container spacing={3} padding={2} alignItems='end' justifyContent='center' sx={{ backgroundColor: 'white' }}>
-                        <Grid item xs={3}>
-                            <Stack spacing={1}>
-                                <InputLabel htmlFor="title" required={true}>Title</InputLabel>
-                                <OutlinedInput
-                                    id="title"
-                                    type="text"
-                                    value={charge_title}
-                                    name="charge_title"
-                                    onChange={(event) => setChargeTitle(event.target.value)}
-                                    placeholder="Title"
-                                    fullWidth
-                                />
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Stack spacing={1}>
-                                <InputLabel htmlFor="amount" required={true}>Amount</InputLabel>
-                                <OutlinedInput
-                                    id="amount"
-                                    type="text"
-                                    value={charge_amount}
-                                    name="charge_amount"
-                                    onChange={(event) => setChargeAmount(parseInt(event.target.value) || 0)}
-                                    placeholder="amount"
-                                    fullWidth
-                                />
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Stack spacing={1}>
-                                <InputLabel htmlFor="year" required={true}>Year</InputLabel>
-                                <OutlinedInput
-                                    id="year"
-                                    type="number"
-                                    value={selected_year}
-                                    name="organization_name"
-                                    onChange={(event) => setSelectedYear(parseInt(event.target.value))}
-                                    placeholder="Current Year"
-                                    fullWidth
-                                />
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Stack spacing={1}>
-                                <InputLabel htmlFor="month" required={true}>Year</InputLabel>
-                                <Select labelId="month"  value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
-                                    {
-                                        Months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
-                                    }
-                                </Select>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button variant='contained' onClick={handleSubmit}>Apply</Button>
-                        </Grid>
-                    </Grid>
+                    <PageTitle title="Apply Fees" />
                 </Grid>
-                <Grid item xs={9} padding={1} spacing={2} sx={{ backgroundColor: 'white' }}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <OutlinedInput value={search_text} onChange={handleSearchChange} placeholder='Search' />
+                <Grid item xs={12}>
+                    <FormContainer>
+                        <Grid container spacing={3} padding={2} alignItems='end' justifyContent='center' >
+                            <Grid item xs={3}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="title" required={true}>Title</InputLabel>
+                                    <OutlinedInput
+                                        id="title"
+                                        type="text"
+                                        value={charge_title}
+                                        name="charge_title"
+                                        onChange={(event) => setChargeTitle(event.target.value)}
+                                        placeholder="Title"
+                                        fullWidth
+                                    />
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="amount" required={true}>Amount</InputLabel>
+                                    <OutlinedInput
+                                        id="amount"
+                                        type="text"
+                                        value={charge_amount}
+                                        name="charge_amount"
+                                        onChange={(event) => setChargeAmount(parseInt(event.target.value) || 0)}
+                                        placeholder="amount"
+                                        fullWidth
+                                    />
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="year" required={true}>Year</InputLabel>
+                                    <OutlinedInput
+                                        id="year"
+                                        type="number"
+                                        value={selected_year}
+                                        name="organization_name"
+                                        onChange={(event) => setSelectedYear(parseInt(event.target.value))}
+                                        placeholder="Current Year"
+                                        fullWidth
+                                    />
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="month" required={true}>Year</InputLabel>
+                                    <Select labelId="month" value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                        {
+                                            Months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
+                                        }
+                                    </Select>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Button variant='contained' onClick={handleSubmit}>Apply</Button>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Paper style={{ maxHeight: 700, overflow: 'auto' }}>
-                                <List dense>
+                    </FormContainer>
+                </Grid>
+                <Grid item xs={12}>
+                    <FormContainer>
+                        <Grid container>
+                            <Grid item xs={9} padding={1} spacing={2}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <OutlinedInput value={search_text} onChange={handleSearchChange} placeholder='Search' />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Paper style={{ maxHeight: 700, overflow: 'auto' }}>
+                                            <List dense>
+                                                {
+                                                    all_students.filter(el => el.display).map((item) => (
+                                                        <ListItem key={item.id} secondaryAction={
+                                                            <Checkbox color='success' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)} />
+                                                        }>
+                                                            <ListItemButton>
+                                                                <ListItemText primary={`${item.first_name} ${item.last_name}`} secondary={item.class} />
+                                                            </ListItemButton>
+                                                        </ListItem>
+                                                    ))
+                                                }
+                                            </List>
+                                        </Paper>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={3} padding={1} spacing={2}>
+                                <Typography variant='h5'>Selected Total: {selected_student.length}</Typography>
+                                <List dense sx={{ width: '100%', bgcolor: 'Background.paper' }}>
                                     {
-                                        all_students.filter(el => el.display).map((item) => (
-                                            <ListItem key={item.id} secondaryAction={
-                                                <Checkbox color='success' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)} />
-                                            }>
+                                        selected_student.map((item, index) => (
+                                            <ListItem key={item.id} secondaryAction={<IconButton edge="end" onClick={() => removeSelectedUser(index)} >
+                                                <CloseOutlined />
+                                            </IconButton>}>
                                                 <ListItemButton>
-                                                    <ListItemText primary={`${item.first_name} ${item.last_name}`} secondary={item.class} />
+                                                    <ListItemText primary={`${item.first_name} ${item.last_name}`} />
                                                 </ListItemButton>
                                             </ListItem>
                                         ))
                                     }
                                 </List>
-                            </Paper>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={3} padding={1} spacing={2}>
-                    <Typography variant='h5'>Selected Total: {selected_student.length}</Typography>
-                    <List dense sx={{ width: '100%', bgcolor: 'Background.paper' }}>
-                        {
-                            selected_student.map((item, index) => (
-                                <ListItem key={item.id} secondaryAction={<IconButton edge="end" onClick={() => removeSelectedUser(index)} >
-                                    <CloseOutlined />
-                                </IconButton>}>
-                                    <ListItemButton>
-                                        <ListItemText primary={`${item.first_name} ${item.last_name}`} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))
-                        }
-                    </List>
+                    </FormContainer>
                 </Grid>
             </Grid>
         </>

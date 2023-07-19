@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid, Tooltip } from '@mui/material';
-import { EditOutlined, FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
+import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Pagination, Typography, Grid, Tooltip, Button, InputLabel, Select, FormControl, MenuItem, OutlinedInput } from '@mui/material';
+import { FilterOutlined, PlusCircleFilled } from '@ant-design/icons';
+import NepaliDate from 'nepali-date-converter';
 //
-import { Months } from '@/utils/constants';
-import { FeesType, FeesFilterType } from '@/types';
+import { DropdownLimitValues, Months } from '@/utils/constants';
+import { FeesType, FeesFilterType, StudentClassType, StudentMiniType } from '@/types';
 import { getNoOfPage, addComma, getSearchParams } from '@/utils/helper-function';
 import { getFeeRowCount, getFees } from '@/services/fees.service';
 import { AddFeeModal, FeesFilterModal } from '@/components/pages/fees/listFees';
 import { PageTitle } from '@/components/shared';
+import { getClassesOnly } from '@/services/class.service';
+import { getAllActiveStudents } from '@/services/student.service';
+const current_year = new NepaliDate(Date.now()).getYear();
 
+const y = Array.from({ length: 20 }, (v, i) => current_year - i)
 const tableHeads = [
     'Student',
     'Fee',
@@ -17,6 +22,8 @@ const tableHeads = [
     'Month',
     'Amount'
 ]
+
+
 
 
 export default function ListFees() {
@@ -28,10 +35,12 @@ export default function ListFees() {
     const [open_filter_modal, setOpenFilterModal] = useState(false);
     const [filter_class_id, setFilterClassId] = useState<number | undefined>();
     const [filter_student_id, setFilterStudentId] = useState<number | undefined>(getSearchParams(searchParams, "student_id"));
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const [filter_charge_id, setFilterChargeId] = useState<number | undefined>();
     const [filter_month, setFilterMonth] = useState<number | undefined>();
     const [filter_year, setFilterYear] = useState<number | undefined>();
     const [open_add_modal, setOpenAddModal] = useState(false)
+    const [all_students, setAllStudents] = useState<Array<StudentMiniType>>([]);
 
 
     function handlePaginationChange(event: any, new_page: number) {
@@ -70,10 +79,9 @@ export default function ListFees() {
     function fetchData() {
         getFees(page, limit, filter_class_id, filter_student_id, filter_charge_id, filter_year, filter_month)
             .then((data) => {
-                console.log(data);
                 setFees(data as Array<FeesType>);
             })
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
 
         //
         getFeeRowCount(filter_class_id, filter_student_id, filter_charge_id, filter_year, filter_month)
@@ -82,9 +90,23 @@ export default function ListFees() {
                     setTotalRows(data);
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
 
     }
+
+    useEffect(() => {
+        getClassesOnly()
+            .then((data) => {
+                setClasses(data as Array<StudentClassType>)
+            })
+            .catch(error => console.error(error));
+
+        getAllActiveStudents()
+            .then((data) => {
+                setAllStudents(data as Array<StudentMiniType>)
+            })
+            .catch(error => console.error(error))
+    }, [])
 
     useEffect(() => {
         fetchData()
@@ -93,7 +115,7 @@ export default function ListFees() {
 
     return (
         <>
-            <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+            <Grid container rowSpacing={2} columnSpacing={2}>
                 <Grid item xs={12}>
                     <PageTitle title="Fees Transactions" actions={
                         <>
@@ -109,6 +131,66 @@ export default function ListFees() {
                             </Tooltip>
                         </>
                     } />
+                </Grid>
+                <Grid item xs={12} >
+                    <Grid container rowSpacing={2} columnSpacing={2} alignItems='center'>
+                        <Grid item xs={12}>
+                            <Typography variant='body2'>Filter</Typography>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel >Limit</InputLabel>
+                                <Select labelId="limit" id='limit' value={limit} name="limit" onChange={(event) => setLimit(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        DropdownLimitValues.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="class">Class</InputLabel>
+                                <Select labelId="class" id="class" value={filter_class_id} name='class' onChange={(event) => setFilterClassId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="student">Student</InputLabel>
+                                <Select labelId="student" id="student" value={filter_student_id} name='student' onChange={(event) => setFilterStudentId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        all_students.map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="year">Year</InputLabel>
+                                <Select labelId="year" id="year" value={filter_year} name='year' onChange={(event) => setFilterYear(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        y.map((year) => <MenuItem value={year}>{year}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="month">Month</InputLabel>
+                                <Select labelId="month" id="month" value={filter_month} name='month' onChange={(event) => setFilterMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        Months.map((mo) => <MenuItem value={mo.value}>{mo.month_name}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     <Typography>Total Count: {total_rows}</Typography>

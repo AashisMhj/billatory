@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { Box, Button, Container, Typography } from "@mui/material"
-import { Link as RouterLink } from "react-router-dom";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button"
 import NepaliDate from "nepali-date-converter";
 import { useParams } from "react-router-dom";
 // icons
-import LeftCircleOutlined from "@ant-design/icons/LeftCircleOutlined";
 import PrinterFilledOutlined from "@ant-design/icons/PrinterOutlined";
 //
 import { FeesType, StudentType } from "@/types"
@@ -14,11 +13,11 @@ import { getStudentCurrentMonthStudentFees } from "@/services/student.service";
 import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
 import { Months } from "@/utils/constants";
 import paths from "@/routes/path";
+import { PageTitle } from "@/components/shared";
 
 
 export default function StudentBillPage() {
     const { value } = useContext(SettingsContext);
-    const billRef = useRef<HTMLDivElement>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [previous_due, setPreviousDue] = useState(0);
     const [student_detail, setStudentDetail] = useState<StudentType | null>(null);
@@ -126,19 +125,17 @@ export default function StudentBillPage() {
     }, []);
 
     return (
-        <Container>
-            <Box display='flex' justifyContent='center' alignItems='center' flexDirection='column' gap={6} width="100%">
-                <Box display='flex' width="100%" justifyContent='space-between' alignItems='center'>
-                    <RouterLink to={paths.studentsList}>
-                        <Button variant="contained" startIcon={<LeftCircleOutlined />}>
-                            Back
-                        </Button>
-                    </RouterLink>
-                    <Typography variant="h4">Print Bill</Typography>
-                    <Button variant="contained" endIcon={<PrinterFilledOutlined />} onClick={handleClick}>Print</Button>
-                </Box>
+        <Grid container rowSpacing={2} columnSpacing={2}>
+            <Grid item xs={12}>
+                <PageTitle title="Student Bill" actions={
+                    <>
+                        <Button variant="outlined" endIcon={<PrinterFilledOutlined />} onClick={handleClick}>Print</Button>
+                    </>
+                } />
+            </Grid>
+            <Grid item xs={12}>
                 <iframe ref={iframeRef} width="100%" style={{ aspectRatio: "1/1.41" }} ></iframe>
-            </Box>
-        </Container>
+            </Grid>
+        </Grid>
     )
 }

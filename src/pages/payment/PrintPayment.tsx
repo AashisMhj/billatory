@@ -53,7 +53,7 @@ export default function PrintPaymentPage() {
     function printDocument() {
         try {
             iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
-
+                
             })
             iframeRef.current?.contentWindow?.print();
         } catch (err) {
@@ -86,10 +86,9 @@ export default function PrintPaymentPage() {
             if (payment_id) {
                 getPaymentDetail(payment_id)
                     .then((data) => {
-                        console.log(data);
                         setPaymentInfo(data as PaymentType);
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => console.error(err));
             }
         }
     }, []);

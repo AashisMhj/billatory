@@ -36,7 +36,7 @@ export default function DisableConfirmModal({ id, handleClose, onSubmit }: Props
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Disable Student {id}? </Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import * as Yup from 'yup';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, Table, IconButton, Tooltip, TableCell, TableHead, TableRow, TableBody, Pagination, Grid } from '@mui/material';
+import { TableContainer, Table, IconButton, Tooltip, TableCell, TableHead, TableRow, TableBody, Pagination, Grid, Stack, InputLabel, Select, FormHelperText, Button, MenuItem, FormControl, Typography } from '@mui/material';
 import { EditFilled, PlusCircleFilled, FilterOutlined, UserOutlined } from '@ant-design/icons';
 //
 import { PageTitle } from '@/components/shared';
@@ -9,6 +10,9 @@ import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, FilterModal, AddClassModal } from '@/components/pages/class/listClasses';
 import { getNoOfPage } from '@/utils/helper-function';
 import paths from '@/routes/path';
+import { Formik } from 'formik';
+import { DropdownLimitValues } from '@/utils/constants';
+import AnimateButton from '@/components/@extended/AnimateButton';
 
 const tableHeads = [
     'Class',
@@ -67,7 +71,7 @@ export default function ListClasses() {
 
     return (
         <>
-            <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+            <Grid container rowSpacing={2} columnSpacing={2}>
                 <Grid item xs={12}>
                     <PageTitle title="Classes" actions={
                         <>
@@ -76,13 +80,30 @@ export default function ListClasses() {
                                     <PlusCircleFilled />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="Filter Class Data">
+                            {/* <Tooltip title="Filter Class Data">
                                 <IconButton size='large' color='info' onClick={() => setOpenFilterModal(true)}>
                                     <FilterOutlined />
                                 </IconButton>
-                            </Tooltip>
+                            </Tooltip> */}
                         </>
                     } />
+                </Grid>
+                <Grid item xs={12} >
+                    <Grid container rowSpacing={2} columnSpacing={2}>
+                        <Grid item xs={12}>
+                            <Typography variant='body2'>Filter</Typography>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel >Limit</InputLabel>
+                                <Select labelId="limit" id='limit' value={limit} name="limit" onChange={(event) => setLimit(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        DropdownLimitValues.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     Total no of Class: {total_page_count}
@@ -151,7 +172,7 @@ export default function ListClasses() {
                 </Grid>
             </Grid>
             <EditModal open={open_edit_modal} data={edit_data} handleClose={() => setOpenEditModal(false)} onSubmit={() => fetchData()} />
-            <FilterModal open={open_filter_modal} value={{ limit: limit }} handleClose={() => setOpenFilterModal(false)} onSubmit={handleFilterSubmit} />
+            {/* <FilterModal open={open_filter_modal} value={{ limit: limit }} handleClose={() => setOpenFilterModal(false)} onSubmit={handleFilterSubmit} /> */}
             <AddClassModal open={open_add_modal} handleClose={() => setOpenAddModal(false)} onSubmit={() => fetchData()} />
         </>
     )

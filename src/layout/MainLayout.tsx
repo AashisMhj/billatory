@@ -35,7 +35,7 @@ const MainLayout = () => {
     if (open !== is_open) setOpen(is_open);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [is_open]);
-  
+
   return (
     <>
       <Box sx={{ display: 'flex', width: '100%' }}>
@@ -43,7 +43,9 @@ const MainLayout = () => {
         <Drawer open={open} handleDrawerToggle={handleDrawerToggle} window={window} />
         <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
           <Toolbar />
-          <Outlet />
+          <Box paddingTop={2} paddingLeft={2} marginLeft={2}>
+            <Outlet />
+          </Box>
         </Box>
       </Box>
       <AppAlert />

@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Tooltip, Pagination, Typography, IconButton, Checkbox, Button, Box } from '@mui/material';
+import { TableContainer, Grid, Table, TableCell, TableHead, Switch, TableRow, TableBody, Tooltip, Pagination, Typography, IconButton, Checkbox, Button, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 // icons
 import CreditCardOutlinedIcon from '@ant-design/icons/CreditCardOutlined';
@@ -11,11 +11,13 @@ import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, Check
 //
 import paths from '@/routes/path';
 import { PageTitle } from '@/components/shared';
-import { StudentType, StudentsTableFilterType } from '@/types';
+import { StudentType, StudentsTableFilterType, StudentClassType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage, getSearchParams } from '@/utils/helper-function';
 import { StudentsTableFilter, DisableConfirmModal, BulkPrintModal, UpdateStudentClassModal, UpdateStudentStatusModal, ApplyChargeModal } from '@/components/pages/students/listStudents';
 import { SnackBarContext } from '@/context/snackBar';
+import { DropdownLimitValues } from '@/utils/constants';
+import { getClassesOnly } from '@/services/class.service';
 
 const tableHeads = [
     'checkbox',
@@ -43,10 +45,17 @@ export default function ListStudents() {
     const [show_update_class_modal, setShowUpdateClassModal] = useState(false);
     const [show_update_status_modal, setShowStatusModal] = useState(false);
     const [show_apply_charge_modal, setShowApplyChargeModal] = useState(false);
+    const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const { showAlert } = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
         setPage(new_page);
+    }
+
+    function clearFilter(){
+        setLimit(10);
+        setShowActive(true);
+        setFilterClass(undefined);
     }
 
     function handleFilterSubmit(value: StudentsTableFilterType) {
@@ -98,8 +107,6 @@ export default function ListStudents() {
         }
     }
 
-
-
     function handleSwitchChange(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, student_id: number) {
         if (checked) {
             changeStatus(student_id, checked);
@@ -116,9 +123,10 @@ export default function ListStudents() {
                     const student_data = JSON.parse(data);
                     setStudentData(student_data);
                 }
+                setCheckBoxIds([]);
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
             });
 
         // 
@@ -129,11 +137,20 @@ export default function ListStudents() {
                 }
             })
             .catch(err => {
-                console.log(err);
+                showAlert('Error ' + err, 'error');
+                console.error(err);
             });
 
         setCheckBoxIds([]);
     }
+
+    useEffect(() => {
+        getClassesOnly()
+            .then((data) => {
+                setClasses(data as Array<StudentClassType>)
+            })
+            .catch(error => console.error(error))
+    }, [])
 
     useEffect(() => {
         fetchData();
@@ -141,7 +158,7 @@ export default function ListStudents() {
 
     return (
         <>
-            <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+            <Grid container rowSpacing={2} columnSpacing={2}>
                 <Grid item xs={12}>
                     <Grid container alignItems="center">
                         <PageTitle title='Students' actions={
@@ -153,11 +170,11 @@ export default function ListStudents() {
                                         </IconButton>
                                     </Tooltip>
                                 </RouterLink>
-                                <Tooltip title="Filter Student Data">
+                                {/* <Tooltip title="Filter Student Data">
                                     <IconButton size="large" color='info' onClick={() => setOpenFilterModal(true)}>
                                         <FilterOutlined />
                                     </IconButton>
-                                </Tooltip>
+                                </Tooltip> */}
                             </>
                         } />
                     </Grid>
@@ -170,6 +187,46 @@ export default function ListStudents() {
                         <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
 
                     </Box>
+                </Grid>
+                <Grid item xs={12} >
+                    <Grid container rowSpacing={2} columnSpacing={2} alignItems='center'>
+                        <Grid item xs={12}>
+                            <Typography variant='body2'>Filter</Typography>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel >Limit</InputLabel>
+                                <Select labelId="limit" id='limit' value={limit} name="limit" onChange={(event) => setLimit(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        DropdownLimitValues.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="class">Class</InputLabel>
+                                <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
+                                    {
+                                        classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item lg={1} md={2} sm={3}>
+                            <FormControl fullWidth>
+                                <InputLabel >Limit</InputLabel>
+                                <Select labelId="limit" id='limit' value={show_active ? "Active" : "Inactive"} defaultValue="Active" name="limit" onChange={(event) => setShowActive(event.target.value === "Active")}>
+                                    {
+                                        ["Active", "Inactive"].map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} >
+                            <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item xs={12}>
                     Total no of Students: {total_rows}
@@ -274,15 +331,15 @@ export default function ListStudents() {
                     </TableContainer>
                 </Grid>
                 <Grid>
-                    <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='secondary' />
+                    <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='primary' />
                 </Grid>
             </Grid >
             <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class, show_active: show_active }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
             <DisableConfirmModal id={disable_id} onSubmit={(id) => changeStatus(id, false)} handleClose={() => setDisableId(null)} />
-            <BulkPrintModal open={show_bulk_print} onSubmit={() => null} handleClose={() => setShowBulkPrint(false)} student_ids={checkbox_ids} />
+            <BulkPrintModal open={show_bulk_print} onSubmit={() => setCheckBoxIds([])} handleClose={() => setShowBulkPrint(false)} student_ids={checkbox_ids} />
             <UpdateStudentClassModal open={show_update_class_modal} student_ids={checkbox_ids} handleClose={() => setShowUpdateClassModal(false)} onSubmit={fetchData} />
             <UpdateStudentStatusModal open={show_update_status_modal} student_ids={checkbox_ids} handleClose={() => setShowStatusModal(false)} new_status={!show_active} onSubmit={fetchData} />
-            <ApplyChargeModal open={show_apply_charge_modal} student_ids={checkbox_ids} handleClose={() => setShowApplyChargeModal(false)} onSubmit={() => null} />
+            <ApplyChargeModal open={show_apply_charge_modal} student_ids={checkbox_ids} handleClose={() => setShowApplyChargeModal(false)} onSubmit={() => setCheckBoxIds([])} />
         </>
     )
 }

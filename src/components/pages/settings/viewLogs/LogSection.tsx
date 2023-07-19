@@ -67,7 +67,6 @@ function convertToLogType(value: string): log_types {
 export default function LogSection() {
     const [logs, setLogs] = useState<Array<LogType>>([]);
     useEffect(() => {
-        // TODO set system logs
         getAppLog()
             .then((data) => {
                 if (typeof data === "string") {

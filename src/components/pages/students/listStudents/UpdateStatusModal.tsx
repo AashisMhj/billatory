@@ -39,7 +39,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, n
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Update Student Status </Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>

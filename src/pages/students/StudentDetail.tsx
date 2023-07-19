@@ -6,6 +6,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { StudentType } from "@/types";
 import paths from '@/routes/path';
 import { LeftCircleOutlined } from "@ant-design/icons";
+import { PageTitle } from "@/components/shared";
 
 export default function StudentDetail() {
     const [studentData, setStudentData] = useState<StudentType | null>(null);
@@ -29,85 +30,74 @@ export default function StudentDetail() {
         return <></>
     }
     return (
-        <>
-            <Box display='flex' alignItems='center' justifyContent='space-between'>
-                <BrowserLink to={paths.studentsList}>
-                    <Button variant="contained" startIcon={<LeftCircleOutlined />}>
-                        Back
-                    </Button>
-                </BrowserLink>
-                <Typography variant="h4">Student Detail</Typography>
-                <div></div>
-            </Box>
-            <Container>
-                <Grid container spacing={2} marginY='10px'>
-                    <BrowserLink to={id ? paths.studentFees(parseInt(id)) : '#'} >
-                        <IconButton>
-                            <CreditCardIcon />
-                        </IconButton>
-                    </BrowserLink>
-                </Grid>
-                <TableContainer component={Paper}>
-                    <Table >
-                        <TableBody>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Name</Typography></TableCell>
-                                <TableCell>{`${studentData.first_name} ${studentData.mid_name || ''} ${studentData.last_name} `}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Class</Typography></TableCell>
-                                <TableCell>{studentData.class}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Gender</Typography></TableCell>
-                                <TableCell>{studentData.gender}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Roll No</Typography></TableCell>
-                                <TableCell>{studentData.roll_no}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Address</Typography></TableCell>
-                                <TableCell>{studentData.address || 'Not Provided'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Father Name</Typography></TableCell>
-                                <TableCell>{studentData.father_name}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Mother Name</Typography></TableCell>
-                                <TableCell>{studentData.mother_name}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Date of Birth</Typography></TableCell>
-                                <TableCell>{studentData.date_of_birth}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Phone No</Typography></TableCell>
-                                <TableCell>{studentData.phone_no}</TableCell>
-                            </TableRow>
+        <Grid container rowSpacing={2} columnGap={2}>
+            <Grid item xs={12}>
+                <PageTitle title="Student Detail" />
+            </Grid>
+            <Grid item xs={12}>
+                <Container>
+                    <TableContainer  component={Paper}>
+                        <Table >
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Name</Typography></TableCell>
+                                    <TableCell>{`${studentData.first_name} ${studentData.mid_name || ''} ${studentData.last_name} `}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Class</Typography></TableCell>
+                                    <TableCell>{studentData.class}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Gender</Typography></TableCell>
+                                    <TableCell>{studentData.gender}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Roll No</Typography></TableCell>
+                                    <TableCell>{studentData.roll_no}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Address</Typography></TableCell>
+                                    <TableCell>{studentData.address || 'Not Provided'}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Father Name</Typography></TableCell>
+                                    <TableCell>{studentData.father_name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Mother Name</Typography></TableCell>
+                                    <TableCell>{studentData.mother_name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Date of Birth</Typography></TableCell>
+                                    <TableCell>{studentData.date_of_birth}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Phone No</Typography></TableCell>
+                                    <TableCell>{studentData.phone_no}</TableCell>
+                                </TableRow>
 
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Email</Typography></TableCell>
-                                <TableCell>{studentData.email || 'Not provided'}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Guardian Name</Typography></TableCell>
-                                <TableCell>{studentData.guardian_name}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Relation with guardian</Typography></TableCell>
-                                <TableCell>{studentData.guardian_relation}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell><Typography variant="h6" fontWeight='bold'>Emergency Contact</Typography></TableCell>
-                                <TableCell>{studentData.emergency_contact}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Email</Typography></TableCell>
+                                    <TableCell>{studentData.email || 'Not provided'}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Guardian Name</Typography></TableCell>
+                                    <TableCell>{studentData.guardian_name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Relation with guardian</Typography></TableCell>
+                                    <TableCell>{studentData.guardian_relation}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell><Typography variant="h6" fontWeight='bold'>Emergency Contact</Typography></TableCell>
+                                    <TableCell>{studentData.emergency_contact}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
 
-            </Container>
-        </>
+                </Container>
+            </Grid>
+        </Grid>
     )
 }

@@ -31,7 +31,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Add Class</Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>

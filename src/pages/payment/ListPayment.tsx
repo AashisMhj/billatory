@@ -51,7 +51,7 @@ export default function ListPaymentPage() {
     }, [])
     return (
         <>
-            <Grid container rowSpacing={4.5} columnSpacing={2.75}>
+            <Grid container rowSpacing={2} columnSpacing={2}>
                 <Grid item xs={12}>
                     <PageTitle title="Student Payments" actions={
                         <>

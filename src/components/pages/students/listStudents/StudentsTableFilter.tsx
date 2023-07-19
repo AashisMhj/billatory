@@ -9,9 +9,9 @@ import { StudentsTableFilterType, StudentClassType } from "@/types";
 import { getClasses } from "@/services/class.service";
 import { DropdownLimitValues } from "@/utils/constants";
 
-enum ActiveOptions  {
-    yes="YES",
-    no="NO"
+enum ActiveOptions {
+    yes = "YES",
+    no = "NO"
 }
 
 interface Props {
@@ -36,6 +36,10 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
 
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
 
+    function resetFilter(){
+        onSubmit({ limit: 10, show_active:  true })
+    }
+
     useEffect(() => {
         getClasses(1, 10000)
             .then((data) => {
@@ -54,7 +58,7 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Filter Data</Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
@@ -66,7 +70,6 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
                             setStatus({ success: false });
-                            // TODO update 
                             setSubmitting(false);
                             onSubmit({ limit: values.limit, class: values.class, show_active: values.show_active === ActiveOptions.yes });
                             handleClose();
@@ -117,8 +120,15 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                                 )}
                                 <Grid item xs={12}>
                                     <AnimateButton>
+                                        <Button disableElevation disabled={isSubmitting} fullWidth size="large"  variant="outlined" color="secondary">
+                                            Reset Filter
+                                        </Button>
+                                    </AnimateButton>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                                            Update
+                                            Filter
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

@@ -14,7 +14,7 @@ import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
 interface Props {
     open: boolean,
     handleClose: () => void,
-    onSubmit: (value: StudentsTableFilterType) => void,
+    onSubmit: () => void,
     student_ids: Array<number>
 }
 const style: SxProps = {
@@ -76,9 +76,13 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
             iframeRef.current?.contentWindow?.document.open();
             iframeRef.current?.contentWindow?.document.write(bill);
             iframeRef.current?.contentWindow?.document.close();
+            iframeRef.current?.contentWindow.addEventListener('afterprint', ()=>{
+                onSubmit();
+                handleClose()
+            })
             iframeRef.current?.contentWindow?.print();
         } catch (error) {
-            console.log(error);
+            console.error(error);
             showAlert('Error '+error, 'error');
         } finally {
             setIsLoading(false);
@@ -93,7 +97,7 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Print</Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>

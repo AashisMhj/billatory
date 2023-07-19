@@ -69,7 +69,7 @@ pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<ClassTabl
 
 pub fn get_class_only( db: &Connection) -> Result<Vec<ClassMini>, rusqlite::Error> {
     let mut data: Vec<ClassMini> = Vec::new();
-    let mut statement = db.prepare("Select class, id from class order by id desc limit ?1 offset ?2;")?;
+    let mut statement = db.prepare("Select class, id from class order by id desc;")?;
     let class_iter = statement.query_map(params![], |row| {
         Ok(ClassMini {
             class: row.get("class")?,

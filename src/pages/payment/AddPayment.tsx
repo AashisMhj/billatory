@@ -1,21 +1,22 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, OutlinedInput, Paper, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Stack,} from "@mui/material";
 import { Formik, FormikErrors } from "formik";
 import * as Yup from 'yup';
 import NepaliDate from "nepali-date-converter";
 //
-type SetFieldValueType = (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void | FormikErrors<{ student_id: null; amount: number; remarks: string; payee: string; }>>;
 import { getAllActiveStudents } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
 import { getClasses } from "@/services/class.service";
 //
+import FormContainer from "@/components/layouts/FormContainer";
 import { SnackBarContext } from "@/context/snackBar";
 import { StudentClassType, StudentMiniType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import paths from "@/routes/path";
 import { PageTitle } from "@/components/shared";
 
+type SetFieldValueType = (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void | FormikErrors<{ student_id: null; amount: number; remarks: string; payee: string; }>>;
 type StudentListType = {
     show: boolean
 } & StudentMiniType;
@@ -68,13 +69,13 @@ export default function AddPaymentPage() {
                     setClasses(class_data);
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
     }, []);
 
     return (
         <Box>
             <PageTitle title="Add Payment" />
-            <Paper sx={{padding: '40px', marginTop: '10px'}}>
+            <FormContainer>
                 <Formik
                     initialValues={{
                         student_id: null,
@@ -209,7 +210,7 @@ export default function AddPaymentPage() {
                         )
                     }
                 </Formik>
-            </Paper>
+            </FormContainer>
         </Box>
     )
 }

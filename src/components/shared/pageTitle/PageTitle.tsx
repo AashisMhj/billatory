@@ -22,7 +22,7 @@ export default function HeaderLayout({ actions, title }: Props) {
 
     return <Box display='flex' alignItems='center' width="100%" justifyContent='space-between'>
         <Box display='flex' alignItems='center'>
-            <Typography variant='h4'>{title}</Typography>
+            <Typography variant='h4' marginRight={2}>{title}</Typography>
             {actions}
         </Box>
         <Box>

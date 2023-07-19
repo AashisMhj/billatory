@@ -5,6 +5,7 @@ import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Mo
 //
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { ClassFilterType } from "@/types";
+import { DropdownLimitValues } from "@/utils/constants";
 
 interface Props {
     open: boolean,
@@ -23,7 +24,6 @@ const style: SxProps = {
     p: 4
 }
 
-const DropDownItems = [10, 20, 30];
 
 export default function EditModal({ open, handleClose, onSubmit, value }: Props) {
     return (
@@ -34,7 +34,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Filter Data</Typography>
-                    <IconButton onClick={() => handleClose()}>
+                    <IconButton onClick={() => handleClose()} size="large">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
@@ -45,7 +45,6 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         try {
                             setStatus({ success: false });
-                            // TODO update 
                             setSubmitting(false);
                             onSubmit({ limit: values.limit });
                             handleClose();
@@ -57,7 +56,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                         }
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, values }) => (
+                    {({ errors, handleChange, handleSubmit, isSubmitting, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -65,7 +64,7 @@ export default function EditModal({ open, handleClose, onSubmit, value }: Props)
                                         <InputLabel htmlFor="limit">Limit</InputLabel>
                                         <Select labelId="limit" id='limit' value={values.limit} name="limit" onChange={handleChange}>
                                             {
-                                                DropDownItems.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                                DropdownLimitValues.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
                                             }
                                         </Select>
                                     </Stack>

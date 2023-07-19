@@ -98,9 +98,9 @@ const fees: NavGroupType = {
         },
         {
             id: 'f-payments',
-            title: 'Payment',
+            title: 'Add Payment',
             type: 'item',
-            url: paths.listPayment,
+            url: paths.addPayment,
             icon: (is_open: boolean) => <AddIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
             level: 2
         },

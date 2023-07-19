@@ -8,6 +8,7 @@ import { StudentChargeType, StudentType, } from '@/types';
 import { getStudentDetail } from '@/services/student.service';
 import paths from '@/routes/path';
 import { LeftCircleOutlined } from '@ant-design/icons';
+import { PageTitle } from '@/components/shared';
 
 export default function ListStudentCharges() {
     const [studentCharges, setStudentCharges] = useState<Array<StudentChargeType>>([]);
@@ -35,7 +36,7 @@ export default function ListStudentCharges() {
                     fetchData();
                 })
                 .catch(err => {
-                    console.log(err);
+                    console.error(err);
                     showAlert('Error Updating', 'error');
                 })
         }
@@ -70,20 +71,15 @@ export default function ListStudentCharges() {
         fetchData();
     }, []);
 
-    console.log(studentCharges);
 
 
     return (
-        <>
-            <Box display='flex' alignItems='center' justifyContent='space-between'>
-                <RouterLink to={paths.studentsList}>
-                    <Button variant='contained' startIcon={<LeftCircleOutlined />}>Back</Button>
-                </RouterLink>
-                <Typography variant='h4'>{` Charges of ${student_detail?.first_name} ${student_detail?.last_name}`}</Typography>
-                <div></div>
-            </Box>
-            <Container>
-                <Grid container>
+        <Grid container rowSpacing={2} columnSpacing={2}>
+            <Grid item xs={12}>
+                <PageTitle title={`Charges of ${student_detail?.first_name} ${student_detail?.last_name}`} />
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container rowSpacing={2}>
                     <Grid item xs={12}>
                         <Typography variant='h6'>Class: {student_detail?.class}</Typography>
                     </Grid>
@@ -93,7 +89,7 @@ export default function ListStudentCharges() {
                                 {
                                     studentCharges.map((charge) => (
                                         <Grid item key={charge.id} xs={3}>
-                                            <FormControlLabel control={<Checkbox value={charge.id} checked={charge.student_id ? true : false} onChange={(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => handleCheckBoxChange(checked, charge.student_charge_id, charge.id, parseInt(id || "0"))} />} label={
+                                            <FormControlLabel control={<Checkbox value={charge.id} checked={charge.student_id ? true : false} onChange={(_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => handleCheckBoxChange(checked, charge.student_charge_id, charge.id, parseInt(id || "0"))} />} label={
                                                 <>
                                                     <Typography variant='body2' display='inline' fontWeight='bold'>{charge.charge_title}</Typography>-{charge.class || ''}
                                                 </>
@@ -106,7 +102,7 @@ export default function ListStudentCharges() {
                         </Paper>
                     </Grid>
                 </Grid>
-            </Container>
-        </>
+            </Grid>
+        </Grid>
     )
 }
