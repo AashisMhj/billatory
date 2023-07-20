@@ -36,7 +36,7 @@ export default function AddStudentPage() {
             <Grid item xs={12}>
                 <PageTitle title='Add Student' />
             </Grid>
-            <Grid item>
+            <Grid item xs={12}>
                 <FormContainer>
                     <Formik
                         initialValues={{

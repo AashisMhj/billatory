@@ -10,7 +10,7 @@ import Print from '@mui/icons-material/Print';
 import { EditFilled, FilterOutlined, PlusCircleFilled, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 //
 import paths from '@/routes/path';
-import { PageTitle } from '@/components/shared';
+import { PageTitle, TableTop } from '@/components/shared';
 import { StudentType, StudentsTableFilterType, StudentClassType } from '@/types';
 import { getStudents, getStudentRowCount, updateStudentStatus } from '@/services/student.service';
 import { getNoOfPage, getSearchParams } from '@/utils/helper-function';
@@ -18,6 +18,8 @@ import { StudentsTableFilter, DisableConfirmModal, BulkPrintModal, UpdateStudent
 import { SnackBarContext } from '@/context/snackBar';
 import { DropdownLimitValues } from '@/utils/constants';
 import { getClassesOnly } from '@/services/class.service';
+import AnimateButton from '@/components/@extended/AnimateButton';
+import MainCard from '@/components/layouts/MainCard';
 
 const tableHeads = [
     'checkbox',
@@ -36,8 +38,7 @@ export default function ListStudents() {
     const [page, setPage] = useState<number>(1);
     const [limit, setLimit] = useState<number>(10);
     const [total_rows, setTotalRow] = useState<number>(0);
-    const [filtered_class, setFilterClass] = useState<number | undefined>(getSearchParams(searchParams, "class_id"));
-    const [is_open_filter_modal, setOpenFilterModal] = useState(false);
+    const [filtered_class, setFilterClass] = useState<number | null>(getSearchParams(searchParams, "class_id"));
     const [show_active, setShowActive] = useState(true);
     const [disable_id, setDisableId] = useState<number | null>(null);
     const [checkbox_ids, setCheckBoxIds] = useState<Array<number>>([]);
@@ -52,10 +53,10 @@ export default function ListStudents() {
         setPage(new_page);
     }
 
-    function clearFilter(){
+    function clearFilter() {
         setLimit(10);
         setShowActive(true);
-        setFilterClass(undefined);
+        setFilterClass(null);
     }
 
     function handleFilterSubmit(value: StudentsTableFilterType) {
@@ -117,7 +118,7 @@ export default function ListStudents() {
     }
 
     function fetchData() {
-        getStudents(page, limit, show_active, filtered_class)
+        getStudents(page, limit, show_active, filtered_class ? filtered_class : undefined)
             .then((data) => {
                 if (typeof data === "string") {
                     const student_data = JSON.parse(data);
@@ -130,7 +131,7 @@ export default function ListStudents() {
             });
 
         // 
-        getStudentRowCount(show_active, filtered_class)
+        getStudentRowCount(show_active, filtered_class ? filtered_class : undefined)
             .then(data => {
                 if (typeof data === "number") {
                     setTotalRow(data);
@@ -164,17 +165,10 @@ export default function ListStudents() {
                         <PageTitle title='Students' actions={
                             <>
                                 <RouterLink to={paths.createStudent}>
-                                    <Tooltip title="Add Student">
-                                        <IconButton size="large" color='warning'>
-                                            <PlusCircleFilled />
-                                        </IconButton>
-                                    </Tooltip>
+                                    <AnimateButton>
+                                        <Button variant='contained'>Add Student</Button>
+                                    </AnimateButton>
                                 </RouterLink>
-                                {/* <Tooltip title="Filter Student Data">
-                                    <IconButton size="large" color='info' onClick={() => setOpenFilterModal(true)}>
-                                        <FilterOutlined />
-                                    </IconButton>
-                                </Tooltip> */}
                             </>
                         } />
                     </Grid>
@@ -189,152 +183,142 @@ export default function ListStudents() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} >
-                    <Grid container rowSpacing={2} columnSpacing={2} alignItems='center'>
-                        <Grid item xs={12}>
-                            <Typography variant='body2'>Filter</Typography>
+                    <MainCard boxShadow>
+                        <Grid container rowSpacing={2} columnSpacing={2} alignItems='center'>
+                            <Grid item xs={12}>
+                                <Typography variant='h6'>Filter</Typography>
+                            </Grid>
+                            <Grid item lg={1} md={2} sm={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="class">Class</InputLabel>
+                                    <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => {
+                                        if(event.target.value){
+                                            setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value ))
+                                        }
+                                    }}>
+                                        {
+                                            classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item lg={1} md={2} sm={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel >Limit</InputLabel>
+                                    <Select labelId="limit" id='limit' value={show_active ? "Active" : "Inactive"} defaultValue="Active" name="limit" onChange={(event) => setShowActive(event.target.value === "Active")}>
+                                        {
+                                            ["Active", "Inactive"].map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item lg={1} md={2} sm={3}>
+                                <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
+                            </Grid>
                         </Grid>
-                        <Grid item lg={1} md={2} sm={3}>
-                            <FormControl fullWidth>
-                                <InputLabel >Limit</InputLabel>
-                                <Select labelId="limit" id='limit' value={limit} name="limit" onChange={(event) => setLimit(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
-                                    {
-                                        DropdownLimitValues.map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
-                                    }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item lg={1} md={2} sm={3}>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="class">Class</InputLabel>
-                                <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
-                                    {
-                                        classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
-                                    }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item lg={1} md={2} sm={3}>
-                            <FormControl fullWidth>
-                                <InputLabel >Limit</InputLabel>
-                                <Select labelId="limit" id='limit' value={show_active ? "Active" : "Inactive"} defaultValue="Active" name="limit" onChange={(event) => setShowActive(event.target.value === "Active")}>
-                                    {
-                                        ["Active", "Inactive"].map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
-                                    }
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} >
-                            <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
-                        </Grid>
-                    </Grid>
+                    </MainCard>
                 </Grid>
                 <Grid item xs={12}>
-                    Total no of Students: {total_rows}
-                </Grid>
-                <Grid item xs={12}>
-                    <TableContainer sx={{
-                        width: '100%',
-                        overflowX: 'auto',
-                        position: 'relative',
-                        display: 'block',
-                        background: '#fefefe',
-                        maxWidth: '100%',
-                        '& td, & th': { whiteSpace: 'nowrap' }
-                    }}>
-                        <Table aria-labelledby="student-table"
-                            sx={{
-                                '& .MuiTableCell-root:first-of-type': {
-                                    pl: 2
-                                },
-                                '& .MuiTableCell-root:last-of-type': {
-                                    pr: 3
-                                }
-                            }}>
-                            <TableHead>
-                                <TableRow>
+                    <MainCard boxShadow>
+                        <TableTop title="Students List" limit={limit} setLimit={setLimit} total_page_count={total_rows} handlePaginationChange={handlePaginationChange} />
+                        <TableContainer sx={{
+                            width: '100%',
+                            overflowX: 'auto',
+                            position: 'relative',
+                            display: 'block',
+                            maxWidth: '100%',
+                            '& td, & th': { whiteSpace: 'nowrap' }
+                        }}>
+                            <Table aria-labelledby="student-table"
+                                sx={{
+                                    '& .MuiTableCell-root:first-of-type': {
+                                        pl: 2
+                                    },
+                                    '& .MuiTableCell-root:last-of-type': {
+                                        pr: 3
+                                    }
+                                }}>
+                                <TableHead>
+                                    <TableRow>
+                                        {
+                                            tableHeads.map((item: string) => (
+                                                item === "checkbox" ? (
+                                                    <TableCell key={item} padding='normal' align='center' sortDirection={false}><Checkbox onChange={handleSelectAll} checked={checkbox_ids.length === student_data.length} /></TableCell>
+                                                ) : (<TableCell key={item} padding='normal' sortDirection={false}>{item}</TableCell>)
+                                            ))
+                                        }
+
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
                                     {
-                                        tableHeads.map((item: string) => (
-                                            item === "checkbox" ? (
-                                                <TableCell key={item} padding='normal' align='center' sortDirection={false}><Checkbox onChange={handleSelectAll} checked={checkbox_ids.length === student_data.length} /></TableCell>
-                                            ) : (<TableCell key={item} padding='normal' sortDirection={false}>{item}</TableCell>)
+                                        student_data.map((student: StudentType, index: number) => (
+                                            <TableRow key={student.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                                                <TableCell component="th" scope="row" align="center">
+                                                    <Checkbox checked={checkbox_ids.includes(student.id)} onChange={(_, checked) => handleCheckBoxChange(checked, student.id)} />
+                                                </TableCell>
+                                                <TableCell component="th" scope='row' align='left'>
+                                                    {student.gender === "male" ? <MaleIcon sx={{ color: '#0000ff' }} /> : <FemaleIcon sx={{ color: '#F89880' }} />}
+                                                    {`${student.first_name} ${student.last_name}`}
+                                                </TableCell>
+                                                <TableCell component="th" scope='row' align='left'>
+                                                    {student.class}
+                                                </TableCell>
+                                                <TableCell component="th" scope='row' align='left'>
+                                                    {student.roll_no}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {student.date_of_birth}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Switch checked={student.is_active} onChange={(event, checked) => handleSwitchChange(event, checked, student.id)} />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <RouterLink to={paths.editStudent(student.id)}>
+                                                        <Tooltip title="Edit Info">
+                                                            <IconButton size='large' color='primary'>
+                                                                <EditFilled />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </RouterLink>
+                                                    <RouterLink to={paths.detailStudent(student.id)}>
+                                                        <Tooltip title="Student Detail">
+                                                            <IconButton size='large' color='info'>
+                                                                <InfoCircleOutlined />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </RouterLink>
+                                                    <RouterLink to={`${paths.listFees}?student_id=${student.id}`}>
+                                                        <Tooltip title="Students Transaction">
+                                                            <IconButton size='large' color="success">
+                                                                <CreditCardOutlinedIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </RouterLink>
+                                                    <RouterLink to={paths.studentBill(student.id)}>
+                                                        <Tooltip title="Student Bill">
+                                                            <IconButton size='large' color="success">
+                                                                <ReceiptIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </RouterLink>
+                                                    <RouterLink to={paths.studentCharges(student.id)}>
+                                                        <Tooltip title="Student Charges">
+                                                            <IconButton size='large' color="primary">
+                                                                <CheckCircleOutlined />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </RouterLink>
+                                                </TableCell>
+                                            </TableRow>
                                         ))
                                     }
-
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    student_data.map((student: StudentType, index: number) => (
-                                        <TableRow key={student.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                            <TableCell component="th" scope="row" align="center">
-                                                <Checkbox checked={checkbox_ids.includes(student.id)} onChange={(_, checked) => handleCheckBoxChange(checked, student.id)} />
-                                            </TableCell>
-                                            <TableCell component="th" scope='row' align='left'>
-                                                {student.gender === "male" ? <MaleIcon sx={{ color: '#0000ff' }} /> : <FemaleIcon sx={{ color: '#F89880' }} />}
-                                                {`${student.first_name} ${student.last_name}`}
-                                            </TableCell>
-                                            <TableCell component="th" scope='row' align='left'>
-                                                {student.class}
-                                            </TableCell>
-                                            <TableCell component="th" scope='row' align='left'>
-                                                {student.roll_no}
-                                            </TableCell>
-                                            <TableCell>
-                                                {student.date_of_birth}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Switch checked={student.is_active} onChange={(event, checked) => handleSwitchChange(event, checked, student.id)} />
-                                                {/* <StudentStatus status={student.is_active} /> */}
-                                            </TableCell>
-                                            <TableCell>
-                                                <RouterLink to={paths.editStudent(student.id)}>
-                                                    <Tooltip title="Edit Info">
-                                                        <IconButton size='large' color='primary'>
-                                                            <EditFilled />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
-                                                <RouterLink to={paths.detailStudent(student.id)}>
-                                                    <Tooltip title="Student Detail">
-                                                        <IconButton size='large' color='info'>
-                                                            <InfoCircleOutlined />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
-                                                <RouterLink to={`${paths.listFees}?student_id=${student.id}`}>
-                                                    <Tooltip title="Students Transaction">
-                                                        <IconButton size='large' color="success">
-                                                            <CreditCardOutlinedIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
-                                                <RouterLink to={paths.studentBill(student.id)}>
-                                                    <Tooltip title="Student Bill">
-                                                        <IconButton size='large' color="success">
-                                                            <ReceiptIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
-                                                <RouterLink to={paths.studentCharges(student.id)}>
-                                                    <Tooltip title="Student Charges">
-                                                        <IconButton size='large' color="primary">
-                                                            <CheckCircleOutlined />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </RouterLink>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-                <Grid>
-                    <Pagination count={getNoOfPage(total_rows, limit)} onChange={handlePaginationChange} color='primary' />
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </MainCard>
                 </Grid>
             </Grid >
-            <StudentsTableFilter open={is_open_filter_modal} value={{ limit, class: filtered_class, show_active: show_active }} onSubmit={handleFilterSubmit} handleClose={() => setOpenFilterModal(false)} />
             <DisableConfirmModal id={disable_id} onSubmit={(id) => changeStatus(id, false)} handleClose={() => setDisableId(null)} />
             <BulkPrintModal open={show_bulk_print} onSubmit={() => setCheckBoxIds([])} handleClose={() => setShowBulkPrint(false)} student_ids={checkbox_ids} />
             <UpdateStudentClassModal open={show_update_class_modal} student_ids={checkbox_ids} handleClose={() => setShowUpdateClassModal(false)} onSubmit={fetchData} />

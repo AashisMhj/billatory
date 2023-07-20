@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Box, Chip, ChipProps, Grid, Stack, Typography } from '@mui/material';
+import {  Chip,useTheme, ChipProps, Grid, Stack, Typography, Icon } from '@mui/material';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import MainCard from "@/components/layouts/MainCard";
 
@@ -9,18 +9,18 @@ type Props =  {
     count: string,
     percentage?: number,
     isLoss?: boolean,
-    extra?: ReactNode | String
+    extra?: ReactNode | String,
+    icon: ReactNode
 }
-export default function AnalyticCard({ color="primary", title, count, percentage, isLoss, extra }: Props) {
+export default function AnalyticCard({ color="primary", title, count, percentage, isLoss, icon }: Props) {
+    const theme = useTheme()
     return (
-        <MainCard contentSX={{ p: 2.25 }}>
-            <Stack spacing={0.5}>
-                <Typography variant="h6" color="textSecondary">
-                    {title}
-                </Typography>
-                <Grid container alignItems="center">
+        <MainCard contentSX={{ p: 6.25 }} boxShadow shadow={theme.customShadows.card} >
+            <Stack spacing={0.8} alignItems='center'>
+                {icon}
+                <Grid container alignItems="center" justifyContent='center'>
                     <Grid item>
-                        <Typography variant="h4" color="inherit" sx={{ color: `${color || 'primary'}.main` }}>
+                        <Typography variant="h3" color="inherit" sx={{ color: `${color || 'primary'}.main` }}>
                             {count}
                         </Typography>
                     </Grid>
@@ -42,6 +42,9 @@ export default function AnalyticCard({ color="primary", title, count, percentage
                         </Grid>
                     )}
                 </Grid>
+                <Typography variant="h6" color="textSecondary">
+                    {title}
+                </Typography>
             </Stack>
         </MainCard>
     )

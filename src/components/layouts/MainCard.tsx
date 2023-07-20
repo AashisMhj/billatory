@@ -18,14 +18,15 @@ type Props = {
   shadow?: string,
   codeHighlight?: boolean,
   secondary?: ReactNode,
-  cardContent?: boolean
+  cardContent?: boolean,
+  borderRadius?: number
 } & CardProps
 
 // TODO why not content
 
 const MainCard = forwardRef((
   {
-    border = true,
+    border = false,
     boxShadow,
     children,
     cardContent = true,
@@ -37,6 +38,7 @@ const MainCard = forwardRef((
     sx = {},
     title,
     codeHighlight,
+    borderRadius = 2,
     ...others
   }: Props, ref) => {
   const theme = useTheme();
@@ -49,7 +51,7 @@ const MainCard = forwardRef((
       {...others}
       sx={{
         border: border ? '1px solid' : 'none',
-        borderRadius: 2,
+        borderRadius,
         borderColor: theme.palette.mode === 'dark' ? theme.palette.divider : theme.palette.grey.A700,
         boxShadow: boxShadow && (!border || theme.palette.mode === 'dark') ? shadow || theme.customShadows.z1 : 'inherit',
         ':hover': {

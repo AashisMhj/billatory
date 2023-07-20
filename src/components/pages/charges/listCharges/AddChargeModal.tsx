@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Formik, } from "formik";
 import * as Yup from 'yup';
 import { Box, Button, Checkbox, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
-import {CloseCircleOutlined} from '@ant-design/icons'
+import { CloseCircleOutlined } from '@ant-design/icons'
 //
 import { ChargesType, StudentClassType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
@@ -23,7 +23,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-    border: '2px solid #000',
+    borderRadius: '10px',
     p: 4
 }
 export default function EditModal({ open, handleClose, onSubmit }: Props) {
@@ -47,7 +47,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
             <Box sx={style}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" marginY={2}>
                     <Typography variant="h4" >Add Charge</Typography>
-                    <IconButton onClick={handleClose} size="large">
+                    <IconButton onClick={handleClose} size="large" color="error">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
@@ -100,7 +100,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="charge-amount">Amount</InputLabel>
-                                        <OutlinedInput id="charge-amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount)} />
+                                        <OutlinedInput id="charge-amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount && touched.amount)} />
                                         {
                                             touched.amount && errors.amount && (
                                                 <FormHelperText error id="amount-error-helper">
@@ -111,7 +111,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
-                                <Stack spacing={1}>
+                                    <Stack spacing={1}>
                                         <InputLabel htmlFor="class">Class</InputLabel>
                                         <Select labelId='class' value={values.class} name="class" onChange={handleChange}>
                                             {
@@ -127,7 +127,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                         }
                                     </Stack>
                                 </Grid>
-                                
+
                                 {errors.submit && (
                                     <Grid item xs={12}>
                                         <FormHelperText error>{errors.submit}</FormHelperText>

@@ -50,3 +50,15 @@ export function getMonthlyPayment(nepaliMonth: number, nepaliYear: number){
         nepaliMonth, nepaliYear
     });
 }
+
+export function getFeeDetail(id:number){
+    return invoke('get_fee_detail_data', {
+        id
+    });
+}
+
+export function updateFeeAmount(id:number, amount:number){
+    return invoke('update_fee_amount_data', {
+        id, amount
+    })
+}

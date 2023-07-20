@@ -63,7 +63,8 @@ fn add_settings_data(
     email: Option<String>,
     pan_no: i32,
     location: String,
-    image: String
+    image: String,
+    password: String
 ) -> Result<settings::Setting, String> {
     let setting_data = settings::Setting {
         organization_name: organization_name,
@@ -72,6 +73,7 @@ fn add_settings_data(
         pan_no: pan_no,
         image: image,
         location: location,
+        password: password,
         updated_at: None,
         created_at: None
     };
@@ -127,6 +129,7 @@ fn update_settings_data(app_handle: AppHandle,
         pan_no: pan_no,
         image: image,
         location: location,
+        password: "".to_string(),
         updated_at: None,
         created_at: None
     };
@@ -157,6 +160,41 @@ fn get_class_data(app_handle: AppHandle, page: i32, limit: i32) -> Result<String
         Err(error)=>{
             error!("{}", error);
             return Err(error.to_string())
+        }
+    }
+}
+#[tauri::command]
+fn update_password_data(app_handle: AppHandle, old_password: String, new_password: String) -> Result<i32, String>{
+    let result = app_handle.db(|db| settings::update_password(db, old_password, new_password));
+    match result{
+        Ok(value)=>{
+            if value{
+                Ok(200)
+            }else{
+                Err("Password Incorrect".to_string())
+            }
+        }
+        Err(error) =>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn verify_user_data(app_handle: AppHandle, password:String)-> Result<i32, String>{
+    let result = app_handle.db(|db| settings::sign_in(db, password));
+    match result{
+        Ok(value)=>{
+            if value {
+                Ok(200)
+            }else{
+                Err("Password Incorrect".to_string())
+            }
+        }
+        Err(error)=>{
+            error!("{}",error);
+            Err(error.to_string())
         }
     }
 }
@@ -792,6 +830,34 @@ fn get_monthly_payment_data(app_handle: AppHandle, nepali_month: i32, nepali_yea
     }
 }
 
+#[tauri::command]
+fn get_fee_detail_data(app_handle: AppHandle, id: i32) -> Result<fees::Fees, String>{
+    let result = app_handle.db(|db| fees::get_fee_detail(db, id));
+    match result{
+        Ok(value)=>{
+            Ok(value)
+        }
+        Err(error) => {
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn update_fee_amount_data(app_handle: AppHandle, id: i32, amount: f32) -> Result<i32, String>{
+    let result = app_handle.db(|db| fees::update_fee_amount(db, id, amount));
+    match result{
+        Ok(_value)=>{
+            Ok(200)
+        }
+        Err(error) =>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
 // payment commands
 #[tauri::command]
 fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32, remarks: Option<String> )->Result<i64, String>{
@@ -880,6 +946,8 @@ fn main() {
             update_settings_data,
             backup_data,
             get_log_data,
+            update_password_data,
+            verify_user_data,
             // class commands
             get_class_data,
             add_class_data,
@@ -920,6 +988,8 @@ fn main() {
             count_fees_row,
             get_monthly_fee_data,
             get_monthly_payment_data,
+            update_fee_amount_data,
+            get_fee_detail_data,
             // payment
             add_payment_data,
             get_payment_data,

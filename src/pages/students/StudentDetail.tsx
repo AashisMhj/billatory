@@ -1,12 +1,10 @@
-import { Box, Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
-import { useParams, Link as BrowserLink } from "react-router-dom";
+import {  Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
 import { getStudentDetail } from "@/services/student.service";
 import { useEffect, useState } from "react";
-import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { StudentType } from "@/types";
-import paths from '@/routes/path';
-import { LeftCircleOutlined } from "@ant-design/icons";
 import { PageTitle } from "@/components/shared";
+import MainCard from "@/components/layouts/MainCard";
 
 export default function StudentDetail() {
     const [studentData, setStudentData] = useState<StudentType | null>(null);
@@ -22,7 +20,7 @@ export default function StudentDetail() {
                     }
                 })
                 .catch(err => {
-                    console.log(err);
+                    console.error(err);
                 })
         }
     }, [])
@@ -36,6 +34,9 @@ export default function StudentDetail() {
             </Grid>
             <Grid item xs={12}>
                 <Container>
+                    <MainCard boxShadow>
+
+                    </MainCard>
                     <TableContainer  component={Paper}>
                         <Table >
                             <TableBody>

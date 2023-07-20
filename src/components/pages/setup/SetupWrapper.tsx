@@ -1,12 +1,8 @@
-import PropTypes from 'prop-types';
 import { ReactNode } from 'react';
-
 // material-ui
 import { Box, Grid } from '@mui/material';
-
 // project import
 import SetUPCard from './SetUpCard';
-import Logo from '@/components/Logo';
 import BasicFooter from '@/components/shared/basicFooter/BasicFooter';
 // assets
 import AuthBackground from '@/assets/images/auth/AuthBackground';
@@ -21,13 +17,11 @@ const AuthWrapper = ({ children }:Props) => (
       container
       direction="column"
       justifyContent="flex-end"
+      alignItems="center"
       sx={{
         minHeight: '100vh'
       }}
     >
-      <Grid item xs={12} sx={{ ml: 3, mt: 3 }}>
-        <Logo to="#" />
-      </Grid>
       <Grid item xs={12}>
         <Grid
           item
@@ -48,9 +42,5 @@ const AuthWrapper = ({ children }:Props) => (
     </Grid>
   </Box>
 );
-
-AuthWrapper.propTypes = {
-  children: PropTypes.node
-};
 
 export default AuthWrapper;

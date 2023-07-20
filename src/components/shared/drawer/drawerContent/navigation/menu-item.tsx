@@ -97,7 +97,7 @@ const fees: NavGroupType = {
             icon: (is_open: boolean) => <MonetizationOnOutlinedIcon style={{ fontSize: is_open ? '1rem' : '1.25rem' }} />,
         },
         {
-            id: 'f-payments',
+            id: 'f-payments-add',
             title: 'Add Payment',
             type: 'item',
             url: paths.addPayment,

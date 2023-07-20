@@ -20,11 +20,16 @@ pub struct Fees {
     pub charge_title: Option<String>,
 }
 
+pub struct GraphType{
+    amount: f64,
+    val: i32
+}
+
 // fees
 pub fn add_fees(db: &Connection, fee_data: Fees) -> Result<(), rusqlite::Error> {
     db.execute("
     INSERT INTO fees (student_id, amount, title, description, charge_id, year, month) VALUES (?1, ?2 , ?3, ?4, ?5, ?6, ?7);
-    ", params![fee_data.student_id, fee_data.amount, fee_data.charge_title, fee_data.description, fee_data.charge_id, fee_data.year, fee_data.month]).unwrap();
+    ", params![fee_data.student_id, fee_data.amount, fee_data.charge_title, fee_data.description, fee_data.charge_id, fee_data.year, fee_data.month])?;
     Ok(())
 }
 
@@ -229,4 +234,100 @@ pub fn update_fee(db: &Connection, fees_data: Fees) -> Result<(), rusqlite::Erro
     db.execute("UPDATE fees SET student_id = ?1, amount = ?2, title = ?3, description = ?4, charge_id = ?5, updated_at = ?6, year = ?7, month = ?8 where id = ?9 ", 
     params![fees_data.student_id, fees_data.amount, fees_data.title, fees_data.description, fees_data.charge_id,current_date_time, fees_data.year, fees_data.month, fees_data.id])?;
     Ok(())
+}
+
+pub fn update_fee_amount(db: &Connection,id: i32, amount:f32) -> Result<(), rusqlite::Error>{
+    let current_date_time = get_current_date_time();
+    db.execute("UPDATE fees SET amount = ?1, updated_at = ?2 where id = ?3", params![amount,current_date_time, id])?;
+    Ok(())
+}
+
+pub fn get_fee_detail(db: &Connection, id: i32) -> Result<Fees, rusqlite::Error>{
+    let mut statement = db.prepare("Select * from fees where id = ?1 limit 1")?;
+    let fee = statement.query_row(params![id], |row|{
+        Ok(Fees{
+            id: row.get("id")?,
+            amount: row.get("amount")?,
+            year: row.get("year")?,
+            month: row.get("month")?,
+            charge_id: row.get("charge_id")?,
+            description: row.get("description")?,
+            created_at: row.get("created_at")?,
+            student_id: row.get("student_id")?,
+            student_first_name: None,
+            student_last_name: None,
+            title: row.get("title")?,
+            updated_at: row.get("updated_at")?,
+            charge_title: None,
+            payment_id: row.get("payment_id")?,
+        })
+    })?;
+    Ok(fee)
+}
+
+pub fn get_monthly_fee_stats(db: &Connection, nepali_year:i32) -> Result<Vec<GraphType>, rusqlite::Error>{
+    let mut statement = db.prepare("select sum(amount) as sum, month from fees  where year = ?1 and payment_id is null group by month order by month;")?;
+    let data_iter = statement.query_map(params![nepali_year], |row|{
+        Ok(GraphType{
+            amount: row.get("sum")?,
+            val: row.get("month")?,
+        })
+    })?;
+
+    let mut data:Vec<GraphType>= Vec::new();
+    for item in data_iter{
+        data.push(item.unwrap())
+    }
+
+    Ok(data)
+}
+
+pub fn get_monthly_payment_stats(db: &Connection, nepali_year:i32) -> Result<Vec<GraphType>, rusqlite::Error>{
+    let mut statement = db.prepare("select sum(amount) as sum, month from fees  where year = ?1 and payment_id is not null group by month order by month;")?;
+    let data_iter = statement.query_map(params![nepali_year], |row|{
+        Ok(GraphType{
+            amount: row.get("sum")?,
+            val: row.get("month")?,
+        })
+    })?;
+
+    let mut data:Vec<GraphType>= Vec::new();
+    for item in data_iter{
+        data.push(item.unwrap())
+    }
+
+    Ok(data)
+}
+
+
+pub fn get_yearly_payment_stats(db: &Connection) -> Result<Vec<GraphType>, rusqlite::Error>{
+    let mut statement = db.prepare("select sum(amount) as year, month from fees  where payment_id is null group by year order by year desc;")?;
+    let data_iter = statement.query_map(params![], |row|{
+        Ok(GraphType{
+            amount: row.get("sum")?,
+            val: row.get("month")?,
+        })
+    })?;
+
+    let mut data:Vec<GraphType>= Vec::new();
+    for item in data_iter{
+        data.push(item.unwrap())
+    }
+    Ok(data)
+}
+
+pub fn get_yearly_fee_stats(db: &Connection) -> Result<Vec<GraphType>, rusqlite::Error>{
+    let mut statement = db.prepare("select sum(amount) as year, month from fees  where payment_id is null group by year order by year desc;")?;
+    let data_iter = statement.query_map(params![], |row|{
+        Ok(GraphType{
+            amount: row.get("sum")?,
+            val: row.get("month")?,
+        })
+    })?;
+
+    let mut data:Vec<GraphType>= Vec::new();
+    for item in data_iter{
+        data.push(item.unwrap())
+    }
+    Ok(data)
 }

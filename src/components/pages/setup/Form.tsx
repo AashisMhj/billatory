@@ -1,4 +1,4 @@
-import { useRef, useContext } from 'react';
+import { useRef, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileAddOutlined } from '@ant-design/icons'
 import * as Yup from 'yup';
@@ -8,9 +8,12 @@ import {
   Button,
   FormHelperText,
   Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
   OutlinedInput,
   Stack,
+  Typography,
 } from '@mui/material';
 
 // project import
@@ -20,13 +23,16 @@ import { toDataURL } from '@/utils/helper-function';
 import { SnackBarContext } from '@/context/snackBar';
 import { SettingsContext } from '@/context/settings';
 import { SettingsType } from '@/types';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import paths from '@/routes/path';
 
 const AuthLogin = () => {
 
   const fileRef = useRef<HTMLInputElement>(null);
+  const [show_password, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const {showAlert} = useContext(SnackBarContext);
-  const {updateValue} = useContext(SettingsContext);
+  const { showAlert } = useContext(SnackBarContext);
+  const { updateValue } = useContext(SettingsContext);
 
   return (
     <>
@@ -37,6 +43,7 @@ const AuthLogin = () => {
           location: '',
           pan_no: 0,
           phone_no: '',
+          password: '',
           email: '',
           submit: null
         }}
@@ -45,7 +52,9 @@ const AuthLogin = () => {
           location: Yup.string().trim().required('Address is required').max(200),
           pan_no: Yup.number().required('Pan No is required').max(99999999999),
           phone_no: Yup.string().trim().required('Phone No is required'),
-          image: Yup.mixed()
+          image: Yup.mixed(),
+          password: Yup.string().min(8,'Password needs to min 8 characters').required(),
+          // passwordConfirmation: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -56,22 +65,24 @@ const AuthLogin = () => {
               image: imageURL as string,
               location: values.location,
               panNo: values.pan_no,
-              phoneNo: values.phone_no
+              phoneNo: values.phone_no,
+              password: values.password
             });
             if (data) {
               updateValue(data as SettingsType);
               showAlert('Settings Saved', 'success');
-              navigate('/dashboard');
+              navigate(paths.dashboard);
               setSubmitting(false);
             }
           } catch (err) {
-            if(typeof err === "string"){
+            if (typeof err === "string") {
               showAlert(err, 'error');
-            }else{
-              showAlert('Error Saving Settings', 'error');
+            } else {
+              showAlert('Error '+err, 'error');
               if (err instanceof Error) {
                 setErrors({ submit: err.message });
               }
+
             }
             setStatus({ success: false });
 
@@ -106,6 +117,7 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
+              
               <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="organization-file" required={true}>Organization Logo</InputLabel>
@@ -119,8 +131,8 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-
-              <Grid item xs={12}>
+              {/* email */}
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="phone-no" >Email</InputLabel>
                   <OutlinedInput
@@ -143,7 +155,7 @@ const AuthLogin = () => {
               </Grid>
 
               {/* Phone no */}
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="phone-no" required={true}>Phone No</InputLabel>
                   <OutlinedInput
@@ -164,8 +176,31 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
+
+              {/* Phone No */}
+              <Grid item xs={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="address" required={true}>Address</InputLabel>
+                  <OutlinedInput
+                    id="address"
+                    type="text"
+                    value={values.location}
+                    name="location"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Your Address"
+                    fullWidth
+                    error={Boolean(touched.location && errors.location)}
+                  />
+                  {touched.location && errors.location && (
+                    <FormHelperText error id="standard-weight-helper-text-email-login">
+                      {errors.location}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </Grid>
               {/* Pan No */}
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="pan-no" required={true}>Pan No</InputLabel>
                   <OutlinedInput
@@ -186,24 +221,33 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              {/* Phone No */}
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="address" required={true}>Address</InputLabel>
+                  <InputLabel htmlFor="password" required={true}>Password</InputLabel>
                   <OutlinedInput
-                    id="address"
-                    type="text"
-                    value={values.location}
-                    name="location"
+                    id="password"
+                    type={ show_password ? "text": "password"}
+                    value={values.password}
+                    name="password"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Your Address"
+                    placeholder="Password"
                     fullWidth
-                    error={Boolean(touched.location && errors.location)}
+                    error={Boolean(touched.password && errors.password)}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword((pre_value) => !pre_value )}
+                        >
+                          {show_password ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                      }
                   />
-                  {touched.location && errors.location && (
-                    <FormHelperText error id="standard-weight-helper-text-email-login">
-                      {errors.location}
+                  {touched.password && errors.password && (
+                    <FormHelperText error id="standard-weight-helper-text-password">
+                      {errors.password}
                     </FormHelperText>
                   )}
                 </Stack>

@@ -4,6 +4,7 @@ import LeftCircleOutlined from '@ant-design/icons/LeftCircleOutlined';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { IconButton } from '@mui/material';
 
 
 
@@ -22,15 +23,13 @@ export default function HeaderLayout({ actions, title }: Props) {
 
     return <Box display='flex' alignItems='center' width="100%" justifyContent='space-between'>
         <Box display='flex' alignItems='center'>
-            <Typography variant='h4' marginRight={2}>{title}</Typography>
-            {actions}
+            <IconButton onClick={goBack} size='large'>
+                <LeftCircleOutlined />
+            </IconButton>
+            <Typography variant='h3' color='primary' marginRight={2}>{title}</Typography>
         </Box>
         <Box>
-            <Button onClick={goBack} startIcon={<LeftCircleOutlined />}>
-                <Typography sx={{textDecoration: 'underline'}} >
-                    Back
-                </Typography>
-            </Button>
+            {actions}
         </Box>
     </Box>
 }

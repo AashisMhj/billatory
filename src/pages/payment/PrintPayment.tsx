@@ -14,12 +14,12 @@ import { convertToWords } from "@/utils/helper-function";
 import '@/components/pages/payment/printPayment/payment-slip.css';
 import paymentFrame from "@/components/pages/payment/PaymentTemplate";
 import paths from "@/routes/path";
+import { PageTitle } from "@/components/shared";
 
 
 export default function PrintPaymentPage() {
     const { id } = useParams();
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    // const slipRef = useRef<HTMLDivElement>(null);
     const current_date = moment().format('YYYY-MM-DD');
 
     const [payment_info, setPaymentInfo] = useState<PaymentType>({
@@ -33,27 +33,10 @@ export default function PrintPaymentPage() {
     });
     const { value } = useContext(SettingsContext);
 
-    // function printDocument() {
-    //     try {
-    //         if (slipRef.current) {
-    //             iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
-    //                 iframeRef.current?.contentWindow?.document.open();
-    //                 iframeRef.current?.contentWindow?.document.close();
-    //             })
-    //             iframeRef.current?.contentWindow?.document.write(slipRef.current.innerHTML);
-    //             iframeRef.current?.contentWindow?.print();
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-
-    //     }
-
-    // }
-
     function printDocument() {
         try {
             iframeRef.current?.contentWindow?.addEventListener('afterprint', function () {
-                
+
             })
             iframeRef.current?.contentWindow?.print();
         } catch (err) {
@@ -93,27 +76,20 @@ export default function PrintPaymentPage() {
         }
     }, []);
 
-
-
-
     return (
-        <Container>
-            <Box>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                            <Box display='flex' alignItems='center' justifyContent='space-between'>
-                                <RouterLink to={paths.listPayment}>
-                                    <Button variant="contained" startIcon={<LeftCircleOutlined />}>Back</Button>
-                                </RouterLink>
-                                <Typography textAlign='center' variant="h4">Print Payment Slip</Typography>
-                                <Button variant="contained" onClick={printDocument} endIcon={<PrinterFilledOutlined />} >Print</Button>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <iframe ref={iframeRef} width="100%" style={{ aspectRatio: "1/1.41" }}></iframe>
-                        </Grid>
-                    </Grid>
-            </Box>
-        </Container>
+        <Box>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <PageTitle title="Print Payment" actions={
+                        <Button variant="contained" onClick={printDocument} endIcon={<PrinterFilledOutlined />} >Print</Button>
+                    } />
+                </Grid>
+                <Grid item xs={12}>
+                    <Container>
+                        <iframe ref={iframeRef} width="100%" style={{ aspectRatio: "1/1" }}></iframe>
+                    </Container>
+                </Grid>
+            </Grid>
+        </Box>
     )
 }

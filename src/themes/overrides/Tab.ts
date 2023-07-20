@@ -1,5 +1,4 @@
 import { Theme } from "@mui/material";
-// ==============================|| OVERRIDES - TAB ||============================== //
 
 export default function Tab(theme:Theme) {
   return {

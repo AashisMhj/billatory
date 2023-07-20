@@ -26,7 +26,7 @@ const MiniDrawerStyled = styled(Drawer, { shouldForwardProp: (prop) => prop !== 
         duration: theme.transitions.duration.enteringScreen
       }),
       overflowX: 'hidden',
-      boxShadow: 'none'
+      boxShadow: theme.customShadows.drawer
     }
   }else{
     return {

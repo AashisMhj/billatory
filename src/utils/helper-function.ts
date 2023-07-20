@@ -64,14 +64,14 @@ export function toDataURL(src:File | null){
     })
 }
 
-export function getSearchParams(searchParams: URLSearchParams, key: string): number | undefined {
+export function getSearchParams(searchParams: URLSearchParams, key: string): number | null {
   const value = searchParams.get(key)
   if (value) {
       const parsed_id = parseInt(value);
       if (parsed_id) {
           return parsed_id;
       }
-      return undefined;
+      return null;
   }
-  return undefined;
+  return null;
 }

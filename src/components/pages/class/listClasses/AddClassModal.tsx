@@ -19,7 +19,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-    border: '2px solid #000',
+    borderRadius: '10px',
     p: 4
 }
 export default function EditModal({ open, handleClose, onSubmit }: Props) {
@@ -31,7 +31,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Add Class</Typography>
-                    <IconButton onClick={() => handleClose()} size="large">
+                    <IconButton onClick={() => handleClose()} size="large" color="error">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
@@ -49,7 +49,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 onSubmit();
                                 handleClose();
                             })
-                                .catch((err) => console.log(err))
+                                .catch((err) => console.error(err))
                         } catch (error) {
                             setStatus(false);
                             if (error instanceof Error) {

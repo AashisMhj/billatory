@@ -15,16 +15,16 @@ export default function BackupSection(){
         backupData()
             .then(data => {
                 showAlert('Backup saved at '+data, 'success');
-                console.log(data);
+                console.error(data);
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
                 showAlert('Failed to Backup Data', 'error');
             })
             .finally(()=> setIsLoading(false))
     }
 
     return <Box display='flex' justifyContent='center' alignItems='center'>
-        <Button variant="contained" color="error" size="large" disabled={is_loading} onClick={handleClick} startIcon={<BackupIcon />}>Backup</Button>
+        <Button variant="contained" color="error" size="large" disabled={is_loading} onClick={handleClick} startIcon={<BackupIcon />}>Backup Database</Button>
     </Box>
 }

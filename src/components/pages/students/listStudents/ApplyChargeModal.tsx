@@ -27,7 +27,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-    border: '2px solid #000',
+   borderRadius: '10px',
     p: 4
 }
 
@@ -67,7 +67,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Apply Charges</Typography>
-                    <IconButton onClick={() => handleClose()} size="large">
+                    <IconButton onClick={() => handleClose()} size="large" color="error">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
@@ -85,6 +85,8 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                         applyCharge(values.charge_id, student_ids, values.amount, values.charge_title, values.nepali_month, values.nepali_year)
                             .then(_ => {
                                 showAlert('Charges applied', 'success');
+                                onSubmit();
+                                handleClose();
                             })
                             .catch(error => {
                                 console.log(error);
@@ -98,7 +100,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="charge_id" error={Boolean(errors.charge_id)}>Charge</InputLabel>
+                                        <InputLabel htmlFor="charge_id" error={Boolean(errors.charge_id && touched.charge_id )}>Charge</InputLabel>
                                         <Select labelId="charge_id" id="charge_id" value={values.charge_id} name='charge_id' onChange={(event) => handleChargeChange(event, setFieldValue)}>
                                             {
                                                 charges.map((ch) => <MenuItem value={ch.id}>{ch.charge_title} - {ch.class || ''} </MenuItem>)

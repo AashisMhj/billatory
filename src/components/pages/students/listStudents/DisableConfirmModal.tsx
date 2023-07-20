@@ -14,7 +14,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-    border: '2px solid #000',
+   borderRadius: '10px',
     p: 4
 }
 

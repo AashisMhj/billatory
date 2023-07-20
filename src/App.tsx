@@ -23,6 +23,8 @@ declare module '@mui/material/styles' {
       button: string,
       text: string,
       z1: string,
+      card: string,
+      drawer: string
     }
     palette: {
       mode: PaletteMode,
