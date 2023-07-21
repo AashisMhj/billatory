@@ -20,9 +20,10 @@ pub struct Fees {
     pub charge_title: Option<String>,
 }
 
+#[derive(Debug, Serialize)]
 pub struct GraphType{
-    amount: f64,
-    val: i32
+    pub amount: f64,
+    pub val: i32
 }
 
 // fees
@@ -301,11 +302,11 @@ pub fn get_monthly_payment_stats(db: &Connection, nepali_year:i32) -> Result<Vec
 
 
 pub fn get_yearly_payment_stats(db: &Connection) -> Result<Vec<GraphType>, rusqlite::Error>{
-    let mut statement = db.prepare("select sum(amount) as year, month from fees  where payment_id is null group by year order by year desc;")?;
+    let mut statement = db.prepare("select sum(amount) as sum, year from fees  where payment_id is not null group by year order by year desc;")?;
     let data_iter = statement.query_map(params![], |row|{
         Ok(GraphType{
             amount: row.get("sum")?,
-            val: row.get("month")?,
+            val: row.get("year")?,
         })
     })?;
 
@@ -317,11 +318,11 @@ pub fn get_yearly_payment_stats(db: &Connection) -> Result<Vec<GraphType>, rusql
 }
 
 pub fn get_yearly_fee_stats(db: &Connection) -> Result<Vec<GraphType>, rusqlite::Error>{
-    let mut statement = db.prepare("select sum(amount) as year, month from fees  where payment_id is null group by year order by year desc;")?;
+    let mut statement = db.prepare("select sum(amount) as sum, year from fees  where payment_id is null group by year order by year desc;")?;
     let data_iter = statement.query_map(params![], |row|{
         Ok(GraphType{
             amount: row.get("sum")?,
-            val: row.get("month")?,
+            val: row.get("year")?,
         })
     })?;
 

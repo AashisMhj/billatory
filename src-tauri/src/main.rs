@@ -56,6 +56,20 @@ fn backup_data(app_handle: AppHandle) -> Result<String, String>{
 }
 
 #[tauri::command]
+fn get_backup_files_data(app_handle: AppHandle) -> Result<Vec<database::BackUpFileType>, String>{
+    let result = database::get_backup_files(&app_handle);
+    match result{
+        Ok(value) =>{
+            Ok(value)
+        }
+        Err(error) =>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
 fn add_settings_data(
     app_handle: AppHandle,
     organization_name: String,
@@ -857,6 +871,65 @@ fn update_fee_amount_data(app_handle: AppHandle, id: i32, amount: f32) -> Result
         }
     }
 }
+#[tauri::command]
+fn get_monthly_fee_stats_data(app_handle: AppHandle, nepali_year: i32) -> Result<Vec<fees::GraphType>, String>{
+    let result = app_handle.db(|db| fees::get_monthly_fee_stats(db, nepali_year));
+    match result{
+        Ok(value) => {
+            Ok(value)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn get_monthly_payment_stats_data(app_handle: AppHandle, nepali_year: i32) -> Result<Vec<fees::GraphType>, String>{
+    let result = app_handle.db(|db| fees::get_monthly_payment_stats(db, nepali_year));
+    match result{
+        Ok(value) => {
+            Ok(value)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn get_yearly_fee_stats_data(app_handle: AppHandle) -> Result<Vec<fees::GraphType>, String>{
+    let result = app_handle.db(|db| fees::get_yearly_fee_stats(db));
+    match result{
+        Ok(value) => {
+            Ok(value)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
+fn get_yearly_payment_stats_data(app_handle: AppHandle) -> Result<Vec<fees::GraphType>, String>{
+    let result = app_handle.db(|db| fees::get_yearly_payment_stats(db));
+    match result{
+        Ok(value) => {
+            Ok(value)
+        }
+        Err(error)=>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+
+
+
 
 // payment commands
 #[tauri::command]
@@ -946,6 +1019,7 @@ fn main() {
             update_settings_data,
             backup_data,
             get_log_data,
+            get_backup_files_data,
             update_password_data,
             verify_user_data,
             // class commands
@@ -990,6 +1064,10 @@ fn main() {
             get_monthly_payment_data,
             update_fee_amount_data,
             get_fee_detail_data,
+            get_yearly_fee_stats_data,
+            get_yearly_payment_stats_data,
+            get_monthly_payment_stats_data,
+            get_monthly_fee_stats_data,
             // payment
             add_payment_data,
             get_payment_data,

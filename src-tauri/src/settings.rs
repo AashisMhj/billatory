@@ -89,3 +89,4 @@ pub fn update_settings(db: &Connection, setting_data: Setting) -> Result<(), rus
     params![setting_data.organization_name, setting_data.image, setting_data.email, setting_data.location, setting_data.pan_no, setting_data.phone_no, current_date])?;
     Ok(())
 }
+

@@ -19,6 +19,11 @@ pub struct Charges {
     pub is_regular: bool,
     pub class: Option<String>,
 }
+#[derive(Debug, Serialize)]
+pub struct BackUpFileType {
+    pub name: String,
+    pub file_size: u64,
+}
 
 /*
 Represent the join table for student_charges, charges and class
@@ -451,4 +456,23 @@ pub fn backup(app_handle: &AppHandle) -> Result<(u64, PathBuf), std::io::Error> 
     let backup_path = app_dir.join(file);
     let result = fs::copy(db_path, &backup_path)?;
     Ok((result, backup_path))
+}
+
+pub fn get_backup_files(app_handle: &AppHandle) -> Result<Vec<BackUpFileType>, std::io::Error> {
+    let mut app_dir = app_handle
+        .path_resolver()
+        .app_data_dir()
+        .expect("The app data directory should exist");
+    app_dir.push(BACKUP_DIR);
+    let paths = fs::read_dir(app_dir)?;
+    let mut items: Vec<BackUpFileType> = Vec::new();
+    for entry in paths {
+        if let Ok(entry) = entry {
+            items.push(BackUpFileType {
+                name: entry.file_name().into_string().unwrap(),
+                file_size: entry.metadata().unwrap().len(),
+            })
+        }
+    }
+    Ok(items)
 }

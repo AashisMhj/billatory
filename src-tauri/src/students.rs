@@ -98,7 +98,7 @@ pub fn get_student(
         })
     };
     if let Some(id) = class_id {
-        let query = "Select * from students inner join class on students.class_id = class.id where is_active = ?4 and class_id = ?3 limit ?1 offset ?2;";
+        let query = "Select * from students inner join class on students.class_id = class.id where is_active = ?4 and class_id = ?3 order by id desc limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
 
         let student_iter = statement.query_map(params![limit, offset_value, id, is_active], map_row)?;
@@ -107,7 +107,7 @@ pub fn get_student(
         }
         return Ok(data);
     } else {
-        let query = "Select * from students inner join class on students.class_id = class.id where is_active = ?3 limit ?1 offset ?2;";
+        let query = "Select * from students inner join class on students.class_id = class.id where is_active = ?3 order by id desc limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
         let student_iter = statement.query_map(params![limit, offset_value, is_active], map_row)?;
         for student in student_iter {
