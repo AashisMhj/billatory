@@ -144,7 +144,7 @@ export default function ApplyChargesPage() {
                 </Grid>
                 <Grid item xs={12}>
                     <FormContainer>
-                        <Grid container spacing={3} padding={2} alignItems='end' justifyContent='center' >
+                        <Grid container spacing={3} alignItems='end' justifyContent='center' >
                             <Grid item xs={3}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="title" required={true}>Title</InputLabel>
@@ -173,7 +173,7 @@ export default function ApplyChargesPage() {
                                     />
                                 </Stack>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="year" required={true}>Year</InputLabel>
                                     <OutlinedInput
@@ -187,7 +187,7 @@ export default function ApplyChargesPage() {
                                     />
                                 </Stack>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="month" required={true}>Year</InputLabel>
                                     <Select labelId="month" value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
@@ -197,7 +197,7 @@ export default function ApplyChargesPage() {
                                     </Select>
                                 </Stack>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={2}>
                                 <Button variant='contained' onClick={handleSubmit}>Apply</Button>
                             </Grid>
                         </Grid>

@@ -1,5 +1,4 @@
 import { invoke } from "@tauri-apps/api";
-import { SettingsType } from "@/types";
 
 interface CreateSettingType {
     organizationName: string, 
@@ -41,10 +40,24 @@ export function updateSettings({organizationName,email, location, image, phoneNo
     })
 }
 
+export function changePassword(oldPassword:string, newPassword:string){
+    return invoke('update_password_data', {
+        oldPassword, newPassword
+    })
+}
+
+export function verifyUser(password:string){
+    return invoke('verify_user_data', {password})
+}
+
 export function backupData(){
     return invoke('backup_data');
 }
 
 export function getAppLog(){
     return invoke('get_log_data');
+}
+
+export function getBackUpFiles(){
+    return invoke('get_backup_files_data')
 }

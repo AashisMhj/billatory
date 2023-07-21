@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, Table, IconButton, Tooltip, TableCell, TableHead, TableRow, TableBody, Pagination, Grid, InputLabel, Select, MenuItem, FormControl, Typography, Button, Paper, Box } from '@mui/material';
-import { EditFilled, PlusCircleFilled, UserOutlined } from '@ant-design/icons';
+import { TableContainer, Table,  TableCell, TableHead, TableRow, TableBody, Grid, Button } from '@mui/material';
 //
 import { PageTitle, TableTop } from '@/components/shared';
 import { ClassTableType, ClassFilterType } from '@/types';
 import { getClassRowCount, getClasses } from '@/services/class.service';
 import { EditModal, AddClassModal } from '@/components/pages/class/listClasses';
-import { getNoOfPage } from '@/utils/helper-function';
 import paths from '@/routes/path';
-import { DropdownLimitValues } from '@/utils/constants';
 import AnimateButton from '@/components/@extended/AnimateButton';
 import MainCard from '@/components/layouts/MainCard';
 
@@ -17,8 +14,8 @@ const tableHeads = [
     'Class',
     'Male',
     'Female',
-    'Actions',
-    'Actions'
+    'Actions 1',
+    'Actions 2'
 ];
 
 export default function ListClasses() {

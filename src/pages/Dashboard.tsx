@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 //
-import { AnalyticSection, OrganizationInfo, BackupSection, WelcomeSection, Report } from '@/components/pages/dashboard';
+import { AnalyticSection, OrganizationInfo, BackupSection, WelcomeSection, Report, StudentGraphSection } from '@/components/pages/dashboard';
 
 export default function DashboardDefault() {
 
@@ -18,6 +18,12 @@ export default function DashboardDefault() {
       </Grid>
       <Grid item lg={4} sm={12}>
         <OrganizationInfo />
+      </Grid>
+      <Grid item lg={4} sm={12}>
+        <BackupSection />
+      </Grid>
+      <Grid item lg={8} sm={12}>
+        <StudentGraphSection />
       </Grid>
     </Grid>
   );

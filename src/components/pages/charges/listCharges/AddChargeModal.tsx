@@ -61,7 +61,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                     validationSchema={Yup.object().shape({
                         charge_title: Yup.string().trim().required('This field is Required'),
                         amount: Yup.number().min(1, 'Please Enter the Amount').required('Please Enter the Amount'),
-                        class: Yup.number().min(0, 'Please Select Class'),
+                        class: Yup.number().min(0, 'Please Select Class').required('Please Select Class'),
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         setStatus({ success: false });
@@ -74,14 +74,14 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                             })
                             .catch(err => {
                                 setStatus(false);
-                                console.log(err);
+                                console.error(err);
                                 if (err instanceof Error) {
                                     setErrors({ submit: err.message });
                                 }
                             })
                     }}
                 >
-                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+                    {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                         <form noValidate onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -112,8 +112,8 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
-                                        <InputLabel htmlFor="class">Class</InputLabel>
-                                        <Select labelId='class' value={values.class} name="class" onChange={handleChange}>
+                                        <InputLabel htmlFor="class" error={Boolean(errors.class && touched.class)}>Class</InputLabel>
+                                        <Select labelId='class' value={values.class} name="class" onChange={handleChange} error={Boolean(errors.class && touched.class)}>
                                             {
                                                 classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
                                             }

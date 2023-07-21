@@ -53,6 +53,11 @@ export interface StudentClassType {
     id: number
 }
 
+export interface DataGraphType {
+    amount: number,
+    val: number
+}
+
 export interface ClassTableType {
     class: string,
     id: number,

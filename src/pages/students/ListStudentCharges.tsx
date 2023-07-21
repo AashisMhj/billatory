@@ -48,7 +48,6 @@ export default function ListStudentCharges() {
             if (parsed_id) {
                 getStudentCharges(parsed_id)
                     .then((data) => {
-                        console.log(data);
                         setStudentCharges(data as Array<StudentChargeType>);
                     })
                     .catch(error => console.log(error));

@@ -54,7 +54,6 @@ const AuthLogin = () => {
           phone_no: Yup.string().trim().required('Phone No is required'),
           image: Yup.mixed(),
           password: Yup.string().min(8,'Password needs to min 8 characters').required(),
-          // passwordConfirmation: Yup.string().oneOf([Yup.ref('password')], 'Passwords must match')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {

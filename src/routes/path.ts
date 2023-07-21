@@ -3,6 +3,7 @@ const paths = {
     // settings
     editSettings: `/dashboard/settings/edit`,
     viewLogs: `/dashboard/logs`,
+    changePassword: `/dashboard/change-password`,
     // students
     studentsList: `/dashboard/students`,
     editStudent: (id: number) => `/dashboard/students/${id}/edit`,

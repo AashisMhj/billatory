@@ -45,6 +45,7 @@ export function getBillPageLayout(content: string) {
 
 export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class }: BillProps) {
     let m_bill_items = [...bill_items];
+    const empty_array = Array.from({length: 9}, (_, k) => k);
     if(m_bill_items.length > 9){
         const remainingItems = m_bill_items.slice(9);
         m_bill_items.splice(9, m_bill_items.length -9);
@@ -54,6 +55,10 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
             charge_title: remainingItems.map(item => item.charge_title).join('+'),
         }
     }
+    console.log(m_bill_items);
+    empty_array.forEach((_, index) =>{
+        console.log(index)
+    })
     return `
     <div class="col-6">
             <div class="card">
@@ -99,18 +104,18 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                                     <tr>
                                         <td>
                                             <ul class="list-unstyled">
-                                            ${bill_items.map(item => `<li>${item.title}</li>`).join(' ')
+                                            ${empty_array.map((item, index) => `<li>${index < m_bill_items.length ?  m_bill_items[index].title : '&nbsp'}</li>`).join(' ')
         }
                                             </ul>
                                         <td>
                                             <ul class="list-unstyled">
-                                            ${bill_items.map(item => `<li>${addComma(item.amount)}</li>`).join(' ')
+                                            ${empty_array.map((item, index) => `<li>${index < m_bill_items.length ? addComma(m_bill_items[index].amount) : '&nbsp'}</li>`).join(' ')
         }
                                             </ul>
                                         </td>
                                         <td>
                                             <ul class="list-unstyled">
-                                            ${bill_items.map(_ => `<li></li>`).join(' ')
+                                            ${empty_array.map(_ => `<li></li>`).join(' ')
         }
                                             </ul>
                                         </td>

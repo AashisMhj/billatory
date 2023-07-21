@@ -153,7 +153,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                                 <Grid item xs={6}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="month" required={true}>Month</InputLabel>
-                                        <Select labelId="month" value={values.nepali_month} onChange={handleChange}>
+                                        <Select labelId="month" value={values.nepali_month} name="nepali_month" onChange={handleChange}>
                                             {
                                                 Months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)
                                             }
@@ -168,7 +168,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                                 <Grid item xs={12}>
                                     <AnimateButton>
                                         <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                                            Update
+                                            Apply
                                         </Button>
                                     </AnimateButton>
                                 </Grid>

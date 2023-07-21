@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { Box, Card, CardContent, CardMedia, Container, Typography, useTheme } from "@mui/material";
 //
 import { SettingsContext } from "@/context/settings";
-import BackupSection from "./BackupSection";
 
 export default function OrganizationInfoSection() {
     const { value } = useContext(SettingsContext);
@@ -21,7 +20,6 @@ export default function OrganizationInfoSection() {
                             <Typography variant="subtitle1" color="text.secondary" component="div">{value.pan_no}</Typography>
                             <Typography variant="subtitle1" color="text.secondary" component="div">{value.email || ''}</Typography>
                         </CardContent>
-                        <BackupSection />
                     </Card>
                 </Box>
         </Container>

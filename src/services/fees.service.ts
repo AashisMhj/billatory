@@ -62,3 +62,23 @@ export function updateFeeAmount(id:number, amount:number){
         id, amount
     })
 }
+
+
+export function getYearlyFeeStats(){
+    return invoke('get_yearly_fee_stats_data');
+}
+
+export function getYearlyPaymentStats(){
+    return invoke('get_yearly_payment_stats_data');
+}
+
+export function getMonthlyFeeStats(nepaliYear: number){
+    return invoke('get_monthly_fee_stats_data', {
+        nepaliYear
+    });
+}
+
+
+export function getMonthlyPaymentStats(nepaliYear: number){
+    return invoke('get_monthly_payment_stats_data', { nepaliYear})
+}

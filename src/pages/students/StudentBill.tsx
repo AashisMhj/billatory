@@ -102,19 +102,16 @@ export default function StudentBillPage() {
 
                 getStudentPreviousDue(parsed_id, nepali_month, nepali_year)
                     .then(data => {
-                        console.log(data);
                         if (typeof data === "number") {
                             setPreviousDue(data);
                         }
                     })
                     .catch(error => {
-                        console.log('previous');
-                        console.log(error)
+                        console.error(error)
                     });
 
                 getStudentCurrentMonthStudentFees(parsed_id, nepali_month, nepali_year)
                     .then(data => {
-                        console.log(data);
                         setCurrentMonthDue(data as Array<FeesType>);
                     })
                     .catch(error => console.log(error))

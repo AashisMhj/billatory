@@ -197,7 +197,7 @@ export default function ListStudents() {
                                         }
                                     }}>
                                         {
-                                            classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
+                                            classes.map((cl) => <MenuItem key={cl.id} value={cl.id}>{cl.class}</MenuItem>)
                                         }
                                     </Select>
                                 </FormControl>

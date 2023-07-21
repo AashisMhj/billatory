@@ -22,6 +22,7 @@ import ListPaymentPage from '@/pages/payment/ListPayment';
 // settings page
 import EditSettingPage from '@/pages/settings/EditSettings';
 import ViewLogsPage from '@/pages/settings/ViewLogs';
+import ChangePassword from '@/pages/settings/ChangePassword';
 // payment
 import AddPaymentPage from '@/pages/payment/AddPayment';
 import PrintPaymentPage from '@/pages/payment/PrintPayment';
@@ -105,6 +106,10 @@ const MainRoutes = {
     {
       path: 'logs',
       element: <ViewLogsPage />
+    },
+    {
+      path: 'change-password',
+      element: <ChangePassword />
     }
   ]
 };
