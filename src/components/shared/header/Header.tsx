@@ -28,8 +28,7 @@ const Header = ({ open, handleDrawerToggle }:Props) => {
         aria-label="open drawer"
         onClick={handleDrawerToggle}
         edge="start"
-        color="secondary"
-        sx={{ color: 'text.primary', bgcolor: open ? iconBackColorOpen : iconBackColor, ml: { xs: 0, lg: -2 } }}
+        sx={{ color: 'text.primary', ml: { xs: 0, lg: -2 } }}
       >
         {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       </IconButton>

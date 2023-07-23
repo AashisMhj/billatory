@@ -15,6 +15,7 @@ interface StudentCharge {
     mid_name?: string,
     last_name: string,
     class: string,
+    class_id: number,
     charge_id?: number,
     display: boolean
 }
@@ -104,25 +105,11 @@ export default function ApplyChargesPage() {
         if (id) {
             const parse_id = parseInt(id);
             if (parse_id) {
-                getStudentOfCharge(parse_id)
-                    .then((data) => {
-                        if (Array.isArray(data)) {
-                            setAllStudents(data.map((item => {
-                                return {
-                                    ...item,
-                                    display: true
-                                }
-                            })) as Array<StudentCharge>);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(error)
-                    });
 
                 //
                 getChargeDetail(parse_id)
                     .then((data) => {
-                        if (typeof data === "object" && data !== null && 'charge_title' in data && 'amount' in data) {
+                        if (typeof data === "object" && data !== null && 'charge_title' in data && 'amount' in data && "class_id" in data) {
                             if (typeof data.charge_title === "string") {
                                 setChargeTitle(data.charge_title);
                             }
@@ -130,9 +117,32 @@ export default function ApplyChargesPage() {
                                 setChargeAmount(data.amount)
                             }
 
+                            if (typeof data.class_id === "number") {
+                                getStudentOfCharge(parse_id)
+                                    .then((s_data) => {
+                                        if (Array.isArray(s_data)) {
+                                            let students_data = s_data.map((item) => {
+                                                return {
+                                                    ...item,
+                                                    display: true
+                                                }
+                                            }) as Array<StudentCharge>;
+                                            console.log(students_data);
+                                            setAllStudents(students_data.filter(el => el.class_id === data.class_id));
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error(error)
+                                    });
+                            }
+
                         }
                     })
                     .catch(error => console.log(error));
+
+
+
+
             }
         }
     }, [])

@@ -43,7 +43,7 @@ const MainLayout = () => {
         <Drawer open={open} handleDrawerToggle={handleDrawerToggle} window={window} />
         <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
           <Toolbar />
-          <Box paddingTop={2} paddingLeft={2} marginLeft={2}>
+          <Box paddingTop={2} paddingLeft={2} marginLeft={2} marginRight={2} paddingRight={2}>
             <Outlet />
           </Box>
         </Box>

@@ -129,7 +129,8 @@ const App = () => {
         if (typeof data === "string") {
           let setting_data = JSON.parse(data);
           updateValue(setting_data);
-          navigate(paths.dashboard);
+          console.log(paths.login)
+          navigate(paths.login);
         }
       })
       .catch(err => {

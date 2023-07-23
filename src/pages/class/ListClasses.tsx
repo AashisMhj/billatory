@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, Table,  TableCell, TableHead, TableRow, TableBody, Grid, Button } from '@mui/material';
+import { TableContainer, Table, TableCell, TableHead, TableRow, TableBody, Grid, Button, Box } from '@mui/material';
 //
 import { PageTitle, TableTop } from '@/components/shared';
 import { ClassTableType, ClassFilterType } from '@/types';
@@ -14,8 +14,7 @@ const tableHeads = [
     'Class',
     'Male',
     'Female',
-    'Actions 1',
-    'Actions 2'
+    'Actions'
 ];
 
 export default function ListClasses() {
@@ -117,18 +116,18 @@ export default function ListClasses() {
                                                     {cl.female_count}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <AnimateButton>
-                                                        <Button color='warning' variant='contained' onClick={(event) => handleEditClick(event, cl)}>
-                                                            Edit
-                                                        </Button>
-                                                    </AnimateButton>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`} style={{ textDecoration: 'none' }}>
+                                                    <Box display='flex' gap={4}>
                                                         <AnimateButton>
-                                                            <Button variant='contained'  >View Students</Button>
+                                                            <Button color='warning' variant='contained' onClick={(event) => handleEditClick(event, cl)}>
+                                                                Edit
+                                                            </Button>
                                                         </AnimateButton>
-                                                    </RouterLink>
+                                                        <RouterLink to={`${paths.studentsList}?class_id=${cl.id}`} style={{ textDecoration: 'none' }}>
+                                                            <AnimateButton>
+                                                                <Button variant='contained'  >View Students</Button>
+                                                            </AnimateButton>
+                                                        </RouterLink>
+                                                    </Box>
                                                 </TableCell>
                                             </TableRow>
                                         ))

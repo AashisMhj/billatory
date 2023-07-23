@@ -7,6 +7,7 @@ import { Link as RouterLink } from 'react-router-dom';
 // assets
 import EditOutlined from '@ant-design/icons/EditOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
+import KeyOutlined from '@ant-design/icons/KeyOutlined';
 import paths from '@/routes/path';
 
 
@@ -35,6 +36,14 @@ const ProfileTab = () => {
             <UserOutlined />
           </ListItemIcon>
           <ListItemText primary="View Logs" />
+        </ListItemButton>
+      </RouterLink>
+      <RouterLink to={paths.changePassword}>
+        <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
+          <ListItemIcon>
+            <KeyOutlined />
+          </ListItemIcon>
+          <ListItemText primary="Change Password" />
         </ListItemButton>
       </RouterLink>
 

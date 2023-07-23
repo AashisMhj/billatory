@@ -1,8 +1,5 @@
-import {createContext, useState, ReactNode, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {createContext, useState, ReactNode} from 'react';
 import { SettingsType } from '@/types';
-import  paths from '@/routes/path';
-import LoadingPage from '@/pages/Loading';
 
 export interface SettingsContextType {
     value: SettingsType,
@@ -11,7 +8,7 @@ export interface SettingsContextType {
 
 const initial_settings:SettingsType = {
     organization_name: '',
-    pan_no: 302720211,
+    pan_no: 0,
     image: '',
     location: '',
     phone_no: ''
@@ -25,7 +22,6 @@ export const SettingsContext = createContext<SettingsContextType>({
 
 export const SettingsProvider = ({children}:{children:ReactNode}) =>{
     const [settings_value, setSettingsValue] = useState(initial_settings);
-    const navigate = useNavigate();
     
     const updateValue = (new_value: SettingsType) =>{
         setSettingsValue(new_value);

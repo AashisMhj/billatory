@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid, Tooltip, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { EditOutlined, PlusCircleFilled, FilterOutlined } from '@ant-design/icons';
+import { TableContainer, Table, TableCell, TableHead, TableRow, TableBody, Button, Typography, Grid, Tooltip, FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 //
 import { PageTitle, TableTop } from '@/components/shared';
@@ -10,7 +9,6 @@ import { getNoOfPage, addComma } from '@/utils/helper-function';
 import { AddChargeModal, EditChargeModal, ChargesFilterModal } from '@/components/pages/charges/listCharges';
 import { SnackBarContext } from '@/context/snackBar';
 import paths from '@/routes/path';
-import { DropdownLimitValues } from '@/utils/constants';
 import { getClassesOnly } from '@/services/class.service';
 import MainCard from '@/components/layouts/MainCard';
 //
@@ -19,7 +17,6 @@ const tableHeads = [
     'Charge',
     'class',
     'Amount',
-    'Actions',
     'Actions'
 ];
 
@@ -106,7 +103,7 @@ export default function ListCharges() {
                             <Grid item xs={12}>
                                 <Typography variant='h6'>Filter</Typography>
                             </Grid>
-                            <Grid item lg={1} md={2} sm={3}>
+                            <Grid item lg={2} md={2} sm={3}>
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="class">Class</InputLabel>
                                     <Select labelId="class" id="class" value={filter_class} name='class' onChange={(event) => setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
@@ -116,7 +113,7 @@ export default function ListCharges() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={1} md={2} sm={3} >
+                            <Grid item lg={2} md={2} sm={3} >
                                 <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
                             </Grid>
                         </Grid>
@@ -169,16 +166,15 @@ export default function ListCharges() {
                                                     {addComma(charge.amount)}
                                                 </TableCell>
                                                 <TableCell>
+                                                    <Box display='flex' gap={4}>
+
                                                     <RouterLink to={paths.applyCharges(charge.id)}>
-                                                        <Button variant='outlined' color='success'>
+                                                        <Button variant='contained' color='success'>
                                                             Apply Charges
                                                         </Button>
                                                     </RouterLink>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Tooltip title="Edit Charge">
                                                         <Button size='large' variant='contained' color='primary' onClick={(event) => handleEditClick(event, charge)}>Edit</Button>
-                                                    </Tooltip>
+                                                    </Box>
                                                 </TableCell>
                                             </TableRow>
                                         ))

@@ -148,7 +148,7 @@ export default function ListFees() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={1} md={2} sm={3}>
+                            <Grid item lg={2} md={2} sm={3}>
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="student">Student</InputLabel>
                                     <Select labelId="student" id="student" value={filter_student_id} name='student' onChange={(event) => {
@@ -162,7 +162,7 @@ export default function ListFees() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={1} md={2} sm={3}>
+                            <Grid item lg={2} md={2} sm={3}>
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="year">Year</InputLabel>
                                     <Select labelId="year" id="year" value={filter_year} name='year' onChange={(event) => {

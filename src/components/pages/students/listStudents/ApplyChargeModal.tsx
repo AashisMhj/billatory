@@ -6,19 +6,22 @@ import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Mo
 //
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { ChargesType } from "@/types";
-import { bulkUpdateStudentClass } from "@/services/student.service";
 import { applyCharge, getCharges } from "@/services/charge.service";
 import { Months } from "@/utils/constants";
 import NepaliDate from "nepali-date-converter";
 import { SnackBarContext } from "@/context/snackBar";
-import { addFee } from "@/services/fees.service";
+
+type ListChargeTpe = {
+    display: boolean
+} & ChargesType;
 
 
 interface Props {
     open: boolean,
     handleClose: () => void,
     onSubmit: () => void,
-    student_ids: Array<number>
+    student_ids: Array<number>,
+    filtered_class: number | null
 }
 const style: SxProps = {
     position: 'absolute' as 'absolute',
@@ -32,9 +35,9 @@ const style: SxProps = {
 }
 
 
-export default function UpdateStudentClassModal({ open, handleClose, onSubmit, student_ids }: Props) {
+export default function UpdateStudentClassModal({ open, handleClose, onSubmit, student_ids, filtered_class }: Props) {
 
-    const [charges, setCharges] = useState<Array<ChargesType>>([]);
+    const [charges, setCharges] = useState<Array<ListChargeTpe>>([]);
     const nepali_date = new NepaliDate(Date.now());
     const { showAlert } = useContext(SnackBarContext);
 
@@ -48,17 +51,33 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
         }
     }
 
+    useEffect(() =>{
+        console.log(filtered_class);
+        if(filtered_class){
+            setCharges(charges.map(el => {
+                console.log(el.class_id)
+                return {
+                    ...el,
+                    display: el.class_id === filtered_class
+                }
+            }));
+        }else{
+            setCharges(charges.map(el => ({...el, display: true})))
+        }
+    }, [filtered_class])
+
     useEffect(() => {
         getCharges(1, 999999)
             .then(data => {
                 if (typeof data === "string") {
-                    const charges_data = JSON.parse(data);
-                    setCharges(charges_data as Array<ChargesType>)
+                    const charges_data = JSON.parse(data) as Array<ChargesType>;
+                    setCharges(charges_data.map((el) => ({...el, display: true})))
                 }
             })
             .catch(error => console.log(error))
     }, []);
 
+    console.log(charges)
     return (
         <Modal
             open={open}
@@ -103,7 +122,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                                         <InputLabel htmlFor="charge_id" error={Boolean(errors.charge_id && touched.charge_id )}>Charge</InputLabel>
                                         <Select labelId="charge_id" id="charge_id" value={values.charge_id} name='charge_id' onChange={(event) => handleChargeChange(event, setFieldValue)}>
                                             {
-                                                charges.map((ch) => <MenuItem value={ch.id}>{ch.charge_title} - {ch.class || ''} </MenuItem>)
+                                                charges.filter(el=> el.display).map((ch) => <MenuItem value={ch.id}>{ch.charge_title} - {ch.class || ''} </MenuItem>)
                                             }
                                         </Select>
                                     </Stack>

@@ -15,12 +15,12 @@ type Props =  {
 export default function AnalyticCard({ color="primary", title, count, percentage, isLoss, icon }: Props) {
     const theme = useTheme()
     return (
-        <MainCard contentSX={{ p: 6.25 }} boxShadow shadow={theme.customShadows.card} >
+        <MainCard contentSX={{ p: 5.25 }} boxShadow shadow={theme.customShadows.card} >
             <Stack spacing={0.8} alignItems='center'>
                 {icon}
                 <Grid container alignItems="center" justifyContent='center'>
                     <Grid item>
-                        <Typography variant="h3" color="inherit" sx={{ color: `${color || 'primary'}.main` }}>
+                        <Typography variant="h2" color="inherit" sx={{ color: `${color || 'primary'}.main` }}>
                             {count}
                         </Typography>
                     </Grid>
@@ -42,7 +42,7 @@ export default function AnalyticCard({ color="primary", title, count, percentage
                         </Grid>
                     )}
                 </Grid>
-                <Typography variant="h6" color="textSecondary">
+                <Typography variant="h4" color="textSecondary">
                     {title}
                 </Typography>
             </Stack>

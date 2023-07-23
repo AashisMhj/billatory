@@ -1,5 +1,5 @@
 import { HTMLAttributes, ReactNode, useRef, useState, useContext, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link as RouterLink } from 'react-router-dom';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -18,13 +18,15 @@ import {
 } from '@mui/material';
 // icon
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
+import UserOutlined from '@ant-design/icons/UserOutlined';
 
 import { SettingsContext } from '@/context/settings';
 // project import
 import MainCard from '@/components/layouts/MainCard';
 import Transitions from '@/components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
+import paths from '@/routes/path';
 
 
 // tab panel wrapper
@@ -53,13 +55,9 @@ const Profile = () => {
   const pathname = useLocation().pathname;
   const { value: SettingValue } = useContext(SettingsContext);
 
-  const handleLogout = async () => {
-    // logout
-  };
-
-  useEffect(()=>{
+  useEffect(() => {
     setOpen(false);
-  },[pathname])
+  }, [pathname])
 
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -140,9 +138,12 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
-                            <LogoutOutlined />
-                          </IconButton>
+                          <RouterLink to={paths.login}>
+
+                            <IconButton size="large" color="secondary">
+                              <LogoutOutlined />
+                            </IconButton>
+                          </RouterLink>
                         </Grid>
                       </Grid>
                     </CardContent>

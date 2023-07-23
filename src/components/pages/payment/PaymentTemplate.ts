@@ -50,7 +50,7 @@ export default function paymentFrame({organization_name, location, pan_no, phone
                 </div>
                 </br>
                 <p class="fs-5 fw-bold" style="font-family:Diphylleia">
-                    Received with thanks from ${payee}  </br> as per the bill no ______ by Cash/Draft/Cheque No. _____________ </br>the sum of rupees ${amount_words} </br>On the account of ${account_name}
+                    Received with thanks from ${payee}. as per the bill no ______ by Cash/Draft/Cheque No. _____________ the sum of rupees ${amount_words} On the account of ${account_name}
                 </p>
             
                 

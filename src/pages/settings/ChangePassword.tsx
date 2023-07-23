@@ -31,6 +31,9 @@ export default function ChangePassword() {
                                     showAlert('Password Updated', 'success');
                                 })
                                 .catch(err => showAlert(''+err, 'error'))
+                                .finally(() =>{
+                                    setSubmitting(false)
+                                })
                             
                         }}
                     >
@@ -48,7 +51,7 @@ export default function ChangePassword() {
                                                     name="current_password"
                                                     onBlur={handleBlur}
                                                     onChange={handleChange}
-                                                    placeholder="School Name"
+                                                    placeholder="Current Password"
                                                     fullWidth
                                                     error={Boolean(touched.current_password && errors.current_password)}
                                                 />
@@ -69,7 +72,7 @@ export default function ChangePassword() {
                                                     name="new_password"
                                                     onBlur={handleBlur}
                                                     onChange={handleChange}
-                                                    placeholder="School Name"
+                                                    placeholder="New Password"
                                                     fullWidth
                                                     error={Boolean(touched.new_password && errors.new_password)}
                                                 />
@@ -90,7 +93,7 @@ export default function ChangePassword() {
                                                     name="confirm_password"
                                                     onBlur={handleBlur}
                                                     onChange={handleChange}
-                                                    placeholder="School Name"
+                                                    placeholder="Confirm Password"
                                                     fullWidth
                                                     error={Boolean(touched.confirm_password && errors.confirm_password)}
                                                 />

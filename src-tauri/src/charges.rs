@@ -10,6 +10,7 @@ pub struct ChargeOfStudent{
     pub last_name: String,
     pub charge_id: Option<i32>,
     pub class: String,
+    pub class_id: i32
 }
 
 #[derive(Debug, Serialize)]
@@ -36,6 +37,7 @@ pub fn get_student_of_charge(db: &Connection, charge_id:i32)-> Result<Vec<Charge
     let student_iter = statement.query_map([charge_id], |row|{
         Ok(ChargeOfStudent{
             id: row.get("id")?,
+            class_id: row.get("class_id")?,
             first_name: row.get("first_name")?,
             mid_name: row.get("mid_name")?,
             last_name: row.get("last_name")?,

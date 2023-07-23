@@ -63,7 +63,7 @@ pub fn initialize_database(app_handle: &AppHandle) -> Result<Connection, rusqlit
     let backup_path = app_dir.join(BACKUP_DIR);
     fs::create_dir_all(backup_path).expect("Back Up Dir should be created");
     let sqlite_path = app_dir.join(FILE_PATH);
-    // print!(" Database file {}", sqlite_path.to_string_lossy());
+    print!(" Database file {}", sqlite_path.to_string_lossy());
     let mut db = Connection::open(sqlite_path)?;
 
     let mut user_pragma = db.prepare("PRAGMA user_version")?;

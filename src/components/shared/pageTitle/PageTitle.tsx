@@ -26,7 +26,7 @@ export default function HeaderLayout({ actions, title }: Props) {
             <IconButton onClick={goBack} size='large'>
                 <LeftCircleOutlined />
             </IconButton>
-            <Typography variant='h3' color='primary' marginRight={2}>{title}</Typography>
+            <Typography variant='h3' marginRight={2}>{title}</Typography>
         </Box>
         <Box>
             {actions}
