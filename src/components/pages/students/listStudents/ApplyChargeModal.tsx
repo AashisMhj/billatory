@@ -52,10 +52,8 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
     }
 
     useEffect(() =>{
-        console.log(filtered_class);
         if(filtered_class){
             setCharges(charges.map(el => {
-                console.log(el.class_id)
                 return {
                     ...el,
                     display: el.class_id === filtered_class
@@ -74,10 +72,9 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                     setCharges(charges_data.map((el) => ({...el, display: true})))
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, []);
 
-    console.log(charges)
     return (
         <Modal
             open={open}
@@ -108,7 +105,7 @@ export default function UpdateStudentClassModal({ open, handleClose, onSubmit, s
                                 handleClose();
                             })
                             .catch(error => {
-                                console.log(error);
+                                console.error(error);
                                 showAlert('Failed to Apply Charge' + error, 'error');
                             })
 

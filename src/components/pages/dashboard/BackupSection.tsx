@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Avatar, Box, Button, Grid, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Avatar, Box, Button, Grid, List, ListItem, ListItemAvatar, ListItemText, Paper } from "@mui/material";
 //
 import { SnackBarContext } from "@/context/snackBar";
 import { backupData, getBackUpFiles } from "@/services/settings.service";
@@ -34,9 +34,15 @@ export default function BackupSection() {
     function fetchData() {
         getBackUpFiles()
             .then(data => {
-                const files_list = data as Array<BackUpFileType>;
-                const list = files_list.splice(0, 10);
-                setBackUpFiles(list)
+                let files_list = data as Array<BackUpFileType>;
+
+                setBackUpFiles(files_list.sort((a: BackUpFileType, b: BackUpFileType) => {
+                    if (a.name > b.name) {
+                        return -1
+                    } else {
+                        return 1
+                    }
+                }));
             })
             .catch(err => console.error(err))
     }
@@ -47,19 +53,21 @@ export default function BackupSection() {
 
     return <MainCard boxShadow>
         <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' >
-            <Button variant="contained" color="error" size="large" disabled={is_loading} onClick={handleClick} startIcon={<BackupIcon />}>Backup Database</Button>
-            <List sx={{ width: "100%" }}>
-                {
-                    backup_files.map((item) => <ListItem key={item.name}>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <FileImageFilled />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={item.name} secondary={formatBytes(item.file_size)} />
-                    </ListItem>)
-                }
-            </List>
+            <Button variant="contained" color="error" size="large" fullWidth disabled={is_loading} onClick={handleClick} startIcon={<BackupIcon />}>Backup Database</Button>
+            <Paper sx={{ height: 200, overflow: 'auto', width: "100%", margin: 1, padding: 1 }}>
+                <List sx={{ width: "100%" }}>
+                    {
+                        backup_files.map((item) => <ListItem key={item.name}>
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <FileImageFilled />
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={item.name} secondary={formatBytes(item.file_size)} />
+                        </ListItem>)
+                    }
+                </List>
+            </Paper>
         </Box>
     </MainCard>
 }

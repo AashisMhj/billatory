@@ -13,10 +13,10 @@ export default function DashboardDefault() {
       </Grid>
       <Grid item xs={12}>
         <Grid container spacing={4} >
-          <Grid item xs={6}>
+          <Grid item sm={12} lg={6}>
             <OrganizationInfo />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item sm={12} lg={6}>
             <BackupSection />
           </Grid>
         </Grid>

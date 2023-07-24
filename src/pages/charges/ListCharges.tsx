@@ -103,7 +103,7 @@ export default function ListCharges() {
                             <Grid item xs={12}>
                                 <Typography variant='h6'>Filter</Typography>
                             </Grid>
-                            <Grid item lg={2} md={2} sm={3}>
+                            <Grid item lg={2}  sm={3}>
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="class">Class</InputLabel>
                                     <Select labelId="class" id="class" value={filter_class} name='class' onChange={(event) => setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
@@ -113,7 +113,7 @@ export default function ListCharges() {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item lg={2} md={2} sm={3} >
+                            <Grid item lg={2} sm={3} >
                                 <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
                             </Grid>
                         </Grid>
@@ -121,7 +121,7 @@ export default function ListCharges() {
                 </Grid>
                 <Grid item xs={12}>
                     <MainCard boxShadow>
-                        <TableTop title="Fe Charges List" limit={limit} setLimit={setLimit} total_page_count={total_rows} handlePaginationChange={handlePaginationChange} />
+                        <TableTop title="Fee Charges List" limit={limit} setLimit={setLimit} total_page_count={total_rows} handlePaginationChange={handlePaginationChange} />
                         <TableContainer sx={{
                             width: '100%',
                             overflowX: 'auto',

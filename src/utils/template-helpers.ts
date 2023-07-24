@@ -43,6 +43,47 @@ export function getBillPageLayout(content: string) {
     `)
 }
 
+export function getBulkBillPageLayout() {
+    return (`
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/bootstrap.min.css" rel="stylesheet" >
+    <style type="text/css">
+        @media print {
+            body {
+                font-size: 10px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            ul.p-padding {
+                padding: 0px 0px 0px 25px;
+            }
+
+            div.p-row {
+                margin-top: -10px;
+            }
+        }
+    </style>
+
+    </head>
+
+    <body>
+        <div class="row" id="content">
+        </div>
+    </body>
+
+    </html>
+    `)
+}
+
 export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class }: BillProps) {
     let m_bill_items = [...bill_items];
     const empty_array = Array.from({length: 9}, (_, k) => k);
@@ -55,10 +96,6 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
             charge_title: remainingItems.map(item => item.charge_title).join('+'),
         }
     }
-    console.log(m_bill_items);
-    empty_array.forEach((_, index) =>{
-        console.log(index)
-    })
     return `
     <div class="col-6">
             <div class="card">
@@ -70,7 +107,7 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                         </div>
                         <div class="col-md-12">
                             <div class="text-center">
-                                <h1 class="mb-0">Holy ${organization_name}</h1>
+                                <h1 class="mb-0"> ${organization_name}</h1>
                                 <p class="fw-bold my-0">${location}</p>
                                 <p class="my-0 text-decoration-underline "> NOTICE BILL </p>
                             </div>

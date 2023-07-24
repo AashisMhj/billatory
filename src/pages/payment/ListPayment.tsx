@@ -111,11 +111,9 @@ export default function ListPaymentPage() {
                                                 </TableCell>
                                                 <TableCell>
                                                     <RouterLink to={paths.printPayment(payment.id)}>
-                                                        <Tooltip title="Print Payment Slip">
-                                                            <IconButton color='primary'>
-                                                                <PrinterOutlined />
-                                                            </IconButton>
-                                                        </Tooltip>
+                                                        <Button variant='contained' startIcon={<PrinterOutlined />}>
+                                                            Print
+                                                        </Button>
                                                     </RouterLink>
                                                 </TableCell>
                                             </TableRow>

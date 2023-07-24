@@ -69,7 +69,7 @@ export default function ApplyChargesPage() {
                         showAlert('Charges applied', 'success');
                     })
                     .catch(error => {
-                        console.log(error);
+                        console.error(error);
                         showAlert('Failed to Apply Charge' + error, 'error');
                     })
             } else {
@@ -79,7 +79,6 @@ export default function ApplyChargesPage() {
         } else {
             showAlert('Id not found', 'error');
         }
-
     }
 
     useEffect(() => {
@@ -127,7 +126,6 @@ export default function ApplyChargesPage() {
                                                     display: true
                                                 }
                                             }) as Array<StudentCharge>;
-                                            console.log(students_data);
                                             setAllStudents(students_data.filter(el => el.class_id === data.class_id));
                                         }
                                     })
@@ -138,11 +136,7 @@ export default function ApplyChargesPage() {
 
                         }
                     })
-                    .catch(error => console.log(error));
-
-
-
-
+                    .catch(error => console.error(error));
             }
         }
     }, [])
@@ -227,9 +221,9 @@ export default function ApplyChargesPage() {
                                                 {
                                                     all_students.filter(el => el.display).map((item) => (
                                                         <ListItem key={item.id} secondaryAction={
-                                                            <Checkbox color='success' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)} />
+                                                            <Checkbox sx={{ color: 'black' }} color='primary' checked={selected_student.findIndex((value) => value.id === item.id) !== -1} onChange={(_, value) => handleCheckBoxChange(value, item)} />
                                                         }>
-                                                            <ListItemButton>
+                                                            <ListItemButton >
                                                                 <ListItemText primary={`${item.first_name} ${item.last_name}`} secondary={item.class} />
                                                             </ListItemButton>
                                                         </ListItem>

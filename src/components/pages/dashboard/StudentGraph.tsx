@@ -32,7 +32,7 @@ const columnChartOptions: ApexOptions = {
     },
     yaxis: {
         title: {
-            text: '$ (thousands)'
+            text: 'No Students'
         }
     },
     fill: {
@@ -175,7 +175,7 @@ const StudentGraph = () => {
 
     return (
         <div id="chart">
-            <ReactApexChart options={options} series={series} type="bar" height={430} />
+            <ReactApexChart options={options} series={series} type="bar" height={420} />
         </div>
     );
 };

@@ -11,7 +11,7 @@ export default function StudentsGraphSection() {
           <Typography variant="h5">Students Count</Typography>
         </Grid>
       </Grid>
-      <MainCard cardContent={false} sx={{mt: 1.5}}>
+      <MainCard cardContent={false}>
         <StudentGraph />
       </MainCard>
     </>

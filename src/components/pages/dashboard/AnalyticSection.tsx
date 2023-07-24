@@ -58,16 +58,16 @@ export default function AnalyticSection() {
 
     return <>
         <Grid item xs={12} lg={12} sm={3}>
-            <AnalyticCard title="Total Students" icon={<CorporateFareOutlined fontSize="large" />} count={addComma(total_student)} color='info' />
+            <AnalyticCard title="Total Students" icon={<CorporateFareOutlined fontSize="large" />} count={addComma(total_student)} color='primary' />
         </Grid>
         <Grid item xs={12} lg={12} sm={3}>
-            <AnalyticCard title="Total Classes" icon={<PersonOutlined fontSize="large" />} count={addComma(total_classes)} color='info' />
+            <AnalyticCard title="Total Classes" icon={<PersonOutlined fontSize="large" />} count={addComma(total_classes)} color='primary' />
         </Grid>
         <Grid item xs={12} lg={12} sm={3}>
-            <AnalyticCard title="Months Payment" icon={<MonetizationOnOutlined fontSize="large" />} count={addComma(monthly_payment)} color='info' />
+            <AnalyticCard title="Months Payment" icon={<MonetizationOnOutlined fontSize="large" />} count={addComma(monthly_payment)} color='primary' />
         </Grid>
         <Grid item xs={12} lg={12} sm={3}>
-            <AnalyticCard title="Months Due" icon={<FeedOutlined fontSize="large" />} count={addComma(monthly_charge)} color='info' />
+            <AnalyticCard title="Months Due" icon={<FeedOutlined fontSize="large" />} count={addComma(monthly_charge)} color='primary' />
         </Grid>
     </>
 }

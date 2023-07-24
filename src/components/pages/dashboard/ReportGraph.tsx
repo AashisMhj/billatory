@@ -50,11 +50,11 @@ const ReportGraph = ({ slot }: Props) => {
     const theme = useTheme();
     const [series, setSeries] = useState<Array<SeriesType>>([
         {
-            name: 'Payment',
+            name: 'Paid Amount',
             data: []
         },
         {
-            name: 'Fee',
+            name: 'Total Fee',
             data: []
         }
     ]);
@@ -158,11 +158,11 @@ const ReportGraph = ({ slot }: Props) => {
 
         setSeries([
             {
-                name: 'Payment',
+                name: 'Paid Amount',
                 data: slot === 'yearly' ? year_payment_data : monthly_payment_data
             },
             {
-                name: 'Fees',
+                name: 'Total Fes',
                 data: slot === 'yearly' ? year_fee_data : monthly_fee_data
             }
         ]);

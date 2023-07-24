@@ -1,4 +1,4 @@
-import {  Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
+import { Container, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { getStudentDetail } from "@/services/student.service";
 import { useEffect, useState } from "react";
@@ -33,11 +33,8 @@ export default function StudentDetail() {
                 <PageTitle title="Student Detail" />
             </Grid>
             <Grid item xs={12}>
-                <Container>
-                    <MainCard boxShadow>
-
-                    </MainCard>
-                    <TableContainer  component={Paper}>
+                <MainCard boxShadow sx={{padding: '40px', marginTop: '10px'}}>
+                    <TableContainer>
                         <Table >
                             <TableBody>
                                 <TableRow>
@@ -96,8 +93,7 @@ export default function StudentDetail() {
                             </TableBody>
                         </Table>
                     </TableContainer>
-
-                </Container>
+                </MainCard>
             </Grid>
         </Grid>
     )

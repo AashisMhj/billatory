@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LeftCircleOutlined from '@ant-design/icons/LeftCircleOutlined';
-import Button from '@mui/material/Button';
+import LeftCircleOutlined from '@ant-design/icons/LeftCircleFilled';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@mui/material';

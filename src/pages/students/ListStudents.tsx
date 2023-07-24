@@ -180,17 +180,12 @@ export default function ListStudents() {
                             <Grid item xs={12}>
                                 <Typography variant='h6'>Filter</Typography>
                             </Grid>
-                            <Grid item xs={12} >
-                                <Box sx={{ display: 'flex', gap: '8px' }}>
+                            <Grid item xs={12}>
+                                <Box display='flex' gap={4}>
                                     <Button startIcon={<Print />} variant='outlined' sx={{ borderRadius: '50px' }} onClick={handleBulkPrint} disabled={checkbox_ids.length === 0}>Print</Button>
                                     <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
                                     <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
                                     <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
-
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Box display='flex' gap={4}>
                                     <FormControl >
                                         <InputLabel htmlFor="class">Class</InputLabel>
                                         <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => {

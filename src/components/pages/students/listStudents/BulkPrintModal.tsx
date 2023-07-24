@@ -1,15 +1,15 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import CloseCircleOutlined from "@ant-design/icons/CloseCircleOutlined";
-import { Box, Button, FormControl, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
+import { Box, Button, IconButton, Modal, SxProps, Typography } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import NepaliDate from "nepali-date-converter";
 //
-import { StudentsTableFilterType, StudentClassType, FeesType, StudentType } from "@/types";
+import { FeesType, StudentType } from "@/types";
 import { getStudentCurrentMonthStudentFees, getStudentDetail, getStudentPreviousDue } from "@/services/student.service";
 import { SettingsContext } from "@/context/settings";
 import { SnackBarContext } from "@/context/snackBar";
 import { Months } from "@/utils/constants";
-import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
+import { getBillPageLayout, billFrame, getBulkBillPageLayout } from "@/utils/template-helpers";
 
 interface Props {
     open: boolean,
@@ -24,7 +24,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-   borderRadius: '10px',
+    borderRadius: '10px',
     p: 4
 }
 
@@ -39,11 +39,10 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
         const nepali_date = new NepaliDate(Date.now());
         const nepali_month = nepali_date.getMonth() + 1;
         const nepali_year = nepali_date.getYear();
-
         try {
             let content = '';
             setIsLoading(true);
-            if(! iframeRef.current?.contentWindow){
+            if (!iframeRef.current?.contentWindow) {
                 throw Error('Content window not found')
             }
             for (let id of student_ids) {
@@ -72,30 +71,40 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                     })
                 }
             }
-            const bill = getBillPageLayout(content);
-            iframeRef.current?.contentWindow?.document.open();
-            iframeRef.current?.contentWindow?.document.close();
-            if(iframeRef && iframeRef.current && iframeRef.current.contentWindow){
-                
-                iframeRef.current.contentWindow?.document.write(bill);
-                iframeRef?.current?.contentWindow?.print();
-                iframeRef.current.contentWindow.onload = (event) =>{
-                    console.log('loaded')
+            // const bill = getBillPageLayout(content);
+            // iframeRef.current?.contentWindow?.document.open();
+            // iframeRef.current?.contentWindow?.document.close();
+            if (iframeRef && iframeRef.current && iframeRef.current.contentWindow) {
+                const container = iframeRef.current.contentWindow.document.getElementById('content');
+                if(container){
+                    container.innerHTML = "";
+                    container.innerHTML = content;
                 }
+
+                // iframeRef.current.contentWindow?.document.write(bill);
+                iframeRef?.current?.contentWindow?.print();
                 iframeRef.current.contentWindow.addEventListener('afterprint', ()=>{
                     onSubmit();
                     handleClose()
                 })
-            }else{
+            } else {
                 throw Error('No Iframe Ref')
             }
         } catch (error) {
             console.error(error);
-            showAlert('Error '+error, 'error');
+            showAlert('Error ' + error, 'error');
         } finally {
             setIsLoading(false);
         }
     }
+
+    useEffect(() => {
+        if (iframeRef && iframeRef.current && iframeRef.current.contentWindow) {
+            iframeRef.current?.contentWindow?.document.open();
+            iframeRef.current?.contentWindow?.document.close();
+            iframeRef.current?.contentWindow?.document.write(getBulkBillPageLayout());
+        }
+    }, [iframeRef.current])
 
     return (
         <Modal
@@ -117,7 +126,7 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                 <Box display='flex' justifyContent='center' marginTop="10px">
                     <Button variant="contained" disabled={is_loading} onClick={handlePrint} fullWidth > {is_loading ? <CircularProgress /> : "Print"}</Button>
                 </Box>
-                <iframe ref={iframeRef} ></iframe>
+                <iframe ref={iframeRef} style={{display: 'none'}} ></iframe>
             </Box>
         </Modal>
     )
