@@ -2,6 +2,8 @@
 use rusqlite::{params, Connection, Result};
 use serde::Serialize;
 
+use crate::helpers::get_current_date_time;
+
 #[derive(Debug, Serialize)]
 pub struct ChargeOfStudent{
     pub id: i32, 
@@ -70,12 +72,17 @@ pub fn get_charge_detail(db: &Connection, charge_id:i32) -> Result<Charge, rusql
 
 pub fn apply_charges_student(db: &mut Connection, charge_id: i32,amount:f32, charge_title:String, student_ids: Vec<i32>, nepali_month: i32, nepali_year: i32) -> Result<(), rusqlite::Error>{
     let transaction = db.transaction()?;
-
     for student_id in student_ids{
         transaction.execute("INSERT INTO fees (student_id, amount, title, charge_id, year, month) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", params![student_id, amount, charge_title,charge_id, nepali_year, nepali_month ])?;
     }
-
     transaction.commit()?;
+    Ok(())
+}
 
+
+pub fn delete_charge(db: &Connection, charge_id: i32) -> Result<(), rusqlite::Error>{
+    let current_date_time = get_current_date_time();
+    println!("{}",charge_id);
+    db.execute("UPDATE charge set deleted = true, updated_at = ?1 where id = ?2", params![current_date_time, charge_id])?;
     Ok(())
 }

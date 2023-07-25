@@ -80,6 +80,7 @@ export default function AddPaymentPage() {
                     initialValues={{
                         student_id: null,
                         amount: 0,
+                        bill_no: null,
                         remarks: '',
                         payee: '',
                         account_name: ''
@@ -88,7 +89,8 @@ export default function AddPaymentPage() {
                         student_id: Yup.number().required('Student Name is Required'),
                         amount: Yup.number().required('Please Provide Amount'),
                         account_name: Yup.string().trim().required(' Account Name is Required'),
-                        remark: Yup.string().trim()
+                        remark: Yup.string().trim(),
+                        bill_no: Yup.number()
                     })}
                     onSubmit={(values, { setErrors, setStatus, setSubmitting }) => {
                         const nepali_month = nepali_date.getMonth() + 1;
@@ -103,7 +105,8 @@ export default function AddPaymentPage() {
                                 payee: values.payee,
                                 account_name: values.account_name,
                                 nepali_month,
-                                nepali_year
+                                nepali_year,
+                                bill_no: values.bill_no
                             })
                                 .then((data) => {
                                     showAlert("Payment Added", 'success');
@@ -149,11 +152,24 @@ export default function AddPaymentPage() {
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
                                             <InputLabel htmlFor="payee">Payee name</InputLabel>
-                                            <OutlinedInput id="payee" type="text" value={values.payee} name='payee' onChange={handleChange} fullWidth error={Boolean(errors.payee)} />
+                                            <OutlinedInput id="payee" type="text" value={values.payee} name='payee' onChange={handleChange} fullWidth error={Boolean(errors.payee && touched.payee)} />
                                             {
                                                 touched.payee && errors.payee && (
                                                     <FormHelperText error id="account-name-error-helper">
                                                         {errors.payee}
+                                                    </FormHelperText>
+                                                )
+                                            }
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="bill_no">Bill No</InputLabel>
+                                            <OutlinedInput id="bill_no" type="number" value={values.bill_no} name='bill_no' onChange={handleChange} fullWidth error={Boolean(errors.bill_no && touched.bill_no)} />
+                                            {
+                                                touched.bill_no && errors.bill_no && (
+                                                    <FormHelperText error id="account-name-error-helper">
+                                                        {errors.bill_no}
                                                     </FormHelperText>
                                                 )
                                             }

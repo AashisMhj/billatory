@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { TableContainer, IconButton, Box, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid, Tooltip } from '@mui/material';
-import { EditOutlined, PlusCircleFilled, FilterOutlined, PrinterOutlined } from '@ant-design/icons';
+import { TableContainer, Table, TableCell, TableHead, TableRow, TableBody, Button, Pagination, Typography, Grid, Tooltip } from '@mui/material';
+import {  PrinterOutlined } from '@ant-design/icons';
 //
 import paths from '@/routes/path';
 import { PaymentType } from '@/types';
-import { addComma, getNoOfPage } from '@/utils/helper-function';
+import { addComma } from '@/utils/helper-function';
 import { getPaymentRowCount, getPayments } from '@/services/payment.service';
 import { PageTitle, TableTop } from '@/components/shared';
 import MainCard from '@/components/layouts/MainCard';
 const tableHeads = [
     'Name',
     'Amount',
-    'Payment Date',
     'Payee',
+    'Payment Date',
     'Actions',
 ];
 

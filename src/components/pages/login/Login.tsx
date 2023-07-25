@@ -45,7 +45,7 @@ const LoginForm = () => {
               showAlert('Login Success', 'success')
             })
             .catch(err => {
-              setErrors({password: err})
+              setErrors({ password: err })
               showAlert('' + err, 'error')
             })
             .finally(() => {
@@ -60,6 +60,7 @@ const LoginForm = () => {
                 <Stack spacing={1}>
                   <InputLabel htmlFor="password" required={true}>Password</InputLabel>
                   <OutlinedInput
+                    autoFocus
                     id="password"
                     type={show_password ? "text" : "password"}
                     value={values.password}

@@ -181,6 +181,7 @@ pub fn upgrade_database_if_needed(
             created_at datetime default current_timestamp,
             amount real not null,
             remarks text,
+            bill_no INTEGER DEFAULT NULL,
             payee text not null,
             account_name text not null,
             deleted boolean default false,
@@ -191,8 +192,7 @@ pub fn upgrade_database_if_needed(
         )?;
 
         tx.execute(
-            "
-        CREATE TABLE IF NOT EXISTS fees (
+            "CREATE TABLE IF NOT EXISTS fees (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_id INTEGER NOT NULL,
             created_at datetime default current_timestamp,
@@ -208,11 +208,18 @@ pub fn upgrade_database_if_needed(
             FOREIGN key(student_id) references students(id),
             FOREIGN KEY(charge_id) REFERENCES charge(id),
             FOREIGN KEY(payment_id) REFERENCES payment(id),
-            unique(student_id,charge_id,month, year, month)
-        )
-        ",
-            (),
-        )?;
+            unique(student_id,charge_id, year, month)
+        );",(),)?;
+
+        tx.execute("CREATE TABLE IF NOT EXISTS bills(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL,
+            created_at datetime NOT NULL,
+            prev_amount INTEGER NOT NULL,
+            roll_no integer not null,
+            student_class integer not null,
+            particular string not null
+        );", ())?;
 
         tx.commit()?;
     }
@@ -326,7 +333,7 @@ pub fn get_charges(
         })
     };
     if let Some(id) = class_id {
-        let query = "Select * from charge inner join class on charge.class_id = class.id where class_id = ?3 order by id desc limit ?1 offset ?2;";
+        let query = "Select * from charge inner join class on charge.class_id = class.id where class_id = ?3  and charge.deleted = false order by id desc limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
         let charge_iter = statement.query_map(params![limit, offset_value, id], map_row)?;
         for charge in charge_iter {
@@ -334,7 +341,7 @@ pub fn get_charges(
         }
         Ok(data)
     } else {
-        let query = "Select * from charge inner join class on charge.class_id = class.id order by id desc limit ?1 offset ?2;";
+        let query = "Select * from charge inner join class on charge.class_id = class.id where charge.deleted = false order by id desc limit ?1 offset ?2;";
         let mut statement = db.prepare(query)?;
         let charge_iter = statement.query_map(params![limit, offset_value], map_row)?;
         for charge in charge_iter {

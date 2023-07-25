@@ -14,6 +14,7 @@ import { getBillPageLayout, billFrame } from "@/utils/template-helpers";
 import { Months } from "@/utils/constants";
 import paths from "@/routes/path";
 import { PageTitle } from "@/components/shared";
+import { addBill, getBillCount } from "@/services/fees.service";
 
 
 export default function StudentBillPage() {
@@ -26,6 +27,7 @@ export default function StudentBillPage() {
     const nepali_date = new NepaliDate(Date.now());
     const nepali_month = nepali_date.getMonth() + 1;
     const nepali_year = nepali_date.getYear();
+    const [bill_count, setBillCount] = useState(0);
 
     const { id } = useParams();
 
@@ -64,7 +66,7 @@ export default function StudentBillPage() {
             const content = billFrame({
                 previous_due: previous_due,
                 total_sum: total_sum,
-                bill_no: 0,
+                bill_no: bill_count,
                 month: Months[nepali_month] ? Months[nepali_month].month_name : '',
                 student_class: student_detail?.class || '',
                 bill_items: current_month_due,
@@ -77,10 +79,23 @@ export default function StudentBillPage() {
                 student_name: `${student_detail?.first_name} ${student_detail?.last_name}`,
             });
             iframeRef.current?.contentWindow?.document.write(getBillPageLayout(content));
+            if(iframeRef.current && iframeRef.current.contentWindow){
+                iframeRef.current.contentWindow.addEventListener('afterprint', ()=>{
+                    console.log('printing')
+                    const studentId = student_detail?.id || 0;
+                    const rollNo = student_detail?.roll_no || 0;
+                    const studentClass = student_detail?.class || ''
+                    addBill(studentId, previous_due, rollNo, studentClass, JSON.stringify(current_month_due))
+                        .then(data => {
+                            console.log(data);
+                        })
+                        .catch(err => console.error(err))
+                })
+            }
         } catch (error) {
 
         }
-    }, [student_detail, total_sum])
+    }, [student_detail, total_sum, iframeRef])
 
     useEffect(() => {
         calculateTotalSum();
@@ -98,7 +113,7 @@ export default function StudentBillPage() {
                             setStudentDetail(student);
                         }
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => console.error(error));
 
                 getStudentPreviousDue(parsed_id, nepali_month, nepali_year)
                     .then(data => {
@@ -114,7 +129,15 @@ export default function StudentBillPage() {
                     .then(data => {
                         setCurrentMonthDue(data as Array<FeesType>);
                     })
-                    .catch(error => console.log(error))
+                    .catch(error => console.error(error));
+
+                getBillCount()
+                    .then(value => {
+                        if(typeof value === "number"){
+                            setBillCount(value +1);
+                        }
+                    })
+                    .catch(err => console.error(err))
             } else {
 
             }

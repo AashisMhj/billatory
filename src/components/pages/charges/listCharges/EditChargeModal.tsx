@@ -20,7 +20,7 @@ const style: SxProps = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     bgcolor: 'white',
-   borderRadius: '10px',
+    borderRadius: '10px',
     p: 4
 }
 export default function EditChargeModal({ open, handleClose, onSubmit, data }: Props) {
@@ -32,13 +32,14 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
             <Box sx={style}>
                 <Box display='flex' justifyContent='space-between'>
                     <Typography variant="h5" >Edit Charge</Typography>
-                    <IconButton onClick={() => handleClose()} size="large">
+                    <IconButton onClick={() => handleClose()} size="large" color="error">
                         <CloseCircleOutlined />
                     </IconButton>
                 </Box>
                 <Formik initialValues={{ ...data, submit: null }}
                     validationSchema={Yup.object().shape({
-                        class: Yup.string().trim().required('Class Title is Required')
+                        amount: Yup.number().min(1, "Please Enter Your Amount").required('Please Enter your Amount'),
+                        charge_title: Yup.string().trim().required('Charge ')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                         setStatus({ success: false });
@@ -80,7 +81,7 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="amount">Amount</InputLabel>
-                                        <OutlinedInput id="amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount)} />
+                                        <OutlinedInput id="amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount && touched.amount)} />
                                         {
                                             touched.amount && errors.amount && (
                                                 <FormHelperText error id="amount-error-helper">
@@ -90,6 +91,7 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
                                         }
                                     </Stack>
                                 </Grid>
+
                                 {errors.submit && (
                                     <Grid item xs={12}>
                                         <FormHelperText error>{errors.submit}</FormHelperText>

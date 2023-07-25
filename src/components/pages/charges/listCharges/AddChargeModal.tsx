@@ -119,9 +119,9 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                             }
                                         </Select>
                                         {
-                                            touched.amount && errors.amount && (
-                                                <FormHelperText error id="amount-error-helper">
-                                                    {errors.amount}
+                                            touched.class && errors.class && (
+                                                <FormHelperText error id="class-error-helper">
+                                                    {errors.class}
                                                 </FormHelperText>
                                             )
                                         }

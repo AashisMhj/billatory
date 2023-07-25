@@ -147,6 +147,7 @@ export interface PaymentType {
     class?: string,
     payee: string,
     account_name: string,
+    bill_no?: number,
     student_first_name?: string,
     student_mid_name?: string,
     student_last_name?: string,

@@ -5,12 +5,13 @@ import { Link as RouterLink } from 'react-router-dom';
 import { PageTitle, TableTop } from '@/components/shared';
 import { ChargesType, ChargesFilterType, StudentClassType } from '@/types';
 import { getCharges, getChargeCount } from '@/services/charge.service';
-import { getNoOfPage, addComma } from '@/utils/helper-function';
-import { AddChargeModal, EditChargeModal, ChargesFilterModal } from '@/components/pages/charges/listCharges';
+import {  addComma } from '@/utils/helper-function';
+import { AddChargeModal, EditChargeModal, ChargesFilterModal, ConfirmDeleteModal } from '@/components/pages/charges/listCharges';
 import { SnackBarContext } from '@/context/snackBar';
 import paths from '@/routes/path';
 import { getClassesOnly } from '@/services/class.service';
 import MainCard from '@/components/layouts/MainCard';
+import { disableChargeData } from '@/services/fees.service';
 //
 const tableHeads = [
     'Id',
@@ -32,6 +33,7 @@ export default function ListCharges() {
     const [is_filter_modal_open, setIsFilterModalOpen] = useState(false);
     const [edit_data, setEditData] = useState<ChargesType | null>(null);
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
+    const [disable_charge_id, setDisableChargeId] = useState<number | null>(null);
     const { showAlert } = useContext(SnackBarContext);
 
     function handlePaginationChange(_: any, new_page: number) {
@@ -103,7 +105,7 @@ export default function ListCharges() {
                             <Grid item xs={12}>
                                 <Typography variant='h6'>Filter</Typography>
                             </Grid>
-                            <Grid item lg={2}  sm={3}>
+                            <Grid item lg={2} sm={3}>
                                 <FormControl fullWidth>
                                     <InputLabel htmlFor="class">Class</InputLabel>
                                     <Select labelId="class" id="class" value={filter_class} name='class' onChange={(event) => setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
@@ -168,12 +170,13 @@ export default function ListCharges() {
                                                 <TableCell>
                                                     <Box display='flex' gap={4}>
 
-                                                    <RouterLink to={paths.applyCharges(charge.id)}>
-                                                        <Button variant='contained' color='success'>
-                                                            Apply Charges
-                                                        </Button>
-                                                    </RouterLink>
+                                                        <RouterLink to={paths.applyCharges(charge.id)}>
+                                                            <Button variant='contained' color='success'>
+                                                                Apply Charges
+                                                            </Button>
+                                                        </RouterLink>
                                                         <Button size='large' variant='contained' color='primary' onClick={(event) => handleEditClick(event, charge)}>Edit</Button>
+                                                        <Button size='large' variant='contained' color='error' onClick={() => setDisableChargeId(charge.id)}>Delete</Button>
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -188,6 +191,7 @@ export default function ListCharges() {
             <AddChargeModal open={is_add_model_open} handleClose={() => setIsAddModalOpen(false)} onSubmit={() => fetchData()} />
             <EditChargeModal data={edit_data} open={is_edit_modal_open} handleClose={() => setIsEditModalOpen(false)} onSubmit={() => fetchData()} />
             <ChargesFilterModal open={is_filter_modal_open} value={{ class_id: filter_class, limit }} handleClose={() => setIsFilterModalOpen(false)} onSubmit={handleFilterSubmit} />
+            <ConfirmDeleteModal delete_id={disable_charge_id} onSubmit={fetchData} handleClose={() =>setDisableChargeId(null)} />
         </>
     )
 }

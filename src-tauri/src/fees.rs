@@ -26,6 +26,14 @@ pub struct GraphType{
     pub val: i32
 }
 
+pub struct Bill{
+    pub student_id: i32,
+    pub created_at: String,
+    pub prev_amount: f32,
+    pub roll_no: i32,
+    pub student_class: String,
+    pub particular: String
+}
 // fees
 pub fn add_fees(db: &Connection, fee_data: Fees) -> Result<(), rusqlite::Error> {
     db.execute("
@@ -332,3 +340,18 @@ pub fn get_yearly_fee_stats(db: &Connection) -> Result<Vec<GraphType>, rusqlite:
     }
     Ok(data)
 }
+
+// bill
+pub fn get_bill_count(db: &Connection) -> Result<i32, rusqlite::Error>{
+    let mut statement = db.prepare("select ifnull( max(id), 0) as count from bills;")?;
+    let count = statement.query_row([], |row|  row.get::<&str, i32>("count"))?;
+    Ok(count)
+}
+
+pub fn add_bill(db: &Connection, bill_data: Bill) -> Result<(), rusqlite::Error>{
+    db.execute("insert into bills (student_id, prev_amount, roll_no, student_class, particular) values (?1, ?2, ?3, ?4, ?5); ", 
+params![bill_data.student_id, bill_data.prev_amount, bill_data.roll_no, bill_data.student_class, bill_data.particular])?;
+Ok(())
+    
+}
+

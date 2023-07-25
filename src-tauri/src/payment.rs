@@ -13,6 +13,7 @@ pub struct Payment {
     pub student_last_name: Option<String>,
     pub created_at: String,
     pub amount: f32,
+    pub bill_no: Option<i32>,
     pub remarks: Option<String>,
 }
 
@@ -21,14 +22,15 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<i64, ru
     let transaction = db.transaction()?;
     transaction.execute(
         "
-    INSERT INTO payment (amount, student_id, remarks, payee, account_name) values (?1, ?2, ?3, ?4, ?5);
+    INSERT INTO payment (amount, student_id, remarks, payee, account_name, bill_no) values (?1, ?2, ?3, ?4, ?5, ?6);
     ",
         params![
             payment_data.amount,
             payment_data.student_id,
             payment_data.remarks,
             payment_data.payee,
-            payment_data.account_name
+            payment_data.account_name,
+            payment_data.bill_no
         ],
     )?;
     let id = transaction.last_insert_rowid();
@@ -60,6 +62,7 @@ pub fn get_payment(
                     year: row.get("year")?,
                     month: row.get("year")?,
                     student_id: row.get("student_id")?,
+                    bill_no: row.get("bill_no")?,
                     student_first_name: row.get("first_name")?,
                     student_last_name: row.get("last_name")?,
                     amount: row.get("amount")?,
@@ -80,6 +83,7 @@ pub fn get_payment(
                     id: row.get("id")?,
                     student_id: row.get("student_id")?,
                     payee: row.get("payee")?,
+                    bill_no: row.get("bill_no")?,
                     year: 0,
                     month: 0,
                     account_name: row.get("account_name")?,
@@ -105,6 +109,7 @@ pub fn get_payment_detail(db: &Connection, id: i32) -> Result<Payment, rusqlite:
             amount: row.get("amount")?,
             year: 0,
             month: 0,
+            bill_no: row.get("bill_no")?,
             payee: row.get("payee")?,
             account_name: row.get("account_name")?,
             created_at: row.get("created_at")?,

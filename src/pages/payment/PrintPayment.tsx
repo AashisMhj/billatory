@@ -1,9 +1,8 @@
 import { useEffect, useState, useContext, useRef } from "react";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import moment from "moment";
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import { Box, Button, Container, Grid } from "@mui/material";
 // icons
-import LeftCircleOutlined from "@ant-design/icons/LeftCircleOutlined";
 import PrinterFilledOutlined from "@ant-design/icons/PrinterOutlined";
 //
 // import { PaymentSlip } from "@/components/pages/payment/printPayment";
@@ -13,7 +12,6 @@ import { SettingsContext } from "@/context/settings";
 import { convertToWords } from "@/utils/helper-function";
 import '@/components/pages/payment/printPayment/payment-slip.css';
 import paymentFrame from "@/components/pages/payment/PaymentTemplate";
-import paths from "@/routes/path";
 import { PageTitle } from "@/components/shared";
 
 
@@ -57,7 +55,8 @@ export default function PrintPaymentPage() {
             payee: payment_info.payee,
             payment_id: payment_info.id,
             phone_no: value.phone_no,
-            account_name: payment_info.account_name
+            account_name: payment_info.account_name,
+            bill_no: payment_info.bill_no
         }));
 
     }, [payment_info]);

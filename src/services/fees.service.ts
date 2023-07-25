@@ -82,3 +82,17 @@ export function getMonthlyFeeStats(nepaliYear: number){
 export function getMonthlyPaymentStats(nepaliYear: number){
     return invoke('get_monthly_payment_stats_data', { nepaliYear})
 }
+
+export function disableChargeData(chargeId: number){
+    return invoke('disable_fee_data', {chargeId})
+}
+
+export function getBillCount(){
+    return invoke('get_bill_count_data');
+}
+
+export function addBill(studentId: number, prevAmount: number, rollNo: number, studentClass: String, particular: String){
+    return invoke('add_bill_data', {
+        studentId, prevAmount, rollNo, studentClass, particular
+    })
+}
