@@ -181,33 +181,55 @@ export default function ListStudents() {
                                 <Typography variant='h6'>Filter</Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Box display='flex' gap={4}>
-                                    <Button startIcon={<Print />} variant='outlined' sx={{ borderRadius: '50px' }} onClick={handleBulkPrint} disabled={checkbox_ids.length === 0}>Print</Button>
-                                    <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
-                                    <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
-                                    <Button variant='outlined' sx={{ borderRadius: '50px' }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
-                                    <FormControl >
-                                        <InputLabel htmlFor="class">Class</InputLabel>
-                                        <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => {
-                                            if (event.target.value) {
-                                                setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
-                                            }
-                                        }}>
-                                            {
-                                                classes.map((cl) => <MenuItem key={cl.id} value={cl.id}>{cl.class}</MenuItem>)
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl>
-                                        <InputLabel >Limit</InputLabel>
-                                        <Select labelId="limit" id='limit' value={show_active ? "Active" : "Inactive"} defaultValue="Active" name="limit" onChange={(event) => setShowActive(event.target.value === "Active")}>
-                                            {
-                                                ["Active", "Inactive"].map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                    <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
-                                </Box>
+                                <Grid container spacing={3}>
+                                    <Grid item lg={6} sm={12}>
+                                        <Grid container spacing={3}>
+                                            <Grid item lg={3}>
+                                                <Button startIcon={<Print />} fullWidth variant='outlined' sx={{ borderRadius: '50px', height: "100%" }} onClick={handleBulkPrint} disabled={checkbox_ids.length === 0}>Print</Button>
+                                            </Grid>
+                                            <Grid item lg={3}>
+                                                <Button variant='outlined' fullWidth sx={{ borderRadius: '50px', height: "100%" }} disabled={checkbox_ids.length === 0} onClick={() => setShowUpdateClassModal(true)}>Update Class</Button>
+                                            </Grid>
+                                            <Grid item lg={3}>
+                                                <Button variant='outlined' fullWidth sx={{ borderRadius: '50px', height: "100%" }} disabled={checkbox_ids.length === 0} onClick={() => setShowStatusModal(true)}>Change Status</Button>
+                                            </Grid>
+                                            <Grid item lg={3}>
+                                                <Button variant='outlined' fullWidth sx={{ borderRadius: '50px', height: "100%" }} disabled={checkbox_ids.length === 0} onClick={() => setShowApplyChargeModal(true)}>Apply Charge</Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid item lg={6} sm={12}>
+                                        <Grid container spacing={3}>
+                                            <Grid item xs={4}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel htmlFor="class">Class</InputLabel>
+                                                    <Select labelId="class" id="class" value={filtered_class} name='class' onChange={(event) => {
+                                                        if (event.target.value) {
+                                                            setFilterClass(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
+                                                        }
+                                                    }}>
+                                                        {
+                                                            classes.map((cl) => <MenuItem key={cl.id} value={cl.id}>{cl.class}</MenuItem>)
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel >Status</InputLabel>
+                                                    <Select labelId="status" id='status' value={show_active ? "Active" : "Inactive"} defaultValue="Active" name="limit" onChange={(event) => setShowActive(event.target.value === "Active")}>
+                                                        {
+                                                            ["Active", "Inactive"].map((item) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+                                                        }
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                <Button onClick={clearFilter} fullWidth variant='contained' color='primary'>Reset Filter</Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </MainCard>

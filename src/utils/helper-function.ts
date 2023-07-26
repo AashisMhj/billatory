@@ -12,7 +12,7 @@ export function addComma(data:number){
   if(data){
     return data.toLocaleString()
   }else {
-    '0'
+    return '0'
   }
 }
 

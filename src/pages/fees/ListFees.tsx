@@ -7,7 +7,7 @@ import { Months } from '@/utils/constants';
 import { FeesType, FeesFilterType, StudentClassType, StudentMiniType } from '@/types';
 import { addComma, getSearchParams } from '@/utils/helper-function';
 import { getFeeRowCount, getFees } from '@/services/fees.service';
-import { AddFeeModal, EditFeesModal,} from '@/components/pages/fees/listFees';
+import { AddFeeModal, EditFeesModal, } from '@/components/pages/fees/listFees';
 import { PageTitle, TableTop } from '@/components/shared';
 import { getClassesOnly } from '@/services/class.service';
 import { getAllActiveStudents } from '@/services/student.service';
@@ -134,64 +134,68 @@ export default function ListFees() {
                             <Grid item xs={12}>
                                 <Typography variant='body2'>Filter</Typography>
                             </Grid>
-                            <Grid item lg={2} sm={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="class">Class</InputLabel>
-                                    <Select labelId="class" id="class" value={filter_class_id} name='class' onChange={(event) => {
-                                        if (event.target.value) {
-                                            setFilterClassId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
-                                        }
-                                    }}>
-                                        {
-                                            classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
-                                        }
-                                    </Select>
-                                </FormControl>
+                            <Grid item lg={10} sm={12}>
+                                <Grid container spacing={2}>
+                                    <Grid item lg={3} sm={6}>
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="class">Class</InputLabel>
+                                            <Select labelId="class" id="class" value={filter_class_id} name='class' onChange={(event) => {
+                                                if (event.target.value) {
+                                                    setFilterClassId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
+                                                }
+                                            }}>
+                                                {
+                                                    classes.map((cl) => <MenuItem value={cl.id}>{cl.class}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item lg={3} sm={6}>
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="student">Student</InputLabel>
+                                            <Select labelId="student" id="student" value={filter_student_id} name='student' onChange={(event) => {
+                                                if (event.target.value) {
+                                                    setFilterStudentId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
+                                                }
+                                            }}>
+                                                {
+                                                    all_students.map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item lg={3} sm={6}>
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="year">Year</InputLabel>
+                                            <Select labelId="year" id="year" value={filter_year} name='year' onChange={(event) => {
+                                                if (event.target.value) {
+                                                    setFilterYear(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
+                                                }
+                                            }}>
+                                                {
+                                                    nepali_years.map((year) => <MenuItem value={year}>{year}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item lg={3} sm={6}>
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="month">Month</InputLabel>
+                                            <Select labelId="month" id="month" value={filter_month} name='month' onChange={(event) => {
+                                                if (event.target.value) {
+                                                    setFilterMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
+                                                }
+                                            }}>
+                                                {
+                                                    Months.map((mo) => <MenuItem value={mo.value}>{mo.month_name}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                            <Grid item lg={2}  sm={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="student">Student</InputLabel>
-                                    <Select labelId="student" id="student" value={filter_student_id} name='student' onChange={(event) => {
-                                        if (event.target.value) {
-                                            setFilterStudentId(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
-                                        }
-                                    }}>
-                                        {
-                                            all_students.map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item lg={2} sm={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="year">Year</InputLabel>
-                                    <Select labelId="year" id="year" value={filter_year} name='year' onChange={(event) => {
-                                        if (event.target.value) {
-                                            setFilterYear(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
-                                        }
-                                    }}>
-                                        {
-                                            nepali_years.map((year) => <MenuItem value={year}>{year}</MenuItem>)
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item lg={2}  sm={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="month">Month</InputLabel>
-                                    <Select labelId="month" id="month" value={filter_month} name='month' onChange={(event) => {
-                                        if (event.target.value) {
-                                            setFilterMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))
-                                        }
-                                    }}>
-                                        {
-                                            Months.map((mo) => <MenuItem value={mo.value}>{mo.month_name}</MenuItem>)
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item lg={2}  sm={3}>
-                                <Button onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
+                            <Grid item lg={2} sm={12}>
+                                <Button fullWidth onClick={clearFilter} variant='contained' color='primary'>Reset Filter</Button>
                             </Grid>
                         </Grid>
                     </MainCard>

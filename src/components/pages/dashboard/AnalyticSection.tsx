@@ -67,7 +67,7 @@ export default function AnalyticSection() {
             <AnalyticCard title="Months Payment" icon={<MonetizationOnOutlined fontSize="large" />} count={addComma(monthly_payment)} color='primary' />
         </Grid>
         <Grid item xs={12} lg={12} sm={3}>
-            <AnalyticCard title="Months Due" icon={<FeedOutlined fontSize="large" />} count={addComma(monthly_charge)} color='primary' />
+            <AnalyticCard title="Months Total Fees" icon={<FeedOutlined fontSize="large" />} count={addComma(monthly_charge)} color='primary' />
         </Grid>
     </>
 }

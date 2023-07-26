@@ -27,12 +27,18 @@ export default function DashboardDefault() {
         </Grid>
       </Grid>
       <Grid item xs={10} lg={10} md={12}>
-        <MainCard boxShadow sx={{margin: '10px'}}>
-          <Report />
-        </MainCard>
-        <MainCard boxShadow sx={{margin: '10px'}}>
-          <StudentGraphSection />
-        </MainCard>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <MainCard boxShadow >
+              <Report />
+            </MainCard>
+          </Grid>
+          <Grid item xs={12}>
+            <MainCard boxShadow >
+              <StudentGraphSection />
+            </MainCard>
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );

@@ -54,7 +54,7 @@ export default function BackupSection() {
     return <MainCard boxShadow>
         <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' >
             <Button variant="contained" color="error" size="large" fullWidth disabled={is_loading} onClick={handleClick} startIcon={<BackupIcon />}>Backup Database</Button>
-            <Paper sx={{ height: 200, overflow: 'auto', width: "100%", margin: 1, padding: 1 }}>
+            <Paper sx={{ height: 150, overflow: 'auto', width: "100%", margin: 1, padding: 1 }}>
                 <List sx={{ width: "100%" }}>
                     {
                         backup_files.map((item) => <ListItem key={item.name}>
