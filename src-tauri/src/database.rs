@@ -398,19 +398,6 @@ pub fn update_charge(
     Ok(())
 }
 
-pub fn count_charges_row(db: &Connection, class_id: Option<i32>) -> Result<i32, rusqlite::Error> {
-    if let Some(id) = class_id {
-        let mut statement =
-            db.prepare("Select count(id) as count from charge where class_id = ?1")?;
-        let count = statement.query_row([id], |row| row.get::<&str, i32>("count"))?;
-        Ok(count)
-    } else {
-        let mut statement = db.prepare("Select count(id) as count from charge")?;
-        let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
-        Ok(count)
-    }
-}
-
 // Not used
 // previously used to apply charges directly
 pub fn apply_charges(db: &mut Connection, charge_id: i32) -> Result<(), rusqlite::Error> {

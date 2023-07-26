@@ -82,7 +82,19 @@ pub fn apply_charges_student(db: &mut Connection, charge_id: i32,amount:f32, cha
 
 pub fn delete_charge(db: &Connection, charge_id: i32) -> Result<(), rusqlite::Error>{
     let current_date_time = get_current_date_time();
-    println!("{}",charge_id);
     db.execute("UPDATE charge set deleted = true, updated_at = ?1 where id = ?2", params![current_date_time, charge_id])?;
     Ok(())
+}
+
+pub fn count_charges_row(db: &Connection, class_id: Option<i32>) -> Result<i32, rusqlite::Error> {
+    if let Some(id) = class_id {
+        let mut statement =
+            db.prepare("Select count(id) as count from charge where class_id = ?1 and deleted = false;")?;
+        let count = statement.query_row([id], |row| row.get::<&str, i32>("count"))?;
+        Ok(count)
+    } else {
+        let mut statement = db.prepare("Select count(id) as count from charge where deleted = false;")?;
+        let count = statement.query_row([], |row| row.get::<&str, i32>("count"))?;
+        Ok(count)
+    }
 }

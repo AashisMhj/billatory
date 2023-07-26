@@ -720,7 +720,7 @@ fn apply_charges_data(app_handle: AppHandle, charge_id: i32)-> Result<i32, Strin
 
 #[tauri::command]
 fn count_charges_row(app_handle: AppHandle, class_id: Option<i32>) -> Result<i32, String> {
-    let count = app_handle.db(|db| database::count_charges_row(db, class_id));
+    let count = app_handle.db(|db| charges::count_charges_row(db, class_id));
     match count{
         Ok(value)=>{
             return Ok(value);

@@ -38,7 +38,7 @@ export default function EditChargeModal({ open, handleClose, onSubmit, data }: P
                 </Box>
                 <Formik initialValues={{ ...data, submit: null }}
                     validationSchema={Yup.object().shape({
-                        amount: Yup.number().min(1, "Please Enter Your Amount").required('Please Enter your Amount'),
+                        amount: Yup.number().min(1, "Please Enter Your Amount").max(999999999, 'Charge Amount must be less then 9 digit').required('Please Enter your Amount'),
                         charge_title: Yup.string().trim().required('Charge ')
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {

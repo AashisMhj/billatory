@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Formik, } from "formik";
 import * as Yup from 'yup';
-import { Box, Button, Checkbox, FormControlLabel, FormHelperText, FormLabel, Grid, IconButton, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Stack, SxProps, Typography } from "@mui/material";
+import { Box, Button, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Modal, OutlinedInput, Select, Stack, SxProps, Typography } from "@mui/material";
 import { CloseCircleOutlined } from '@ant-design/icons'
 //
-import { ChargesType, StudentClassType } from "@/types";
+import { StudentClassType } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import { addCharge } from "@/services/charge.service";
 import { getClasses } from "@/services/class.service";
@@ -60,7 +60,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                 }}
                     validationSchema={Yup.object().shape({
                         charge_title: Yup.string().trim().required('This field is Required'),
-                        amount: Yup.number().min(1, 'Please Enter the Amount').required('Please Enter the Amount'),
+                        amount: Yup.number().min(1, 'Please Enter the Amount').max(999999999, 'Charge Amount must be less then 9 digit').required('Please Enter the Amount'),
                         class: Yup.number().min(0, 'Please Select Class').required('Please Select Class'),
                     })}
                     onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {

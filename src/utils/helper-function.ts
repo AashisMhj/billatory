@@ -9,7 +9,11 @@ export function getNoOfPage(total:number, limit:number):number{
 }
 
 export function addComma(data:number){
+  if(data){
     return data.toLocaleString()
+  }else {
+    '0'
+  }
 }
 
 export function convertToWords(number:number) {
