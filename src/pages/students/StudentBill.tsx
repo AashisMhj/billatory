@@ -81,13 +81,12 @@ export default function StudentBillPage() {
             iframeRef.current?.contentWindow?.document.write(getBillPageLayout(content));
             if(iframeRef.current && iframeRef.current.contentWindow){
                 iframeRef.current.contentWindow.addEventListener('afterprint', ()=>{
-                    console.log('printing')
                     const studentId = student_detail?.id || 0;
                     const rollNo = student_detail?.roll_no || 0;
                     const studentClass = student_detail?.class || ''
                     addBill(studentId, previous_due, rollNo, studentClass, JSON.stringify(current_month_due))
                         .then(data => {
-                            console.log(data);
+                            // TODO Navigate
                         })
                         .catch(err => console.error(err))
                 })

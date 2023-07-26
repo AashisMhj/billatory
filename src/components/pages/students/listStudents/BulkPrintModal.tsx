@@ -4,12 +4,13 @@ import { Box, Button, IconButton, Modal, SxProps, Typography } from "@mui/materi
 import CircularProgress from '@mui/material/CircularProgress';
 import NepaliDate from "nepali-date-converter";
 //
-import { FeesType, StudentType } from "@/types";
+import {  FeesType, StudentType } from "@/types";
 import { getStudentCurrentMonthStudentFees, getStudentDetail, getStudentPreviousDue } from "@/services/student.service";
 import { SettingsContext } from "@/context/settings";
 import { SnackBarContext } from "@/context/snackBar";
 import { Months } from "@/utils/constants";
-import { getBillPageLayout, billFrame, getBulkBillPageLayout } from "@/utils/template-helpers";
+import {  billFrame, getBulkBillPageLayout } from "@/utils/template-helpers";
+import { addBill, getBillCount } from "@/services/fees.service";
 
 interface Props {
     open: boolean,
@@ -28,6 +29,13 @@ const style: SxProps = {
     p: 4
 }
 
+interface BillInsertType {
+    studentId: number,
+    previous_due: number,
+    rollNo: number,
+    studentClass: string,
+    content: string,
+}
 
 export default function BulkPrintModal({ open, handleClose, onSubmit, student_ids }: Props) {
     const [is_loading, setIsLoading] = useState(false);
@@ -45,9 +53,12 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
             if (!iframeRef.current?.contentWindow) {
                 throw Error('Content window not found')
             }
+            let bill_count = await getBillCount() as number;
+            let bill_contents:Array<BillInsertType> = []
             for (let id of student_ids) {
                 const data = await getStudentDetail(id);
                 if (typeof data === "string") {
+                    bill_count = bill_count +1;
                     const student_detail = JSON.parse(data) as StudentType;
                     const previous_due = await getStudentPreviousDue(id, nepali_month, nepali_year) as number;
                     const current_month_fee = await getStudentCurrentMonthStudentFees(id, nepali_month, nepali_year) as Array<FeesType>
@@ -57,7 +68,7 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                     content += billFrame({
                         previous_due: previous_due,
                         total_sum: total_sum,
-                        bill_no: 0,
+                        bill_no: bill_count,
                         month: Months[nepali_month] ? Months[nepali_month].month_name : '',
                         student_class: student_detail?.class || '',
                         bill_items: current_month_fee,
@@ -68,6 +79,13 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                         phone_no: value.phone_no,
                         location: value.location,
                         student_name: `${student_detail?.first_name} ${student_detail?.last_name}`,
+                    });
+                    bill_contents.push({
+                        content: JSON.stringify(current_month_fee),
+                        previous_due: previous_due,
+                        rollNo: student_detail.roll_no || 0,
+                        studentClass: student_detail.class || '',
+                        studentId: student_detail.id || 0
                     })
                 }
             }
@@ -84,6 +102,11 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                 // iframeRef.current.contentWindow?.document.write(bill);
                 iframeRef?.current?.contentWindow?.print();
                 iframeRef.current.contentWindow.addEventListener('afterprint', ()=>{
+                    bill_contents.forEach((item) => {
+                        addBill(item.studentId, item.previous_due, item.rollNo, item.studentClass, item.content)
+                            .then(data => null)
+                            .catch(error => console.error(error))
+                    })
                     onSubmit();
                     handleClose()
                 })

@@ -214,7 +214,7 @@ pub fn upgrade_database_if_needed(
         tx.execute("CREATE TABLE IF NOT EXISTS bills(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_id INTEGER NOT NULL,
-            created_at datetime NOT NULL,
+            created_at datetime NOT NULL default current_timestamp,
             prev_amount INTEGER NOT NULL,
             roll_no integer not null,
             student_class integer not null,
