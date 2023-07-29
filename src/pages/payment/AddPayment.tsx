@@ -5,13 +5,13 @@ import { Formik, FormikErrors } from "formik";
 import * as Yup from 'yup';
 import NepaliDate from "nepali-date-converter";
 //
-import { getAllActiveStudents } from "@/services/student.service";
+import { getAllActiveStudents, getStudentsWithBillNo } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
 import { getClasses } from "@/services/class.service";
 //
 import FormContainer from "@/components/layouts/FormContainer";
 import { SnackBarContext } from "@/context/snackBar";
-import { StudentClassType, StudentMiniType } from "@/types";
+import { StudentClassType, StudentMiniBillNo } from "@/types";
 import AnimateButton from "@/components/@extended/AnimateButton";
 import paths from "@/routes/path";
 import { PageTitle } from "@/components/shared";
@@ -19,7 +19,7 @@ import { PageTitle } from "@/components/shared";
 type SetFieldValueType = (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void | FormikErrors<{ student_id: null; amount: number; remarks: string; payee: string; }>>;
 type StudentListType = {
     show: boolean
-} & StudentMiniType;
+} & StudentMiniBillNo;
 
 export default function AddPaymentPage() {
     const [students, setStudents] = useState<Array<StudentListType>>([]);
@@ -46,11 +46,12 @@ export default function AddPaymentPage() {
             const selected_student = students.find((el) => el.id === event.target.value);
             if (selected_student) {
                 setFieldValue('account_name', `${selected_student.first_name} ${selected_student.last_name}`);
+                setFieldValue('bill_no', selected_student.bill_no)
             }
         }
     }
     useEffect(() => {
-        getAllActiveStudents()
+        getStudentsWithBillNo()
             .then(data => {
                 if (Array.isArray(data)) {
                     setStudents(data.map((value) => {
@@ -117,7 +118,7 @@ export default function AddPaymentPage() {
                                 })
                                 .catch(err => {
                                     showAlert('Error Adding Payment ' + err, 'error');
-                                    console.log(err);
+                                    console.error(err);
                                 })
                                 .finally(() => {
                                     setSubmitting(false);

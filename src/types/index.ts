@@ -95,6 +95,10 @@ export interface StudentMiniType {
     class_id: number,
 }
 
+export interface StudentMiniBillNo extends StudentMiniType{
+    bill_no: number
+} 
+
 export interface StudentType {
     id: number,
     first_name: string,

@@ -121,3 +121,7 @@ export function bulkUpdateStudentStatus(newStatus: boolean, studentIds: Array<nu
         studentIds
     })
 }
+
+export function getStudentsWithBillNo(){
+    return invoke('get_students_with_bill_no_data')
+}

@@ -453,6 +453,20 @@ fn bulk_update_student_class_data(app_handle: AppHandle, class_id: i32, student_
 }
 
 #[tauri::command]
+fn get_students_with_bill_no_data(app_handle: AppHandle) ->Result<Vec<students::StudentBillNo>, String>{
+    let result = app_handle.db(|db| students::get_students_with_bill_no(db));
+    match result{
+        Ok(value) =>{
+            Ok(value)
+        }
+        Err(error) =>{
+            error!("{}", error);
+            Err(error.to_string())
+        }
+    }
+}
+
+#[tauri::command]
 fn bulk_update_student_status_data(app_handle: AppHandle, new_status: bool, student_ids: Vec<i32>) -> Result<i32, String>{
     let result = app_handle.db(|db| students::bulk_update_student_status(db, new_status, student_ids));
     match result{
@@ -1088,6 +1102,7 @@ fn main() {
             get_all_active_students_data,
             bulk_update_student_class_data,
             bulk_update_student_status_data,
+            get_students_with_bill_no_data,
             count_student_row,
             // student charges
             get_student_charges_data,

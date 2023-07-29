@@ -7,8 +7,18 @@ pub struct StudentMinType{
     pub id: i32,
     pub first_name: String,
     pub last_name: String,
-    pub class_id: i32
+    pub class_id: i32,
 }
+
+#[derive(Debug, Serialize)]
+pub struct StudentBillNo{
+    pub id: i32,
+    pub first_name: String,
+    pub last_name: String,
+    pub class_id: i32,
+    pub bill_no: i32
+}
+
 
 
 #[derive(Debug, Serialize)]
@@ -167,9 +177,7 @@ pub fn change_student_status(
 ) -> Result<(), rusqlite::Error> {
     let date_string = get_current_date_time();
     db.execute(
-        "
-    UPDATE students SET is_active = ?1, updated_at = ?2 where id = ?3
-    ",
+        "UPDATE students SET is_active = ?1, updated_at = ?2 where id = ?3;",
         params![new_status, date_string, student_id],
     )?;
     Ok(())
@@ -202,4 +210,23 @@ pub fn bulk_update_student_status(db: &Connection ,new_status: bool, student_ids
     let query = format!( "UPDATE students set is_active = ?1, updated_at = ?2 where id in ( {} )", joined_ids);
     db.execute(query.as_str(), params![new_status, date_string])?;
     Ok(())
+}
+
+pub fn get_students_with_bill_no(db: &Connection) -> Result<Vec<StudentBillNo>, rusqlite::Error>{
+    let mut statement = db.prepare("select id,first_name,last_name,class_id, (select ifnull(max(id),0)  from bills where bills.id = students.id) as bill_no from students where is_active = true;")?;
+    let student_iter = statement.query_map([], |row|{
+        Ok(StudentBillNo{
+            id: row.get("id")?,
+            bill_no: row.get("bill_no")?,
+            class_id: row.get("class_id")?,
+            first_name: row.get("first_name")?,
+            last_name: row.get("last_name")?,
+        })
+    })?;
+
+    let mut data:Vec<StudentBillNo> = Vec::new();
+    for item in student_iter{
+        data.push(item.unwrap())
+    }
+    Ok(data)
 }
