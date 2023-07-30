@@ -26,6 +26,10 @@ const tableHeads = [
     'Action'
 ]
 
+interface AllStudentMiniType extends StudentMiniType{
+    display: boolean
+}
+
 
 export default function ListFees() {
     const [searchParams] = useSearchParams();
@@ -40,7 +44,7 @@ export default function ListFees() {
     const [filter_month, setFilterMonth] = useState<number | null>(null);
     const [filter_year, setFilterYear] = useState<number | null>(null);
     const [open_add_modal, setOpenAddModal] = useState(false)
-    const [all_students, setAllStudents] = useState<Array<StudentMiniType>>([]);
+    const [all_students, setAllStudents] = useState<Array<AllStudentMiniType>>([]);
     const [fee_edit_id, setFeeEditId] = useState<number | null>(null);
 
 
@@ -96,6 +100,19 @@ export default function ListFees() {
 
     }
 
+    useEffect(() =>{
+        if(filter_class_id){
+            setAllStudents(all_students.map(el =>{
+                return {
+                    ...el,
+                    display: el.class_id === filter_class_id
+                }
+            }))
+        }else{
+            setAllStudents(all_students.map((el) => ({...el, display: true})))
+        }
+    }, [filter_class_id])
+
     useEffect(() => {
         getClassesOnly()
             .then((data) => {
@@ -105,7 +122,8 @@ export default function ListFees() {
 
         getAllActiveStudents()
             .then((data) => {
-                setAllStudents(data as Array<StudentMiniType>)
+                let students_data = data as Array<StudentMiniType>;
+                setAllStudents(students_data.map((el) => ({...el, display: true})))
             })
             .catch(error => console.error(error))
     }, [])
@@ -159,7 +177,7 @@ export default function ListFees() {
                                                 }
                                             }}>
                                                 {
-                                                    all_students.map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
+                                                    all_students.filter(el => el.display).map((st) => <MenuItem value={st.id}>{`${st.first_name} ${st.last_name}`}</MenuItem>)
                                                 }
                                             </Select>
                                         </FormControl>

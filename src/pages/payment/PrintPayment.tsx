@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
-import moment from "moment";
+import NepaliDate from "nepali-date-converter";
 import { Box, Button, Container, Grid } from "@mui/material";
 // icons
 import PrinterFilledOutlined from "@ant-design/icons/PrinterOutlined";
@@ -18,7 +18,6 @@ import { PageTitle } from "@/components/shared";
 export default function PrintPaymentPage() {
     const { id } = useParams();
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const current_date = moment().format('YYYY-MM-DD');
 
     const [payment_info, setPaymentInfo] = useState<PaymentType>({
         amount: 0,
@@ -42,22 +41,27 @@ export default function PrintPaymentPage() {
         }
     }
 
+
     useEffect(() => {
-        iframeRef.current?.contentWindow?.document.open();
-        iframeRef.current?.contentWindow?.document.close();
-        iframeRef.current?.contentWindow?.document.write(paymentFrame({
-            organization_name: value.organization_name,
-            amount: payment_info.amount,
-            current_date: current_date,
-            amount_words: convertToWords(payment_info.amount),
-            location: value.location,
-            pan_no: value.pan_no,
-            payee: payment_info.payee,
-            payment_id: payment_info.id,
-            phone_no: value.phone_no,
-            account_name: payment_info.account_name,
-            bill_no: payment_info.bill_no
-        }));
+        try {     
+            iframeRef.current?.contentWindow?.document.open();
+            iframeRef.current?.contentWindow?.document.close();
+            iframeRef.current?.contentWindow?.document.write(paymentFrame({
+                organization_name: value.organization_name,
+                amount: payment_info.amount,
+                current_date: new NepaliDate(new Date(payment_info.created_at)).format('YYYY-MM-DD'),
+                amount_words: convertToWords(payment_info.amount),
+                location: value.location,
+                pan_no: value.pan_no,
+                payee: payment_info.payee,
+                payment_id: payment_info.id,
+                phone_no: value.phone_no,
+                account_name: payment_info.account_name,
+                bill_no: payment_info.bill_no
+            }));
+        } catch (error) {
+            console.error(error)
+        }
 
     }, [payment_info]);
 

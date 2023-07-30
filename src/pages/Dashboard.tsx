@@ -21,12 +21,12 @@ export default function DashboardDefault() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={2} lg={2} md={12} >
+      <Grid item lg={2} md={12} sm={12} >
         <Grid container rowSpacing={4.5} columnSpacing={2.75}>
           <AnalyticSection />
         </Grid>
       </Grid>
-      <Grid item xs={10} lg={10} md={12}>
+      <Grid item lg={10} md={12} sm={12}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <MainCard boxShadow >

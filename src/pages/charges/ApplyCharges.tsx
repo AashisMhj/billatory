@@ -1,6 +1,7 @@
 import { Button, Checkbox, Grid, InputLabel, IconButton, List, ListItem, ListItemButton, ListItemText, OutlinedInput, Paper, Stack, Typography, Select, MenuItem } from '@mui/material';
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import NepaliDate from 'nepali-date-converter';
 //
 import { applyCharge, getChargeDetail, getStudentOfCharge } from '@/services/charge.service';
 import { SnackBarContext } from '@/context/snackBar';
@@ -19,7 +20,7 @@ interface StudentCharge {
     charge_id?: number,
     display: boolean
 }
-
+const CurrentNepaliDate = new NepaliDate(Date.now())
 
 export default function ApplyChargesPage() {
     const [selected_student, setSelectedStudent] = useState<Array<StudentCharge>>([]);
@@ -27,8 +28,8 @@ export default function ApplyChargesPage() {
     const [charge_title, setChargeTitle] = useState('');
     const [charge_amount, setChargeAmount] = useState(0);
     const [search_text, setSearchText] = useState('');
-    const [selected_year, setSelectedYear] = useState(2080);
-    const [selected_month, setSelectedMonth] = useState(Months[0].value);
+    const [selected_year, setSelectedYear] = useState(CurrentNepaliDate.getYear());
+    const [selected_month, setSelectedMonth] = useState(Months[CurrentNepaliDate.getMonth()]?.value);
     const { showAlert } = useContext(SnackBarContext);
 
     const { id } = useParams();
@@ -193,7 +194,7 @@ export default function ApplyChargesPage() {
                             </Grid>
                             <Grid item xs={2}>
                                 <Stack spacing={1}>
-                                    <InputLabel htmlFor="month" required={true}>Year</InputLabel>
+                                    <InputLabel htmlFor="month" required={true}>Month</InputLabel>
                                     <Select labelId="month" value={selected_month} onChange={(event) => setSelectedMonth(typeof event.target.value === "number" ? event.target.value : parseInt(event.target.value))}>
                                         {
                                             Months.map((item) => <MenuItem key={item.value} value={item.value}>{item.month_name}</MenuItem>)

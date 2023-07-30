@@ -25,7 +25,7 @@ export default function StudentBillPage() {
     const [current_month_due, setCurrentMonthDue] = useState<Array<FeesType>>([]);
     const [total_sum, setTotalSum] = useState(0);
     const nepali_date = new NepaliDate(Date.now());
-    const nepali_month = nepali_date.getMonth() + 1;
+    const nepali_month = nepali_date.getMonth();
     const nepali_year = nepali_date.getYear();
     const [bill_count, setBillCount] = useState(0);
 
