@@ -114,7 +114,7 @@ export default function StudentBillPage() {
                     })
                     .catch(error => console.error(error));
 
-                getStudentPreviousDue(parsed_id, nepali_month, nepali_year)
+                getStudentPreviousDue(parsed_id, nepali_month + 1, nepali_year)
                     .then(data => {
                         if (typeof data === "number") {
                             setPreviousDue(data);
@@ -124,7 +124,7 @@ export default function StudentBillPage() {
                         console.error(error)
                     });
 
-                getStudentCurrentMonthStudentFees(parsed_id, nepali_month, nepali_year)
+                getStudentCurrentMonthStudentFees(parsed_id, nepali_month + 1, nepali_year)
                     .then(data => {
                         setCurrentMonthDue(data as Array<FeesType>);
                     })

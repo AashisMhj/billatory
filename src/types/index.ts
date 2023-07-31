@@ -44,6 +44,7 @@ export interface SettingsType {
     image: string,
     location: string,
     phone_no: string,
+    secondary_phone_no?: string,
     created_at?: string,
     updated_at?: string
 }

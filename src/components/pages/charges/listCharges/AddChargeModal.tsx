@@ -113,7 +113,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 <Grid item xs={12}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="class" error={Boolean(errors.class && touched.class)}>Class</InputLabel>
-                                        <Select labelId='class' value={values.class} name="class" onChange={handleChange} error={Boolean(errors.class && touched.class)}>
+                                        <Select labelId='class' value={values.class} name="class" onChange={handleChange} onBlur={handleBlur} error={Boolean(errors.class && touched.class)}>
                                             {
                                                 classes.map((item) => <MenuItem key={item.id} value={item.id}>{item.class}</MenuItem>)
                                             }

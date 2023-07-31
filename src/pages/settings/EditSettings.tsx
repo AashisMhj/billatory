@@ -31,8 +31,9 @@ export default function EditSettingPage() {
                         validationSchema={Yup.object().shape({
                             organization_name: Yup.string().trim().required('Name is required').max(200),
                             location: Yup.string().trim().required('Address is required').max(200),
-                            pan_no: Yup.number().required('Pan No is required').max(99999999999),
+                            pan_no: Yup.number().required('Pan No is required').max(999999999999),
                             phone_no: Yup.string().trim().required('Phone No is required'),
+                            secondary_phone_no: Yup.string().trim(),
                             image: Yup.mixed()
                         })}
                         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -43,7 +44,8 @@ export default function EditSettingPage() {
                                     image: values.image,
                                     location: values.location,
                                     panNo: values.pan_no,
-                                    phoneNo: values.phone_no
+                                    phoneNo: values.phone_no,
+                                    secondaryPhoneNo: values.secondary_phone_no
                                 });
                                 if (data === 200) {
                                     const settings = await getSettings();
@@ -69,6 +71,9 @@ export default function EditSettingPage() {
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, isSubmitting, touched, values }) => (
                             <form noValidate onSubmit={handleSubmit}>
+                                <pre>
+                                    {JSON.stringify(errors)}
+                                </pre>
                                 <Grid container spacing={3}>
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
@@ -145,6 +150,29 @@ export default function EditSettingPage() {
                                             {touched.phone_no && errors.phone_no && (
                                                 <FormHelperText error id="standard-weight-helper-text-email-login">
                                                     {errors.phone_no}
+                                                </FormHelperText>
+                                            )}
+                                        </Stack>
+                                    </Grid>
+
+                                    {/* Secondary Phone no */}
+                                    <Grid item xs={12}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="secondary-phone-no">Secondary Phone No</InputLabel>
+                                            <OutlinedInput
+                                                id="secondary-phone-no"
+                                                type="string"
+                                                value={values.secondary_phone_no}
+                                                name="secondary_phone_no"
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                                placeholder="Enter Phone No"
+                                                fullWidth
+                                                error={Boolean(touched.secondary_phone_no && errors.secondary_phone_no)}
+                                            />
+                                            {touched.secondary_phone_no && errors.secondary_phone_no && (
+                                                <FormHelperText error id="standard-weight-helper-text-email-login">
+                                                    {errors.secondary_phone_no}
                                                 </FormHelperText>
                                             )}
                                         </Stack>

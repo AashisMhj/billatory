@@ -85,20 +85,19 @@ pub fn upgrade_database_if_needed(
 
         tx.pragma_update(None, "user_version", CURRENT_DB_VERSION)?;
 
-        tx.execute_batch(
-            " CREATE TABLE IF NOT EXISTS settings (
+        tx.execute_batch(" CREATE TABLE IF NOT EXISTS settings (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 organization_name text not null,
                 pan_no int not null,
                 email text,
                 location text not null,
                 phone_no text not null,
+                secondary_phone_no text,
                 password text not null,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at datetime,
                 image text
-            )",
-        )?;
+            );",)?;
 
         tx.execute(
             "

@@ -8,6 +8,7 @@ interface CreateSettingType {
     phoneNo: string, 
     panNo: number,
     password: string,
+    secondaryPhoneNo?: string
 }
 
 type UpdateSettingType = Omit<CreateSettingType, "password">
@@ -16,7 +17,7 @@ export function getSettings(){
     return invoke('get_settings_data');
 }
 
-export function addSettings({organizationName, email, location, image, phoneNo, panNo, password}:CreateSettingType){
+export function addSettings({organizationName, email, location, image, phoneNo, panNo, password, secondaryPhoneNo }:CreateSettingType){
     return invoke('add_settings_data', {
         organizationName,
         location,
@@ -24,19 +25,21 @@ export function addSettings({organizationName, email, location, image, phoneNo, 
         image,
         phoneNo,
         panNo,
-        password
+        password,
+        secondaryPhoneNo
     });
 
 }
 
-export function updateSettings({organizationName,email, location, image, phoneNo, panNo}:UpdateSettingType){
+export function updateSettings({organizationName,email, location, image, phoneNo, panNo,secondaryPhoneNo}:UpdateSettingType){
     return invoke('update_settings_data', {
         organizationName,
         location,
         email,
         image,
         phoneNo,
-        panNo
+        panNo,
+        secondaryPhoneNo
     })
 }
 

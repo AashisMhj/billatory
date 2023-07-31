@@ -50,7 +50,7 @@ pub fn add_class(class: String, db: &Connection) -> Result<(), rusqlite::Error> 
 pub fn get_class(page: i32, limit: i32, db: &Connection) -> Result<Vec<ClassTable>, rusqlite::Error> {
     let offset_value = (page - 1) * limit;
     let mut data: Vec<ClassTable> = Vec::new();
-    let mut statement = db.prepare("Select *, (select count(id) from students where gender = 'male' and class.id = students.class_id) as male_count, (select count(id) from students where gender = 'female' and class.id = students.class_id) as female_count from class order by id desc limit ?1 offset ?2;")?;
+    let mut statement = db.prepare("Select *, (select count(id) from students where gender = 'male' and class.id = students.class_id and is_active = true) as male_count, (select count(id) from students where gender = 'female' and class.id = students.class_id and is_active = true) as female_count from class order by id desc limit ?1 offset ?2;")?;
     let class_iter = statement.query_map(params![limit, offset_value], |row| {
         Ok(ClassTable {
             class: row.get("class")?,

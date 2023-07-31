@@ -15,6 +15,7 @@ pub struct Setting {
     pub phone_no: String,
     pub location: String,
     pub image: String,
+    pub secondary_phone_no: Option<String>,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
     pub password: String,
@@ -41,9 +42,7 @@ pub fn update_password(db: &Connection, old_password:String, new_password: Strin
 pub fn add_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqlite::Error> {
     let hashed_password = hash(setting_data.password, bcrypt::DEFAULT_COST).unwrap();
     db.execute(
-        "
-    INSERT INTO settings (organization_name, pan_no, location, phone_no, image, email, password) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
-    ",
+        "INSERT INTO settings (organization_name, pan_no, location, phone_no, image, email, password, secondary_phone_no) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);",
         params![
             setting_data.organization_name,
             setting_data.pan_no,
@@ -51,7 +50,8 @@ pub fn add_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqli
             setting_data.phone_no,
             setting_data.image,
             setting_data.email,
-            hashed_password
+            hashed_password,
+            setting_data.secondary_phone_no
         ],
     )?;
 
@@ -74,6 +74,7 @@ pub fn get_settings(db: &Connection) -> Result<Setting, rusqlite::Error> {
             email: row.get("email")?,
             location: row.get("location")?,
             pan_no: row.get("pan_no")?,
+            secondary_phone_no: row.get("secondary_phone_no")?,
             phone_no: row.get("phone_no")?,
             created_at: row.get("created_at")?,
             updated_at: row.get("updated_at")?,
@@ -85,8 +86,8 @@ pub fn get_settings(db: &Connection) -> Result<Setting, rusqlite::Error> {
 
 pub fn update_settings(db: &Connection, setting_data: Setting) -> Result<(), rusqlite::Error> {
     let current_date = get_current_date_time();
-    db.execute("UPDATE settings SET organization_name = ?1, image = ?2, email = ?3, location = ?4, pan_no = ?5, phone_no = ?6, updated_at = ?7;", 
-    params![setting_data.organization_name, setting_data.image, setting_data.email, setting_data.location, setting_data.pan_no, setting_data.phone_no, current_date])?;
+    db.execute("UPDATE settings SET organization_name = ?1, image = ?2, email = ?3, location = ?4, pan_no = ?5, phone_no = ?6, updated_at = ?7, secondary_phone_no = ?8;", 
+    params![setting_data.organization_name, setting_data.image, setting_data.email, setting_data.location, setting_data.pan_no, setting_data.phone_no, current_date, setting_data.secondary_phone_no])?;
     Ok(())
 }
 

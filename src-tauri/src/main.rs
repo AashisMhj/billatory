@@ -78,7 +78,8 @@ fn add_settings_data(
     pan_no: i32,
     location: String,
     image: String,
-    password: String
+    password: String,
+    secondary_phone_no: Option<String>
 ) -> Result<settings::Setting, String> {
     let setting_data = settings::Setting {
         organization_name: organization_name,
@@ -88,6 +89,7 @@ fn add_settings_data(
         image: image,
         location: location,
         password: password,
+        secondary_phone_no: secondary_phone_no,
         updated_at: None,
         created_at: None
     };
@@ -135,6 +137,7 @@ fn update_settings_data(app_handle: AppHandle,
     email: Option<String>,
     pan_no: i32,
     location: String,
+    secondary_phone_no: Option<String>,
     image: String ) -> Result<i32, String>{
     let settings_data = settings::Setting{
         organization_name: organization_name,
@@ -143,6 +146,7 @@ fn update_settings_data(app_handle: AppHandle,
         pan_no: pan_no,
         image: image,
         location: location,
+        secondary_phone_no: secondary_phone_no,
         password: "".to_string(),
         updated_at: None,
         created_at: None

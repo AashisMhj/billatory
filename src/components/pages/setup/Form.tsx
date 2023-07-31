@@ -43,6 +43,7 @@ const AuthLogin = () => {
           location: '',
           pan_no: 0,
           phone_no: '',
+          secondary_phone_no: '',
           password: '',
           email: '',
           submit: null
@@ -50,10 +51,11 @@ const AuthLogin = () => {
         validationSchema={Yup.object().shape({
           organization_name: Yup.string().trim().required('Name is required').max(200),
           location: Yup.string().trim().required('Address is required').max(200),
-          pan_no: Yup.number().required('Pan No is required').max(99999999999),
+          pan_no: Yup.number().required('Pan No is required').max(999999999999),
           phone_no: Yup.string().trim().required('Phone No is required'),
+          secondary_phone_no: Yup.string().trim(),
           image: Yup.mixed(),
-          password: Yup.string().min(8,'Password needs to min 8 characters').required(),
+          password: Yup.string().min(8, 'Password needs to min 8 characters').required(),
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -65,6 +67,7 @@ const AuthLogin = () => {
               location: values.location,
               panNo: values.pan_no,
               phoneNo: values.phone_no,
+              secondaryPhoneNo: values.secondary_phone_no,
               password: values.password
             });
             if (data) {
@@ -77,7 +80,7 @@ const AuthLogin = () => {
             if (typeof err === "string") {
               showAlert(err, 'error');
             } else {
-              showAlert('Error '+err, 'error');
+              showAlert('Error ' + err, 'error');
               if (err instanceof Error) {
                 setErrors({ submit: err.message });
               }
@@ -116,7 +119,7 @@ const AuthLogin = () => {
                   )}
                 </Stack>
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="organization-file" required={true}>Organization Logo</InputLabel>
@@ -131,7 +134,7 @@ const AuthLogin = () => {
                 </Stack>
               </Grid>
               {/* email */}
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="phone-no" >Email</InputLabel>
                   <OutlinedInput
@@ -156,7 +159,7 @@ const AuthLogin = () => {
               {/* Phone no */}
               <Grid item xs={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="phone-no" required={true}>Phone No</InputLabel>
+                  <InputLabel htmlFor="phone-no" required={true}>Primary Phone No</InputLabel>
                   <OutlinedInput
                     id="phone-no"
                     type="text"
@@ -176,7 +179,30 @@ const AuthLogin = () => {
                 </Stack>
               </Grid>
 
-              {/* Phone No */}
+              {/* Secondary Phone no */}
+              <Grid item xs={6}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="secondary-phone-no">Secondary Phone No</InputLabel>
+                  <OutlinedInput
+                    id="secondary-phone-no"
+                    type="text"
+                    value={values.secondary_phone_no}
+                    name="secondary_phone_no"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="Secondary Enter Phone No"
+                    fullWidth
+                    error={Boolean(touched.secondary_phone_no && errors.secondary_phone_no)}
+                  />
+                  {touched.secondary_phone_no && errors.secondary_phone_no && (
+                    <FormHelperText error id="standard-weight-helper-text-email-login">
+                      {errors.secondary_phone_no}
+                    </FormHelperText>
+                  )}
+                </Stack>
+              </Grid>
+
+              {/* Address */}
               <Grid item xs={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="address" required={true}>Address</InputLabel>
@@ -225,7 +251,7 @@ const AuthLogin = () => {
                   <InputLabel htmlFor="password" required={true}>Password</InputLabel>
                   <OutlinedInput
                     id="password"
-                    type={ show_password ? "text": "password"}
+                    type={show_password ? "text" : "password"}
                     value={values.password}
                     name="password"
                     onBlur={handleBlur}
@@ -237,12 +263,12 @@ const AuthLogin = () => {
                       <InputAdornment position="end">
                         <IconButton
                           aria-label="toggle password visibility"
-                          onClick={() => setShowPassword((pre_value) => !pre_value )}
+                          onClick={() => setShowPassword((pre_value) => !pre_value)}
                         >
                           {show_password ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
-                      }
+                    }
                   />
                   {touched.password && errors.password && (
                     <FormHelperText error id="standard-weight-helper-text-password">
