@@ -56,7 +56,7 @@ export default function EditSettingPage() {
                                     }
                                 }
                             } catch (err) {
-                                console.log(err);
+                                console.error(err);
                                 setStatus({ success: false });
                                 if (err instanceof Error) {
                                     setErrors({ submit: err.message });
@@ -71,9 +71,6 @@ export default function EditSettingPage() {
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, setFieldValue, isSubmitting, touched, values }) => (
                             <form noValidate onSubmit={handleSubmit}>
-                                <pre>
-                                    {JSON.stringify(errors)}
-                                </pre>
                                 <Grid container spacing={3}>
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>

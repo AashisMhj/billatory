@@ -98,7 +98,7 @@ export default function LogSection() {
                     setLogs(filtered_logs);
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, [])
     return (
         <Grid container alignItems='center' justifyContent='space-between'>

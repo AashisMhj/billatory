@@ -23,7 +23,7 @@ export default function StudentFeePage() {
                     .then((data) => {
                         setFees(data as Array<FeesType>);
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => console.error(error));
             }
         }
     }, []);

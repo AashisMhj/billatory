@@ -38,21 +38,6 @@ export default function StudentBillPage() {
         setTotalSum(sum);
     }
 
-    // function handleClick(){
-    //     try {
-    //         if(billRef.current){
-    //             iframeRef.current?.contentWindow?.addEventListener('afterprint', function(){
-    //                 iframeRef.current?.contentWindow?.document.open();
-    //                 iframeRef.current?.contentWindow?.document.close();
-    //             })
-    //             iframeRef.current?.contentWindow?.document.write(billRef.current.innerHTML);
-    //             iframeRef.current?.contentWindow?.print();
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-
-    //     }
-    // }
 
     function handleClick() {
         iframeRef.current?.contentWindow?.print();

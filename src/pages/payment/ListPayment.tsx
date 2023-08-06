@@ -31,7 +31,7 @@ export default function ListPaymentPage() {
                     setPayments(payment_data);
                 }
             })
-            .catch(error => console.log(error));
+            .catch(error => console.error(error));
 
         //
         getPaymentRowCount()
@@ -40,7 +40,7 @@ export default function ListPaymentPage() {
                     setTotalRows(data);
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
     }
 
     function handlePaginationChange(_: any, new_page: number) {

@@ -60,7 +60,6 @@ export default function ListFees() {
     }
 
     function handleFilter(value: FeesFilterType) {
-        console.log(value);
         setPage(1);
         if (value.limit !== limit) {
             setLimit(value.limit)

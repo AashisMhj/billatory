@@ -62,7 +62,7 @@ export default function AddPaymentPage() {
                     }));
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
         getClasses(1, 1000)
             .then(data => {
                 if (typeof data === "string") {

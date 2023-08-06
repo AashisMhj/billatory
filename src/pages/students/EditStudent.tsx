@@ -31,7 +31,7 @@ export default function EditStudentPage() {
                 }
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             })
     }, []);
 
@@ -44,7 +44,7 @@ export default function EditStudentPage() {
                         setStudentData(student);
                     }
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.error(err))
         }
     }, [])
 
@@ -106,7 +106,7 @@ export default function EditStudentPage() {
 
                                         })
                                         .catch((error) => {
-                                            console.log(error);
+                                            console.error(error);
                                             showAlert('Error updating Data', 'error');
                                             setStatus(false);
                                             if (error instanceof Error) {

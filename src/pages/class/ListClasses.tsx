@@ -38,7 +38,7 @@ export default function ListClasses() {
                     setClasses(class_data);
                 }
             })
-            .catch(console.log);
+            .catch(console.error);
         //
         getClassRowCount()
             .then(data => {
@@ -46,7 +46,7 @@ export default function ListClasses() {
                     setTotalPageCount(data);
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => console.error(err));
     }
 
     function handleFilterSubmit(value: ClassFilterType) {

@@ -25,7 +25,7 @@ export default function ListStudentCharges() {
                         fetchData();
                     })
                     .catch(err => {
-                        console.log(err);
+                        console.error(err);
                         showAlert('Error Updating', 'error');
                     })
             }
@@ -50,7 +50,7 @@ export default function ListStudentCharges() {
                     .then((data) => {
                         setStudentCharges(data as Array<StudentChargeType>);
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => console.error(error));
 
                 getStudentDetail(parsed_id)
                     .then(data => {

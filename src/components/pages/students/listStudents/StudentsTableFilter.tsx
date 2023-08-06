@@ -48,7 +48,7 @@ export default function StudentsTableFilter({ open, handleClose, onSubmit, value
                     setClasses(class_data);
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, [])
     return (
         <Modal

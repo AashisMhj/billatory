@@ -28,7 +28,7 @@ export default function AddStudentPage() {
                 }
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             })
     }, [])
     return (
@@ -100,7 +100,7 @@ export default function AddStudentPage() {
                                     navigate(paths.studentsList);
                                 })
                                 .catch((error) => {
-                                    console.log(error);
+                                    console.error(error);
                                     setStatus(false);
                                     if (error instanceof Error) {
                                         setErrors({ submit: error.message });

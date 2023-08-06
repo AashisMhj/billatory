@@ -51,7 +51,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
             .then((data) => {
                 setAllStudents(data as Array<StudentMiniType>)
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
 
         getCharges(1, 999999)
             .then(data => {
@@ -60,7 +60,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                     setCharges(charges_data as Array<ChargesType>)
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, [])
     return (
         <Modal
@@ -95,7 +95,7 @@ export default function EditModal({ open, handleClose, onSubmit }: Props) {
                                 })
                                 .catch(error => {
                                     showAlert('Error '+error, 'error');
-                                    console.log(error);
+                                    console.error(error);
                                 })
                         } catch (error) {
                             setStatus(false);
