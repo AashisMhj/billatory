@@ -11,6 +11,7 @@ const initial_settings:SettingsType = {
     pan_no: 0,
     image: '',
     location: '',
+    secondary_phone_no: '',
     phone_no: ''
 };
 

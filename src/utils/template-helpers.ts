@@ -176,8 +176,7 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                                 </tbody>
                             </table>
                         </div>
-                        <p class="">Note: Please show in this bill should be paid within the current month by 10th. of
-                            each month</p>
+                        <p class="">Note: Amount shown in this bill should be paid within 10th of each month.</p>
                     </div>
                 </div>
             </div>
