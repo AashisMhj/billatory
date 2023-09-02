@@ -152,6 +152,7 @@ export interface PaymentType {
     class?: string,
     payee: string,
     account_name: string,
+    due_amount: number,
     bill_no?: number,
     student_first_name?: string,
     student_mid_name?: string,
@@ -202,10 +203,12 @@ export interface BillProps {
     organization_name: string,
     location: string,
     pan_no: number,
-    phone_no: string
+    phone_no: string,
+    image: string
 }
 
 export interface PaymentProps {
+    bill_no?: number,
     organization_name: string
     location: string
     pan_no: number
@@ -215,7 +218,8 @@ export interface PaymentProps {
     amount_words: string,
     current_date: string,
     payee: string,
-    account_name: string
+    account_name: string,
+    due_amount: number
 
 }
 

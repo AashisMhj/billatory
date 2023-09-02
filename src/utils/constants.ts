@@ -14,3 +14,5 @@ export const Months = [
 ]
 
 export const DropdownLimitValues = [10, 20, 30, 50, 80, 100];
+
+export const MAX_BILL_ITEM = 8;

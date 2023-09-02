@@ -173,20 +173,19 @@ pub fn upgrade_database_if_needed(
         )?;
 
         tx.execute(
-            "
-        CREATE TABLE IF NOT EXISTS payment(
+            "CREATE TABLE IF NOT EXISTS payment(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             student_id INTEGER NOT NULL,
             created_at datetime default current_timestamp,
             amount real not null,
+            due_amount real not null,
             remarks text,
             bill_no INTEGER DEFAULT NULL,
             payee text not null,
             account_name text not null,
             deleted boolean default false,
             FOREIGN KEY(student_id) references students(id)
-        );
-        ",
+        );",
             (),
         )?;
 

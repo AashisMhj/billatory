@@ -5,7 +5,7 @@ import { Formik, FormikErrors } from "formik";
 import * as Yup from 'yup';
 import NepaliDate from "nepali-date-converter";
 //
-import { getAllActiveStudents, getStudentsWithBillNo } from "@/services/student.service";
+import { getAllActiveStudents, getStudentPreviousDue, getStudentsWithBillNo } from "@/services/student.service";
 import { addPayment } from "@/services/payment.service";
 import { getClasses } from "@/services/class.service";
 //
@@ -26,6 +26,7 @@ export default function AddPaymentPage() {
     const [classes, setClasses] = useState<Array<StudentClassType>>([]);
     const { showAlert } = useContext(SnackBarContext);
     const nepali_date = new NepaliDate(Date.now());
+    const [due_amount, setDueAmount] = useState(0);
     const navigate = useNavigate();
 
     function filterStudent(selected_class: number | null, setFieldValue: SetFieldValueType) {
@@ -44,12 +45,30 @@ export default function AddPaymentPage() {
         if (typeof event.target.value === "number") {
             setFieldValue('student_id', event.target.value);
             const selected_student = students.find((el) => el.id === event.target.value);
+            getDueAmount(event.target.value);
             if (selected_student) {
                 setFieldValue('account_name', `${selected_student.first_name} ${selected_student.last_name}`);
                 setFieldValue('bill_no', selected_student.bill_no)
             }
         }
     }
+
+    function getDueAmount(student_id: number){
+        const current_date = new Date();
+        current_date.setMonth(current_date.getMonth() + 1);
+        const next_month_nepali_date = new NepaliDate(current_date);
+        getStudentPreviousDue(student_id, next_month_nepali_date.getMonth() + 1, next_month_nepali_date.getYear())
+            .then(data =>{
+                if(typeof data === "number"){
+                    setDueAmount(data);
+                }
+            })
+            .catch(err => {
+                console.trace(err)
+                setDueAmount(0);
+            })
+    }
+
     useEffect(() => {
         getStudentsWithBillNo()
             .then(data => {
@@ -107,7 +126,8 @@ export default function AddPaymentPage() {
                                 account_name: values.account_name,
                                 nepali_month,
                                 nepali_year,
-                                bill_no: values.bill_no
+                                bill_no: values.bill_no,
+                                due_amount
                             })
                                 .then((data) => {
                                     showAlert("Payment Added", 'success');
@@ -187,6 +207,12 @@ export default function AddPaymentPage() {
                                                     </FormHelperText>
                                                 )
                                             }
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="due-amount">Due Amount</InputLabel>
+                                            <OutlinedInput id="due-amount" type="number" disabled={true} value={due_amount} fullWidth  />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12}>

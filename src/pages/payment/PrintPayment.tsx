@@ -11,7 +11,7 @@ import { PaymentType } from "@/types";
 import { SettingsContext } from "@/context/settings";
 import { convertToWords } from "@/utils/helper-function";
 import '@/components/pages/payment/printPayment/payment-slip.css';
-import paymentFrame from "@/components/pages/payment/PaymentTemplate";
+import { paymentFrame } from "@/utils/template-helpers";
 import { PageTitle } from "@/components/shared";
 
 
@@ -21,10 +21,12 @@ export default function PrintPaymentPage() {
 
     const [payment_info, setPaymentInfo] = useState<PaymentType>({
         amount: 0,
+        bill_no: 0,
         student_id: 0,
         created_at: '',
         class_id: 0,
         id: 0,
+        due_amount: 0,
         account_name: '',
         payee: ''
     });
@@ -57,6 +59,7 @@ export default function PrintPaymentPage() {
                 payment_id: payment_info.id,
                 phone_no: value.phone_no,
                 account_name: payment_info.account_name,
+                due_amount: payment_info.due_amount,
                 bill_no: payment_info.bill_no
             }));
         } catch (error) {

@@ -11,6 +11,7 @@ pub struct Payment {
     pub account_name: String,
     pub student_first_name: Option<String>,
     pub student_last_name: Option<String>,
+    pub due_amount: f32,
     pub created_at: String,
     pub amount: f32,
     pub bill_no: Option<i32>,
@@ -22,7 +23,7 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<i64, ru
     let transaction = db.transaction()?;
     transaction.execute(
         "
-    INSERT INTO payment (amount, student_id, remarks, payee, account_name, bill_no) values (?1, ?2, ?3, ?4, ?5, ?6);
+    INSERT INTO payment (amount, student_id, remarks, payee, account_name, bill_no, due_amount) values (?1, ?2, ?3, ?4, ?5, ?6, ?7);
     ",
         params![
             payment_data.amount,
@@ -30,7 +31,8 @@ pub fn add_payment(db: &mut Connection, payment_data: Payment) -> Result<i64, ru
             payment_data.remarks,
             payment_data.payee,
             payment_data.account_name,
-            payment_data.bill_no
+            payment_data.bill_no,
+            payment_data.due_amount
         ],
     )?;
     let id = transaction.last_insert_rowid();
@@ -63,6 +65,7 @@ pub fn get_payment(
                     month: row.get("year")?,
                     student_id: row.get("student_id")?,
                     bill_no: row.get("bill_no")?,
+                    due_amount: row.get("due_amount")?,
                     student_first_name: row.get("first_name")?,
                     student_last_name: row.get("last_name")?,
                     amount: row.get("amount")?,
@@ -84,6 +87,7 @@ pub fn get_payment(
                     student_id: row.get("student_id")?,
                     payee: row.get("payee")?,
                     bill_no: row.get("bill_no")?,
+                    due_amount: row.get("due_amount")?,
                     year: 0,
                     month: 0,
                     account_name: row.get("account_name")?,
@@ -110,6 +114,7 @@ pub fn get_payment_detail(db: &Connection, id: i32) -> Result<Payment, rusqlite:
             year: 0,
             month: 0,
             bill_no: row.get("bill_no")?,
+            due_amount: row.get("due_amount")?,
             payee: row.get("payee")?,
             account_name: row.get("account_name")?,
             created_at: row.get("created_at")?,

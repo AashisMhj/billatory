@@ -58,6 +58,7 @@ export default function StudentBillPage() {
                 date: nepali_date.format('YYYY-MM-DD'),
                 roll_no: student_detail?.roll_no || 0,
                 organization_name: value.organization_name,
+                image: value.image,
                 pan_no: value.pan_no,
                 phone_no: value.phone_no,
                 location: value.location,

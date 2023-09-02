@@ -82,14 +82,14 @@ fn add_settings_data(
     secondary_phone_no: Option<String>
 ) -> Result<settings::Setting, String> {
     let setting_data = settings::Setting {
-        organization_name: organization_name,
-        phone_no: phone_no,
-        email: email,
-        pan_no: pan_no,
-        image: image,
-        location: location,
-        password: password,
-        secondary_phone_no: secondary_phone_no,
+        organization_name,
+        phone_no,
+        email,
+        pan_no,
+        image,
+        location,
+        password,
+        secondary_phone_no,
         updated_at: None,
         created_at: None
     };
@@ -140,13 +140,13 @@ fn update_settings_data(app_handle: AppHandle,
     secondary_phone_no: Option<String>,
     image: String ) -> Result<i32, String>{
     let settings_data = settings::Setting{
-        organization_name: organization_name,
-        phone_no: phone_no,
-        email: email,
-        pan_no: pan_no,
-        image: image,
-        location: location,
-        secondary_phone_no: secondary_phone_no,
+        organization_name,
+        phone_no,
+        email,
+        pan_no,
+        image,
+        location,
+        secondary_phone_no,
         password: "".to_string(),
         updated_at: None,
         created_at: None
@@ -985,20 +985,21 @@ fn add_bill_data(app_handle: AppHandle,student_id: i32, prev_amount: f32, roll_n
 
 // payment commands
 #[tauri::command]
-fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32,bill_no: Option<i32>, remarks: Option<String> )->Result<i64, String>{
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32,bill_no: Option<i32>, remarks: Option<String>, due_amount: f32 )->Result<i64, String>{
     let payment_data = payment::Payment { 
         id: 0, 
-        student_id: student_id, 
-        account_name: account_name,
-        payee: payee,
-        bill_no: bill_no,
+        student_id, 
+        account_name,
+        payee,
+        bill_no,
+        due_amount,
         student_first_name: None, 
         student_last_name: None, 
         year: nepali_year,
         month: nepali_month,
         created_at: "".to_string(), 
-        amount: amount, 
-        remarks: remarks
+        amount, 
+        remarks
     };
     let result = app_handle.db_mut(|db| payment::add_payment(db, payment_data));
 

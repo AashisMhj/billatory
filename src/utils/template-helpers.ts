@@ -1,17 +1,20 @@
 import { BillProps, PaymentProps } from "@/types";
 import { addComma } from "@/utils/helper-function";
+import { MAX_BILL_ITEM } from "./constants";
+import { convertToWords } from "@/utils/helper-function";
 
-export function getBillPageLayout(content: string) {
-    return (`
-    <!DOCTYPE html>
-<html lang="en">
-
+const Bill_Layout_HEAD = `
 <head>
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/bootstrap.min.css" rel="stylesheet" >
     <style type="text/css">
+        .logo{
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
         @media print {
             body {
                 font-size: 10px;
@@ -31,8 +34,14 @@ export function getBillPageLayout(content: string) {
         }
     </style>
 
-    </head>
+</head>
+`
 
+export function getBillPageLayout(content: string) {
+    return (`
+    <!DOCTYPE html>
+    <html lang="en">
+    ${Bill_Layout_HEAD}
     <body>
         <div class="row">
         ${content}
@@ -46,35 +55,8 @@ export function getBillPageLayout(content: string) {
 export function getBulkBillPageLayout() {
     return (`
     <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>Bootstrap Example</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/bootstrap.min.css" rel="stylesheet" >
-    <style type="text/css">
-        @media print {
-            body {
-                font-size: 10px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            ul.p-padding {
-                padding: 0px 0px 0px 25px;
-            }
-
-            div.p-row {
-                margin-top: -10px;
-            }
-        }
-    </style>
-
-    </head>
-
+    <html lang="en">
+    ${Bill_Layout_HEAD}
     <body>
         <div class="row" id="content">
         </div>
@@ -84,28 +66,29 @@ export function getBulkBillPageLayout() {
     `)
 }
 
-export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class }: BillProps) {
+export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class, image }: BillProps) {
     let m_bill_items = [...bill_items];
-    const empty_array = Array.from({length: 9}, (_, k) => k);
-    if(m_bill_items.length > 9){
-        const remainingItems = m_bill_items.slice(9);
-        m_bill_items.splice(9, m_bill_items.length -9);
-        m_bill_items[9] = {
-            ...m_bill_items[9],
+    const empty_array = Array.from({length: MAX_BILL_ITEM}, (_, k) => k);
+    // if the no of items is greater than the specified then concat all the items to the last item
+    if(m_bill_items.length > MAX_BILL_ITEM){
+        const remainingItems = m_bill_items.slice(MAX_BILL_ITEM);
+        m_bill_items.splice(MAX_BILL_ITEM, m_bill_items.length -MAX_BILL_ITEM);
+        m_bill_items[MAX_BILL_ITEM] = {
+            ...m_bill_items[MAX_BILL_ITEM],
             amount: remainingItems.reduce((prev, item)=>  prev + item.amount,0),
             charge_title: remainingItems.map(item => item.charge_title).join('+'),
         }
     }
     return `
     <div class="col-6">
-            <div class="card">
+            <div class="card logo">
                 <div class="card-body">
                     <div class="container">
                         <div class="row">
                             <div class="col-6 "> PAN No.: ${pan_no} </div>
                             <div class="col-6 text-end"> Ph No.: ${phone_no} </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 logo" style="background-image: url(${image})">
                             <div class="text-center">
                                 <h1 class="mb-0"> ${organization_name}</h1>
                                 <p class="fw-bold my-0">${location}</p>
@@ -176,7 +159,20 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                                 </tbody>
                             </table>
                         </div>
-                        <p class="">Note: Amount shown in this bill should be paid within 10th of each month.</p>
+                        <div class="row">
+                            <div class="col-2 text-dark">In Words</div>
+                            <div class="col-10 text-dark"> ${convertToWords(total_sum + previous_due)} </div>
+                        </div>
+                        <div class="row">
+                            <p class="col-9">Note: Amount shown in this bill should be paid within 10th of each month.</p>
+                            <div class="col-3"> 
+                                <div class="row align-items-end">
+                                    <div class="col border-top-0">
+                                        Signature
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,7 +181,7 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
 }
 
 
-export default function paymentFrame({organization_name, location, pan_no, phone_no, payment_id, amount, current_date, amount_words, payee, account_name}:PaymentProps) {
+export function paymentFrameV1({organization_name, location, pan_no, phone_no, payment_id, amount, current_date, amount_words, payee, account_name}:PaymentProps) {
     return `
     <!DOCTYPE html>
         <html lang="en">
@@ -251,6 +247,136 @@ export default function paymentFrame({organization_name, location, pan_no, phone
             </div>
         </body>
         </html>
+    `
+}
+
+export function paymentFrame({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name}:PaymentProps) {
+    return `
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bootstrap 5 Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        tr td {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .vbottom {
+            align-items: flex-end;
+        }
+
+        div {
+            font-size: 14px;
+        }
+        @print media{
+            tr td {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+    
+            .vbottom {
+                align-items: flex-end;
+            }
+    
+            div {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
+        <div class="container-fluid">
+            <div class="row pb-3">
+                <div class="col col-md-4 d-flex justify-content-start fs-3 text-primary vbottom">RECEIPT</div>
+                <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ${current_date}</div>
+                <div class="col-4 col-md-4 d-flex justify-content-end vbottom">Receipt No.: ${payment_id}</div>
+            </div>
+            <div class="row pb-1">
+                <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
+                <div class="col d-flex justify-content-start vbottom">${payee}</div>
+                <div class="col  d-flex justify-content-end">
+                    <div class="row d-flex justify-content-end">
+                        <div class="col d-flex vbottom">Amount <div>
+                                <div class="col d-flex border border-dark px-2 vbottom">Rs ${amount} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row pb-1">
+                <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
+                <div class="col d-flex justify-content-start">________${amount}_______</div>
+                <div class="col-2 d-flex justify-content-end">rupees</div>
+
+            </div>
+            <div class="row pb-1">
+                <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">For Payment Of</div>
+                <div class="col d-flex justify-content-start">___________________________________________________</div>
+            </div>
+
+            <div class="row pb-1">
+                <div class="col-3  col-lg-2 d-flex justify-content-end ">From</div>
+                <div class="col d-flex justify-content-start">________ to ______ rupees</div>
+                <div class="col-5 col-md-5 d-flex justify-content-end">
+                    <div class="row">
+                        <div class="col d-flex justify-content-end">Paid By</div>
+                        <div class="col justify-content-end">
+                            <div class="form-check ">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Cash
+
+                            </div>
+                            <div class="form-check ">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                Cheque_____________
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Money
+                                Order
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pb-1">
+            <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">Received By</div>
+            <div class="col d-flex justify-content-start">___________________________________________________</div>
+
+            <div class="col-3 d-flex justify-content-end">
+                <table class="table">
+                    <tr>
+                        <td>Amount Amt</td>
+                        <td>${amount}</td>
+                    </tr>
+                    <tr class="border-bottom border-dark">
+                        <td>This Payment</td>
+                        <td>${amount}</td>
+                    </tr>
+                    <tfoot>
+                        <tr>
+                            <td>Balance due</td>
+                            <td>${due_amount - amount}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
     `
 }
 

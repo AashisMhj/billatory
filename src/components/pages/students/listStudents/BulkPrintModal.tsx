@@ -68,6 +68,7 @@ export default function BulkPrintModal({ open, handleClose, onSubmit, student_id
                     content += billFrame({
                         previous_due: previous_due,
                         total_sum: total_sum,
+                        image: value.image,
                         bill_no: bill_count,
                         month: Months[nepali_month] ? Months[nepali_month].month_name : '',
                         student_class: student_detail?.class || '',
