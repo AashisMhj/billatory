@@ -20,180 +20,52 @@
         div {
             font-size: 14px;
         }
+
+        .mg {
+            margin-top: -1rem;
+        }
+
+        @media print {
+            tr td {
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .vbottom {
+                align-items: flex-end;
+            }
+
+            div {
+                font-size: 14px;
+            }
+
+            .mg {
+                margin-top: -1rem;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
         <div class="container-fluid">
-            <div class="row pb-3">
-                <div class="col col-md-4 d-flex justify-content-start fs-3 text-primary vbottom">RECEIPT</div>
+            <div class="row d-flex">
+                <div class="col">
+                    PAN No.: 123456789
+                </div>
+                <div class="col text-end">
+                    Ph No.: 980123456
+                </div>
+            </div>
+            <div class="text-center mg">
+                <h4 class=" ">Falano School</h4>
+                <p class="fw-bold m-0">Nepal, Earth</p>
+            </div>
+
+            <div class="row ">
+                <div class="col-3 col-md-3 d-flex justify-content-end fs-3 text-primary vbottom">RECEIPT</div>
                 <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ...................</div>
-                <div class="col-4 col-md-4 d-flex justify-content-end vbottom">Receipt No.: ...................</div>
-            </div>
-            <div class="row pb-1">
-                <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
-                <div class="col d-flex justify-content-start vbottom">
-                    ___________________________________________________</div>
-                <div class="col  d-flex justify-content-end">
-                    <div class="row d-flex justify-content-end">
-                        <div class="col d-flex vbottom">Amount <div>
-                                <div class="col d-flex border border-dark px-2 vbottom">Rs 10000 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
-                <div class="col d-flex justify-content-start">___________________________________________________</div>
-                <div class="col-2 d-flex justify-content-end">rupees</div>
-
-            </div>
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">For Payment Of</div>
-                <div class="col d-flex justify-content-start">___________________________________________________</div>
-            </div>
-
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end ">From</div>
-                <div class="col d-flex justify-content-start">________ to ______ rupees</div>
-                <div class="col-5 col-md-5 d-flex justify-content-end">
-                    <div class="row">
-                        <div class="col d-flex justify-content-end">Paid By</div>
-                        <div class="col justify-content-end">
-                            <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Cash
-
-                            </div>
-                            <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                Cheque_____________
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Money
-                                Order
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row pb-1">
-            <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">Received By</div>
-            <div class="col d-flex justify-content-start">___________________________________________________</div>
-
-            <div class="col-3 d-flex justify-content-end">
-                <table class="table">
-                    <tr>
-                        <td>Amount Amt</td>
-                        <td>10000</td>
-                    </tr>
-                    <tr class="border-bottom border-dark">
-                        <td>This Payment</td>
-                        <td>10000</td>
-                    </tr>
-                    <tfoot>
-                        <tr>
-                            <td>Balance due</td>
-                            <td>10000</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
-        <div class="container-fluid">
-            <div class="row pb-3">
-                <div class="col col-md-4 d-flex justify-content-start fs-3 text-primary vbottom">RECEIPT</div>
-                <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ...................</div>
-                <div class="col-4 col-md-4 d-flex justify-content-end vbottom">Receipt No.: ...................</div>
-            </div>
-            <div class="row pb-1">
-                <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
-                <div class="col d-flex justify-content-start vbottom">
-                    ___________________________________________________</div>
-                <div class="col  d-flex justify-content-end">
-                    <div class="row d-flex justify-content-end">
-                        <div class="col d-flex vbottom">Amount <div>
-                                <div class="col d-flex border border-dark px-2 vbottom">Rs 10000 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
-                <div class="col d-flex justify-content-start">___________________________________________________</div>
-                <div class="col-2 d-flex justify-content-end">rupees</div>
-
-            </div>
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">For Payment Of</div>
-                <div class="col d-flex justify-content-start">___________________________________________________</div>
-            </div>
-
-            <div class="row pb-1">
-                <div class="col-3  col-lg-2 d-flex justify-content-end ">From</div>
-                <div class="col d-flex justify-content-start">________ to ______ rupees</div>
-                <div class="col-5 col-md-5 d-flex justify-content-end">
-                    <div class="row">
-                        <div class="col d-flex justify-content-end">Paid By</div>
-                        <div class="col justify-content-end">
-                            <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Cash
-
-                            </div>
-                            <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                Cheque_____________
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Money
-                                Order
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row pb-1">
-            <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">Received By</div>
-            <div class="col d-flex justify-content-start">___________________________________________________</div>
-
-            <div class="col-3 d-flex justify-content-end">
-                <table class="table">
-                    <tr>
-                        <td>Amount Amt</td>
-                        <td>10000</td>
-                    </tr>
-                    <tr class="border-bottom border-dark">
-                        <td>This Payment</td>
-                        <td>10000</td>
-                    </tr>
-                    <tfoot>
-                        <tr>
-                            <td>Balance due</td>
-                            <td>10000</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
-        <div class="container-fluid">
-            <div class="row pb-3">
-                <div class="col col-md-4 d-flex justify-content-start fs-3 text-primary vbottom">RECEIPT</div>
-                <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ...................</div>
-                <div class="col-4 col-md-4 d-flex justify-content-end vbottom">Receipt No.: ...................</div>
+                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: ...................</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>

@@ -259,8 +259,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
     <title>Bootstrap 5 Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="/bootstrap.min.css" rel="stylesheet">
     <style>
         tr td {
             padding: 0 !important;
@@ -274,30 +273,52 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
         div {
             font-size: 14px;
         }
-        @print media{
+
+        .mg {
+            margin-top: -1rem;
+        }
+
+        @media print {
             tr td {
                 padding: 0 !important;
                 margin: 0 !important;
             }
-    
+
             .vbottom {
                 align-items: flex-end;
             }
-    
+
             div {
                 font-size: 14px;
+            }
+
+            .mg {
+                margin-top: -1rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
+    <div class="container-fluid m-1 p-1 mb-3 border border-dark">
         <div class="container-fluid">
-            <div class="row pb-3">
-                <div class="col col-md-4 d-flex justify-content-start fs-3 text-primary vbottom">RECEIPT</div>
+            <div class="row d-flex">
+                <div class="col">
+                    PAN No.: ${pan_no}
+                </div>
+                <div class="col text-end">
+                    Ph No.: ${phone_no}
+                </div>
+            </div>
+            <div class="text-center mg">
+                <h4 class=" ">${organization_name}</h4>
+                <p class="fw-bold m-0">${location}</p>
+            </div>
+
+            <div class="row ">
+                <div class="col-3 col-md-3 d-flex justify-content-end fs-3 text-primary vbottom">RECEIPT</div>
                 <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ${current_date}</div>
-                <div class="col-4 col-md-4 d-flex justify-content-end vbottom">Receipt No.: ${payment_id}</div>
+                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: ___${payment_id}___</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
@@ -314,7 +335,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             </div>
             <div class="row pb-1">
                 <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
-                <div class="col d-flex justify-content-start">________${amount}_______</div>
+                <div class="col d-flex justify-content-start">${convertToWords(amount)}</div>
                 <div class="col-2 d-flex justify-content-end">rupees</div>
 
             </div>
@@ -356,8 +377,8 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             <div class="col-3 d-flex justify-content-end">
                 <table class="table">
                     <tr>
-                        <td>Amount Amt</td>
-                        <td>${amount}</td>
+                        <td>Amount Due</td>
+                        <td>${due_amount}</td>
                     </tr>
                     <tr class="border-bottom border-dark">
                         <td>This Payment</td>
@@ -373,7 +394,6 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             </div>
         </div>
     </div>
-    
 </body>
 
 </html>
