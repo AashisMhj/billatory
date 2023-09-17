@@ -279,8 +279,10 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                             </table>
                         </div>
                         <div class=""><strong>Amount</strong>: ${convertToWords(total_sum + previous_due)}</div>
-                        <p class="">Note: Please show in this bill should be paid within the current month by 10th. of
-                            each month</p>
+                        <div class="row">
+                            <p class="col-10">Note: Amount shown in Bill should be paid within 10th of each Month</p>
+                            <span class="col-2">Signature </span>
+                        </div>
                     </div>
                 </div>
             </div>
