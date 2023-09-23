@@ -153,6 +153,7 @@ export interface PaymentType {
     payee: string,
     account_name: string,
     due_amount: number,
+    receiver: string,
     bill_no?: number,
     student_first_name?: string,
     student_mid_name?: string,
@@ -219,7 +220,8 @@ export interface PaymentProps {
     current_date: string,
     payee: string,
     account_name: string,
-    due_amount: number
+    due_amount: number,
+    receiver: string
 
 }
 

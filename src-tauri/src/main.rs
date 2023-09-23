@@ -985,7 +985,7 @@ fn add_bill_data(app_handle: AppHandle,student_id: i32, prev_amount: f32, roll_n
 
 // payment commands
 #[tauri::command]
-fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32,bill_no: Option<i32>, remarks: Option<String>, due_amount: f32 )->Result<i64, String>{
+fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: String, account_name: String, nepali_year: i32, nepali_month: i32,bill_no: Option<i32>, remarks: Option<String>, due_amount: f32, receiver: String )->Result<i64, String>{
     let payment_data = payment::Payment { 
         id: 0, 
         student_id, 
@@ -997,6 +997,7 @@ fn add_payment_data(app_handle: AppHandle, amount: f32, student_id: i32, payee: 
         student_last_name: None, 
         year: nepali_year,
         month: nepali_month,
+        receiver,
         created_at: "".to_string(), 
         amount, 
         remarks

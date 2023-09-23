@@ -182,6 +182,7 @@ pub fn upgrade_database_if_needed(
             remarks text,
             bill_no INTEGER DEFAULT NULL,
             payee text not null,
+            receiver text default '',
             account_name text not null,
             deleted boolean default false,
             FOREIGN KEY(student_id) references students(id)
@@ -189,25 +190,24 @@ pub fn upgrade_database_if_needed(
             (),
         )?;
 
-        tx.execute(
-            "CREATE TABLE IF NOT EXISTS fees (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_id INTEGER NOT NULL,
-            created_at datetime default current_timestamp,
-            updated_at datetime,
-            year integer not null,
-            month integer not null,
-            amount real not null,
-            payment_id INTEGER DEFAULT NULL,
-            title text,
-            description text,
-            charge_id integer,
-            deleted boolean default false,
-            FOREIGN key(student_id) references students(id),
-            FOREIGN KEY(charge_id) REFERENCES charge(id),
-            FOREIGN KEY(payment_id) REFERENCES payment(id),
-            unique(student_id,charge_id, year, month)
-        );",(),)?;
+        tx.execute("CREATE TABLE IF NOT EXISTS fees (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id INTEGER NOT NULL,
+                created_at datetime default current_timestamp,
+                updated_at datetime,
+                year integer not null,
+                month integer not null,
+                amount real not null,
+                payment_id INTEGER DEFAULT NULL,
+                title text,
+                description text,
+                charge_id integer,
+                deleted boolean default false,
+                FOREIGN key(student_id) references students(id),
+                FOREIGN KEY(charge_id) REFERENCES charge(id),
+                FOREIGN KEY(payment_id) REFERENCES payment(id),
+                unique(student_id,charge_id, year, month)
+            );",(),)?;
 
         tx.execute("CREATE TABLE IF NOT EXISTS bills(
             id INTEGER PRIMARY KEY AUTOINCREMENT,

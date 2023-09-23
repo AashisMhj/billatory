@@ -14,9 +14,11 @@ const Bill_Layout_HEAD = `
             body {
                 font-size: 10px;
             }
-
             h1 {
                 font-size: 16px;
+            }
+            .small-text{
+                front-size: 4px;
             }
 
             ul.p-padding {
@@ -29,13 +31,16 @@ const Bill_Layout_HEAD = `
             ul {
                 margin: 0px;
             }
+            .imagepack {
+                background-position: center 40px;
+                background-repeat: no-repeat;
+                background-size: auto 60%;
+            }
         }
 
         ul {
             margin: 0px;
         }
-
-
         .imagepack {
             background-position: center 40px;
             background-repeat: no-repeat;
@@ -75,6 +80,11 @@ export function getBulkBillPageLayout() {
     `)
 }
 
+/**
+ * @deprecated
+ * @param param0 
+ * @returns 
+ */
 export function billFrameV1({ bill_items, previous_due, pan_no, phone_no, bill_no, total_sum, organization_name, month, location, student_name, roll_no, date, student_class, image }: BillProps) {
     let m_bill_items = [...bill_items];
     const empty_array = Array.from({length: MAX_BILL_ITEM}, (_, k) => k);
@@ -217,14 +227,14 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                                 </div>
                             </div>
                             <div class="row p-row">
-                                <div class="col-sm-7 col-lg-9 col-7">
+                                <div class="col-7">
                                     <ul class="list-unstyled">
                                         <li class="text-muted">BILL No.: ${bill_no}</li>
                                         <li class="text-muted">Name: ${student_name}</li>
                                         <li class="text-muted">Month: ${month}</li>
                                     </ul>
                                 </div>
-                                <div class="col-sm-5 col-lg-3 col-5 ">
+                                <div class="col-5">
                                     <ul class="list-unstyled p-padding">
                                         <li class="text-muted">Date: ${date}</li>
                                         <li class="text-muted">Class: ${student_class}</li>
@@ -279,9 +289,12 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                             </table>
                         </div>
                         <div class=""><strong>Amount</strong>: ${convertToWords(total_sum + previous_due)}</div>
-                        <div class="row">
-                            <p class="col-10">Note: Amount shown in Bill should be paid within 10th of each Month</p>
-                            <span class="col-2">Signature </span>
+                        <div class="row align-items-center">
+                            <div class="col-9 small-text">Note: Amount shown in Bill should be paid within 10th of each Month</div>
+                            <div class="col-3">
+                                <hr />
+                                <span class="small-text">Signature </signature>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -290,7 +303,11 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
     `
 }
 
-
+/**
+ * @deprecated
+ * @param param0 
+ * @returns 
+ */
 export function paymentFrame1({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name}:PaymentProps) {
     return `
     <!DOCTYPE html>
@@ -442,7 +459,7 @@ export function paymentFrame1({organization_name, location, pan_no, phone_no, du
 }
 
 
-export function paymentFrame({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name}:PaymentProps) {
+export function paymentFrame({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name, receiver}:PaymentProps) {
     return`
     <!DOCTYPE html>
 <html lang="en">
@@ -491,7 +508,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             <div class="row ">
                 <div class="col-3 col-md-3 d-flex justify-content-end fs-3 text-primary vbottom">RECEIPT</div>
                 <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ${current_date}</div>
-                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: ...........${payment_id}....</div>
+                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: .........  ${payment_id} ..</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
@@ -508,12 +525,12 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             </div>
             <div class="row pb-1">
                 <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
-                <div class="col d-flex justify-content-start">${convertToWords(amount)}</div>
+                <div class="col d-flex justify-content-start">${amount_words}</div>
                 <div class="col-2 d-flex justify-content-end">rupees</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">For Payment Of</div>
-                <div class="col d-flex justify-content-start">___________________________________________________</div>
+                <div class="col d-flex justify-content-start">${account_name}</div>
             </div>
 
             <div class="row pb-1">
@@ -523,12 +540,11 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
                         <div class="col d-flex justify-content-end">Paid By</div>
                         <div class="col justify-content-end">
                             <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Cash
-
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"> Cash
                             </div>
                             <div class="form-check ">
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                Cheque_____________
+                                Cheque _____________
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Money
@@ -543,7 +559,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
 
         <div class="row pb-1">
             <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">Received By</div>
-            <div class="col d-flex justify-content-start">___________________________________________________</div>
+            <div class="col d-flex justify-content-start">${receiver}</div>
 
             <div class="col-3 d-flex justify-content-end">
                 <table class="table">

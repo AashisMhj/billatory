@@ -28,7 +28,8 @@ export default function PrintPaymentPage() {
         id: 0,
         due_amount: 0,
         account_name: '',
-        payee: ''
+        payee: '',
+        receiver: ''
     });
     const { value } = useContext(SettingsContext);
 
@@ -60,7 +61,8 @@ export default function PrintPaymentPage() {
                 phone_no: value.phone_no,
                 account_name: payment_info.account_name,
                 due_amount: payment_info.due_amount,
-                bill_no: payment_info.bill_no
+                bill_no: payment_info.bill_no,
+                receiver: payment_info.receiver
             }));
         } catch (error) {
             console.error(error)

@@ -103,7 +103,8 @@ export default function AddPaymentPage() {
                         bill_no: null,
                         remarks: '',
                         payee: '',
-                        account_name: ''
+                        account_name: '',
+                        receiver: ''
                     }}
                     validationSchema={Yup.object().shape({
                         student_id: Yup.number().required('Student Name is Required'),
@@ -127,7 +128,8 @@ export default function AddPaymentPage() {
                                 nepali_month,
                                 nepali_year,
                                 bill_no: values.bill_no,
-                                due_amount
+                                due_amount,
+                                receiver: values.receiver
                             })
                                 .then((data) => {
                                     showAlert("Payment Added", 'success');
@@ -218,11 +220,24 @@ export default function AddPaymentPage() {
                                     <Grid item xs={12}>
                                         <Stack spacing={1}>
                                             <InputLabel htmlFor="amount">Payment Amount</InputLabel>
-                                            <OutlinedInput id="amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount)} />
+                                            <OutlinedInput id="amount" type="number" value={values.amount} onBlur={handleBlur} onChange={handleChange} name='amount' fullWidth error={Boolean(errors.amount && touched.receiver)} />
                                             {
                                                 touched.amount && errors.amount && (
                                                     <FormHelperText error id="class-error-helper">
                                                         {errors.amount}
+                                                    </FormHelperText>
+                                                )
+                                            }
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="receiver">Receiver Name</InputLabel>
+                                            <OutlinedInput id="receiver" type="string" value={values.receiver} onBlur={handleBlur} onChange={handleChange} name='receiver' fullWidth error={Boolean(errors.receiver && touched.receiver)} />
+                                            {
+                                                touched.receiver && errors.receiver && (
+                                                    <FormHelperText error id="class-error-helper">
+                                                        {errors.receiver}
                                                     </FormHelperText>
                                                 )
                                             }
