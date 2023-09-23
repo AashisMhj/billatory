@@ -1,5 +1,5 @@
 import { BillProps, PaymentProps } from "@/types";
-import { addComma } from "@/utils/helper-function";
+import { addComma, padString } from "@/utils/helper-function";
 import { MAX_BILL_ITEM } from "./constants";
 import { convertToWords } from "@/utils/helper-function";
 
@@ -508,11 +508,11 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             <div class="row ">
                 <div class="col-3 col-md-3 d-flex justify-content-end fs-3 text-primary vbottom">RECEIPT</div>
                 <div class="col-4 col-md-4  d-flex justify-content-end vbottom">Date: ${current_date}</div>
-                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: .........  ${payment_id} ..</div>
+                <div class="col-5 col-md-5 d-flex justify-content-end vbottom">Receipt No.: ${padString(""+payment_id, 10, "&nbsp;")}</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3 col-lg-2 d-flex justify-content-end fw-bold vbottom">Received From</div>
-                <div class="col d-flex justify-content-start vbottom">${payee}</div>
+                <div class="col d-flex justify-content-start vbottom"> <span class="border-bottom border-dashed">${padString(payee, 30, "&nbsp;")}</span></div>
                 <div class="col  d-flex justify-content-end">
                     <div class="row d-flex justify-content-end">
                         <div class="col d-flex vbottom">Amount <div>
@@ -525,12 +525,12 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             </div>
             <div class="row pb-1">
                 <div class="col-3  col-lg-2 d-flex justify-content-end ">Amount</div>
-                <div class="col d-flex justify-content-start">${amount_words}</div>
+                <div class="col d-flex justify-content-start"> ${ amount_words}</div>
                 <div class="col-2 d-flex justify-content-end">rupees</div>
             </div>
             <div class="row pb-1">
                 <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">For Payment Of</div>
-                <div class="col d-flex justify-content-start">${account_name}</div>
+                <div class="col d-flex justify-content-start"> <span class="border-bottom border-dashed"> ${padString(account_name, 30, "&nbsp;")} </span> </div>
             </div>
 
             <div class="row pb-1">

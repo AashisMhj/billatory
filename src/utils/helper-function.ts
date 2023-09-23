@@ -90,3 +90,28 @@ export function formatBytes(bytes:number, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
+
+/**
+ * Function to pad character to left and right of a string of given length
+ * @param inputString 
+ * @param padLength 
+ * @param padCharacter 
+ * @returns 
+ */
+export function padString(inputString:string, padLength:number, padCharacter:string) {
+  inputString = inputString.toString();
+  padCharacter = padCharacter || ' ';
+
+  const totalPadding = padLength - inputString.length;
+  if (totalPadding <= 0) {
+    return inputString;
+  }
+
+  const leftPadding = Math.floor(totalPadding / 2);
+  const rightPadding = totalPadding - leftPadding;
+
+  const leftPaddedString = padCharacter.repeat(leftPadding) + inputString;
+  const fullyPaddedString = leftPaddedString + padCharacter.repeat(rightPadding);
+
+  return fullyPaddedString;
+}
