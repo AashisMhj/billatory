@@ -221,7 +221,8 @@ export interface PaymentProps {
     payee: string,
     account_name: string,
     due_amount: number,
-    receiver: string
+    receiver: string,
+    image: string
 
 }
 

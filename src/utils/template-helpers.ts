@@ -291,8 +291,7 @@ export function billFrame({ bill_items, previous_due, pan_no, phone_no, bill_no,
                         <div class=""><strong>Amount</strong>: ${convertToWords(total_sum + previous_due)}</div>
                         <div class="row align-items-center">
                             <div class="col-9 small-text">Note: Amount shown in Bill should be paid within 10th of each Month</div>
-                            <div class="col-3">
-                                <hr />
+                            <div class="col-3 border-top">
                                 <span class="small-text">Signature </signature>
                             </div>
                         </div>
@@ -459,7 +458,7 @@ export function paymentFrame1({organization_name, location, pan_no, phone_no, du
 }
 
 
-export function paymentFrame({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name, receiver}:PaymentProps) {
+export function paymentFrame({organization_name, location, pan_no, phone_no, due_amount, payment_id, amount, current_date, amount_words, payee, account_name, receiver, image}:PaymentProps) {
     return`
     <!DOCTYPE html>
 <html lang="en">
@@ -486,11 +485,23 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
         .mg {
             margin-top: -1rem;
         }
+        .imagepack {
+            background-position: center 40px;
+            background-repeat: no-repeat;
+            background-size: auto 60%;
+        }
+        @media {
+            .imagepack {
+                background-position: center 40px;
+                background-repeat: no-repeat;
+                background-size: auto 60%;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="conainer-fluid m-1 p-1 mb-3 border border-dark">
+    <div class="container-fluid m-1 p-1 mb-3 border border-dark imagepack" style="background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5)), url(${image});">
         <div class="container-fluid">
             <div class="row d-flex">
                 <div class="col">
@@ -500,7 +511,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
                     Ph No.: ${phone_no}
                 </div>
             </div>
-            <div class="text-center mg">
+            <div class="text-center mg " >
                 <h4 class=" ">${organization_name}</h4>
                 <p class="fw-bold m-0">${location}</p>
             </div>
@@ -534,7 +545,6 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
             </div>
 
             <div class="row pb-1">
-                
                 <div class="col-5 col-md-5 d-flex justify-content-end">
                     <div class="row">
                         <div class="col d-flex justify-content-end">Paid By</div>
@@ -543,13 +553,7 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"> Cash
                             </div>
                             <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                Cheque _____________
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">Money
-                                Order
-
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"> Cheque 
                             </div>
                         </div>
                     </div>
@@ -558,9 +562,19 @@ export function paymentFrame({organization_name, location, pan_no, phone_no, due
         </div>
 
         <div class="row pb-1">
-            <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">Received By</div>
-            <div class="col d-flex justify-content-start">${receiver}</div>
-
+            <div class="col-3  col-lg-2 d-flex justify-content-end fw-bold">
+                <div class="row">
+                    <div class="col-12 text-end">
+                        Received By
+                    </div>
+                    <div class="col-12 text-end border-top">
+                        Signature
+                    </div>
+                </div>
+            </div>
+            <div class="col d-flex justify-content-start">
+                ${receiver}
+            </div>
             <div class="col-3 d-flex justify-content-end">
                 <table class="table">
                     <tr>

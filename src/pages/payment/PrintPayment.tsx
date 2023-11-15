@@ -62,7 +62,8 @@ export default function PrintPaymentPage() {
                 account_name: payment_info.account_name,
                 due_amount: payment_info.due_amount,
                 bill_no: payment_info.bill_no,
-                receiver: payment_info.receiver
+                receiver: payment_info.receiver,
+                image: value.image
             }));
         } catch (error) {
             console.error(error)
