@@ -1,8 +1,8 @@
 [package]
 name = "student-billing"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Student Billing System"
+authors = ["Aashis Maharjan"]
 license = ""
 repository = ""
 edition = "2021"
@@ -26,3 +26,6 @@ bcrypt = "^0.15.0"
 # this feature is used for production builds or when `devPath` points to the filesystem
 # DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
+
+[dev-dependencies]
+cargo-audit = "0.18.3"
