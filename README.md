@@ -44,3 +44,15 @@ yarn tauri dev
 ## build 
 yarn tauri build
 ```
+
+## Upgrading packages
+```bash
+yarn upgrade
+# upgrade to latest 
+yarn upgrade --latest
+
+## update rust packages
+cd tauri-src
+cargo update
+
+```
