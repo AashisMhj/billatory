@@ -52,7 +52,7 @@ yarn upgrade
 yarn upgrade --latest
 
 ## update rust packages
-cd tauri-src
+cd src-tauri
 cargo update
 
 ```
