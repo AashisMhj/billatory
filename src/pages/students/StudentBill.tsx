@@ -78,7 +78,7 @@ export default function StudentBillPage() {
                 })
             }
         } catch (error) {
-
+            console.log(error);
         }
     }, [student_detail, total_sum, iframeRef])
 

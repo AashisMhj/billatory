@@ -25,9 +25,14 @@ export function convertToWords(number:number) {
       return 'zero';
     }
   
-    function convertNumber(n:number) {
+    function convertNumber(n?:number) {
       let word = '';
-  
+      if(!n) return '';
+
+      if(n < 0){
+        return ''
+      }
+
       if (n < 10) {
         word = units[n];
       } else if (n < 20) {
@@ -41,6 +46,8 @@ export function convertToWords(number:number) {
       } else if (n < 10000000) {
         word = convertNumber(Math.floor(n / 100000)) + ' lakh ' + convertNumber(n % 100000);
       }
+
+      console.log(word);
   
       return word.trim();
     }
